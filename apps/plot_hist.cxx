@@ -1216,19 +1216,19 @@ int main( int argc, char** argv )
         hnumuCCinFV->SetLineColor(kAzure+6);
         hnumuCCinFV->SetLineWidth(1);
 
-        hstack[obschannel-1]->Add(hRnumuCCinFV); 
-        legend[obschannel-1]->AddEntry(hRnumuCCinFV, Form("#nu_{#mu} CC in FV, %.1f", hRnumuCCinFV->Integral()), "F"); 
-        hRnumuCCinFV->SetFillStyle(1001);
-        hRnumuCCinFV->SetFillColorAlpha(kAzure+6, 0.5);
-        hRnumuCCinFV->SetLineColor(kAzure+6);
-        hRnumuCCinFV->SetLineWidth(1);
+        //hstack[obschannel-1]->Add(hRnumuCCinFV); 
+        //legend[obschannel-1]->AddEntry(hRnumuCCinFV, Form("#nu_{#mu} CC in FV, %.1f", hRnumuCCinFV->Integral()), "F"); 
+        //hRnumuCCinFV->SetFillStyle(1001);
+        //hRnumuCCinFV->SetFillColorAlpha(kAzure+6, 0.5);
+        //hRnumuCCinFV->SetLineColor(kAzure+6);
+        //hRnumuCCinFV->SetLineWidth(1);
 
-        hstack[obschannel-1]->Add(hAnumuCCinFV); 
-        legend[obschannel-1]->AddEntry(hAnumuCCinFV, Form("Anti #nu_{#mu} CC in FV, %.1f", hAnumuCCinFV->Integral()), "F"); 
-        hAnumuCCinFV->SetFillStyle(1001);
-        hAnumuCCinFV->SetFillColorAlpha(kAzure-6, 0.5);
-        hAnumuCCinFV->SetLineColor(kAzure+6);
-        hAnumuCCinFV->SetLineWidth(1);
+        //hstack[obschannel-1]->Add(hAnumuCCinFV); 
+        //legend[obschannel-1]->AddEntry(hAnumuCCinFV, Form("Anti #nu_{#mu} CC in FV, %.1f", hAnumuCCinFV->Integral()), "F"); 
+        //hAnumuCCinFV->SetFillStyle(1001);
+        //hAnumuCCinFV->SetFillColorAlpha(kAzure-6, 0.5);
+        //hAnumuCCinFV->SetLineColor(kAzure+6);
+        //hAnumuCCinFV->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hnueCCinFV); 
         legend[obschannel-1]->AddEntry(hnueCCinFV, Form("#nu_{e} CC in FV, %.1f", hnueCCinFV->Integral()), "F"); 
@@ -1506,11 +1506,13 @@ int main( int argc, char** argv )
         gratio_mc2[obschannel-1]->GetYaxis()->SetRangeUser(0,int(1.5*maxratio)<2?int(1.5*maxratio):2);
         gratio_mc2[obschannel-1]->GetXaxis()->SetRangeUser(hmc->GetXaxis()->GetXmin(),hmc->GetXaxis()->GetXmax());
         }
-        if(obschannel>=5) //hard coded at this moment
-        {
-            gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco #pi^{0} energy [MeV]");
-        }
-        else gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]");
+
+
+        if(obschannel == 1){        gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed E_{#nu} [MeV]"); }
+        else if(obschannel == 2){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed P_{#pi^{0}} [MeV/c]"); }
+        else if(obschannel == 3){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed #pi^{0} mass [MeV/c^{2}]"); }
+        else if(obschannel == 4){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
+        else if(obschannel >= 5) {  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco #pi^{0} energy [MeV]"); }
         //else gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]");
         /* if(obschannel <=26) */ 
         /*     gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
@@ -1642,6 +1644,8 @@ int main( int argc, char** argv )
         pad2->Modified();
 
         canvas[obschannel-1]->Print(Form("canvas%d.pdf", obschannel));
+        canvas[obschannel-1]->Print(Form("canvas%d.C", obschannel));
+        canvas[obschannel-1]->Print(Form("canvas%d.png", obschannel));
         
         if(obschannel==1) canvas[obschannel-1]->Print("selection.pdf(");
         else if(obschannel==nchannels) canvas[obschannel-1]->Print("selection.pdf)");

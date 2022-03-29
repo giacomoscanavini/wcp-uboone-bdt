@@ -60,21 +60,21 @@ namespace config_Lee
 
 
   
-  TString spectra_file = "./new_TLee_input_opendata5e19/merge.root";
-  TString flux_Xs_directory = "./new_TLee_input_opendata5e19/flux_Xs/";
-  TString detector_directory = "./new_TLee_input_opendata5e19/det/";
-  TString mc_directory = "./new_TLee_input_opendata5e19/mc_stat/";
+  TString spectra_file = "/home/gs627/LEEana/merge.root";
+  TString flux_Xs_directory = "/home/gs627/LEEana/hist_rootfiles/XsFlux/";
+  TString detector_directory = "/home/gs627/LEEana/hist_rootfiles/DetVar/";
+  TString mc_directory = "/home/gs627/LEEana/mc_stat/";
 
 
   
-  int channels_observation = 7;// data channels (=hdata_obsch_# in spectra_file above)
+  int channels_observation = 2;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 
   int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
   int syst_cov_flux_Xs_end   = 17;
  
   int syst_cov_mc_stat_begin = 0;// files in mc_directory above
-  int syst_cov_mc_stat_end   = 99;
+  int syst_cov_mc_stat_end   = 1;
    
 
   /// some places may need to be changed when use different file-formats
@@ -97,7 +97,7 @@ namespace config_Lee
 
   double Lee_strength_for_outputfile_covariance_matrix = 0;
   
-  bool flag_plotting_systematics   = 0;
+  bool flag_plotting_systematics   = 1;
   
   ////////// goodness of fit
   

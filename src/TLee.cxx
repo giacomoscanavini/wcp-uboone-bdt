@@ -2397,26 +2397,20 @@ void TLee::Set_Spectra_MatrixCov()
 
   ////////////////////////////////////// pred
   
-  map_input_spectrum_ch_str[1] = "nueCC_FC_norm";
-  map_input_spectrum_ch_str[2] = "nueCC_PC_norm";
-  map_input_spectrum_ch_str[3] = "numuCC_FC_norm";
-  map_input_spectrum_ch_str[4] = "numuCC_PC_norm";
-  map_input_spectrum_ch_str[5] = "CCpi0_FC_norm";
-  map_input_spectrum_ch_str[6] = "CCpi0_PC_norm";
-  map_input_spectrum_ch_str[7] = "NCpi0_norm";
-  map_input_spectrum_ch_str[8] = "Lee_FC";
-  map_input_spectrum_ch_str[9] = "Lee_PC"; 
-  map_input_spectrum_ch_str[10]= "nueCC_FC_ext";
-  map_input_spectrum_ch_str[11]= "nueCC_PC_ext";
-  map_input_spectrum_ch_str[12]= "numuCC_FC_ext";
-  map_input_spectrum_ch_str[13]= "numuCC_PC_ext";
-  map_input_spectrum_ch_str[14]= "CCpi0_FC_ext";
-  map_input_spectrum_ch_str[15]= "CCpi0_PC_ext";
-  map_input_spectrum_ch_str[16]= "NCpi0_ext";
+  map_input_spectrum_ch_str[1] = "BNB";
+  map_input_spectrum_ch_str[2] = "BNB1";
+  //map_input_spectrum_ch_str[3] = "BNB2";
+  //map_input_spectrum_ch_str[4] = "BNB3";
+
+  map_input_spectrum_ch_str[3] = "ext";
+  map_input_spectrum_ch_str[4] = "ext1";
+  //map_input_spectrum_ch_str[7] = "ext2";
+  //map_input_spectrum_ch_str[8] = "ext3";
+  
 
   /// flag for LEE channels corresponding to the cov_input.txt
-  map_Lee_ch[8] = 1;
-  map_Lee_ch[9] = 1;
+  //map_Lee_ch[8] = 1;
+  //map_Lee_ch[9] = 1;
   
 
   ///////////////////////////////////////

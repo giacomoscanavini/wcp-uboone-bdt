@@ -44,19 +44,19 @@ int main( int argc, char** argv )
   }
   
   CovMatrix cov("./configurations/cov_input.txt", "./configurations/det_input.txt", "./configurations/det_file_ch.txt");
-  cov.add_disabled_ch_name("BG_nueCC_FC_overlay");
-  cov.add_disabled_ch_name("BG_nueCC_PC_overlay");
-  // cov.add_disabled_ch_name("nueCC_FC_nueoverlay");
-  // cov.add_disabled_ch_name("nueCC_PC_nueoverlay");
-  // cov.add_disabled_ch_name("LEE_FC_nueoverlay");
-  // cov.add_disabled_ch_name("LEE_PC_nueoverlay");
+  //cov.add_disabled_ch_name("BG_nueCC_FC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC_PC_overlay");
+  //cov.add_disabled_ch_name("nueCC_FC_nueoverlay");
+  //cov.add_disabled_ch_name("nueCC_PC_nueoverlay");
+  //cov.add_disabled_ch_name("LEE_FC_nueoverlay");
+  //cov.add_disabled_ch_name("LEE_PC_nueoverlay");
   
-  cov.add_disabled_ch_name("BG_nueCC2_FC_overlay");
-  cov.add_disabled_ch_name("BG_nueCC2_PC_overlay");
-  cov.add_disabled_ch_name("BG_nueCC3_FC_overlay");
-  cov.add_disabled_ch_name("BG_nueCC3_PC_overlay");
-  cov.add_disabled_ch_name("BG_nueCC_extra_FC_overlay");
-  cov.add_disabled_ch_name("BG_nueCC_extra_PC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC2_FC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC2_PC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC3_FC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC3_PC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC_extra_FC_overlay");
+  //cov.add_disabled_ch_name("BG_nueCC_extra_PC_overlay");
   if (flag_osc) cov.add_osc_config();
 
   // Get the file based on runno ...
