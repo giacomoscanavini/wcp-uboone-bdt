@@ -2399,13 +2399,13 @@ void TLee::Set_Spectra_MatrixCov()
   
   map_input_spectrum_ch_str[1] = "BNB";
   map_input_spectrum_ch_str[2] = "BNB1";
-  //map_input_spectrum_ch_str[3] = "BNB2";
-  //map_input_spectrum_ch_str[4] = "BNB3";
+  map_input_spectrum_ch_str[3] = "BNB2";
+  map_input_spectrum_ch_str[4] = "BNB3";
 
-  map_input_spectrum_ch_str[3] = "ext";
-  map_input_spectrum_ch_str[4] = "ext1";
-  //map_input_spectrum_ch_str[7] = "ext2";
-  //map_input_spectrum_ch_str[8] = "ext3";
+  map_input_spectrum_ch_str[5] = "ext";
+  map_input_spectrum_ch_str[6] = "ext1";
+  map_input_spectrum_ch_str[7] = "ext2";
+  map_input_spectrum_ch_str[8] = "ext3";
   
 
   /// flag for LEE channels corresponding to the cov_input.txt

@@ -170,8 +170,42 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   }else if (var_name == "kine_pio_energy_2"){   return kine.kine_pio_energy_2;
   }else if (var_name == "kine_pio_theta_1"){    return kine.kine_pio_theta_1;
   }else if (var_name == "kine_pio_theta_2"){    return kine.kine_pio_theta_2;
-  }else if (var_name == "kine_pio_phi_1"){      return kine.kine_pio_phi_1;
-  }else if (var_name == "kine_pio_phi_2"){      return kine.kine_pio_phi_2;
+  }else if (var_name == "kine_pio_costheta_1"){ return kine.kine_pio_theta_1;
+  }else if (var_name == "kine_pio_costheta_2"){ return kine.kine_pio_theta_2;
+  }else if (var_name == "kine_pio_phi_1"){      return kine.kine_pio_phi_1/180.*3.1415926;
+  }else if (var_name == "kine_pio_phi_2"){      return kine.kine_pio_phi_2/180.*3.1415926;
+
+  }else if (var_name == "kine_pio_energy_high"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
+      else return kine.kine_pio_energy_2;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_energy_low"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
+      else return kine.kine_pio_energy_2;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_costheta_high"){    
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_theta_1;
+      else return kine.kine_pio_theta_2;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_costheta_low"){    
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_theta_1;
+      else return kine.kine_pio_theta_2;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_phi_high"){      
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_phi_1/180.*3.1415926;
+      else return kine.kine_pio_phi_2/180.*3.1415926;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_phi_low"){      
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_phi_1/180.*3.1415926;
+      else return kine.kine_pio_phi_2/180.*3.1415926;
+    }else return -1000.;
+
 
   }else if (var_name == "pi0_mass"){
     if (kine.kine_pio_mass > 0){

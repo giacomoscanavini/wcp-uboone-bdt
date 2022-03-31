@@ -2,72 +2,13 @@ namespace config_Lee
 {
   ////////// input files for spectra and covariance matrixes
 
-  /* TString spectra_file = "./data_framework_Doc33131/merge_all.root"; */
-  /* TString flux_Xs_directory = "./data_framework_Doc33131/flux_Xs/"; */
-  /* TString detector_directory = "./data_framework_Doc33131/det_both/"; */
-  /* TString mc_directory = "./data_framework_Doc33131/mc_stat/"; */
-
-  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_11stat/";
-  //TString detector_directory = "/home/xji/data0/work/505_TLee/TLee_for_data_5e19/data_framework/det_norandom/";  
-  
-  /* TString spectra_file = "./new_new_TLee_input_fakeset5_myself/merge.root"; */
-  /* TString flux_Xs_directory = "./new_new_TLee_input_fakeset5_myself/flux_Xs/"; */
-  /* TString detector_directory = "./new_new_TLee_input_fakeset5_myself/det/"; */
-  /* TString mc_directory = "./new_new_TLee_input_fakeset5_myself/mc_stat/"; */
-
-  /* TString spectra_file = "./new_new_TLee_input_fakeset5_1mu0p1muNp/merge.root"; */
-  /* TString flux_Xs_directory = "./new_new_TLee_input_fakeset5_1mu0p1muNp/flux_Xs/"; */
-  /* TString detector_directory = "./new_new_TLee_input_fakeset5_1mu0p1muNp/det/"; */
-  /* TString mc_directory = "./new_new_TLee_input_fakeset5_1mu0p1muNp/mc_stat/"; */
-
-  /* TString spectra_file = "./new_new_TLee_input_fakeset7/merge.root"; */
-  /* TString flux_Xs_directory = "./new_new_TLee_input_fakeset7/flux_Xs/"; */
-  /* TString detector_directory = "./new_new_TLee_input_fakeset7/det/"; */
-  /* TString mc_directory = "./new_new_TLee_input_fakeset7/mc_stat/"; */
-
-  /* TString spectra_file = "./new_new_TLee_input_normal_highstatDetVar/merge.root"; */
-  /* TString flux_Xs_directory = "./new_new_TLee_input_normal_highstatDetVar/flux_Xs/"; */
-  /* TString detector_directory = "./new_new_TLee_input_normal_highstatDetVar/det/"; */
-  /* TString mc_directory = "./new_new_TLee_input_normal_highstatDetVar/mc_stat/"; */
-          
-  /* TString spectra_file = "./TLee_input_NumiReinteractionIssue_cutbased/merge.root"; */
-  /* TString flux_Xs_directory = "./TLee_input_NumiReinteractionIssue_cutbased/flux_Xs/"; */
-  /* TString detector_directory = "./TLee_input_NumiReinteractionIssue_cutbased/det/"; */
-  /* TString mc_directory = "./TLee_input_NumiReinteractionIssue_cutbased/mc_stat/"; */
-  
-  /* TString spectra_file = "./numi_result_syst_0_0/merge.root"; */
-  /* TString flux_Xs_directory = "./numi_result_syst_0_0/XsFlux/"; */
-  /* TString detector_directory = "./TLee_input_Mar25_final_16chs_standard/det/"; */
-  /* TString mc_directory = "./numi_result_syst_0_0/mc_stat/"; */  
-  
-  /* TString spectra_file = "./TLee_input_eLEEnote1/merge.root"; */
-  /* TString flux_Xs_directory = "./TLee_input_eLEEnote1/flux_Xs/"; */
-  /* TString detector_directory = "./TLee_input_eLEEnote1/det/"; */
-  /* TString mc_directory = "./TLee_input_eLEEnote1/mc_stat/"; */
-  
-  /*
-  TString spectra_file = "./numi_summary_noosc/merge.root";
-  TString flux_Xs_directory = "./numi_summary_noosc/XsFlux/";
-  TString detector_directory = "./numi_summary_noosc/det/";
-  TString mc_directory = "./numi_summary_noosc/mcstat/";
-  */
-  /*
-  TString spectra_file = "./numi_summary_osc/merge.root";
-  TString flux_Xs_directory = "./numi_summary_osc/XsFlux/";
-  TString detector_directory = "./numi_summary_osc/det/";
-  TString mc_directory = "./numi_summary_osc/mcstat/";
-  */
-
-
-  
   TString spectra_file = "/home/gs627/LEEana/merge.root";
   TString flux_Xs_directory = "/home/gs627/LEEana/hist_rootfiles/XsFlux/";
   TString detector_directory = "/home/gs627/LEEana/hist_rootfiles/DetVar/";
   TString mc_directory = "/home/gs627/LEEana/mc_stat/";
 
 
-  
-  int channels_observation = 2;// data channels (=hdata_obsch_# in spectra_file above)
+  int channels_observation = 4;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 
   int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
