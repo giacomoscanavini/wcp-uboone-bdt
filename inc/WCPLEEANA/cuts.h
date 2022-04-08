@@ -161,7 +161,18 @@ double LEEana::get_weight(TString weight_name, EvalInfo& eval){
 double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, TaggerInfo& tagger, bool flag_data , TString var_name){
   
   
+
+
+
   if (var_name == "truth_nuEnergy"){      return eval.truth_nuEnergy;
+
+
+
+  }else if (var_name == "nc_pio_score"){        return tagger.nc_pio_score;
+  }else if (var_name == "visible_energy"){      return eval.match_energy;
+
+
+
 
   }else if (var_name == "kine_reco_Enu"){ 
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return get_reco_Enu_corr(kine, flag_data);
@@ -184,6 +195,16 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
       if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
       else return kine.kine_pio_energy_2;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_gap_high"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_dis_1;
+      else return kine.kine_pio_dis_2;
+    }else return -1000.;
+  }else if (var_name == "kine_pio_gap_low"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_dis_1;
+      else return kine.kine_pio_dis_2;
     }else return -1000.;
   }else if (var_name == "kine_pio_costheta_high"){    
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
@@ -279,7 +300,6 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   }else if (var_name == "numu_cc_3_track_length"){    return tagger.numu_cc_3_max_length;
   }else if (var_name == "brm_connected_length"){      return tagger.brm_connected_length;
   }else if (var_name == "nue_score"){                 return (tagger.nue_score<=15.99?tagger.nue_score:15.99);
-  }else if (var_name == "nc_pio_score"){              return tagger.nc_pio_score;
   }else if (var_name == "nc_delta_score"){            return tagger.nc_delta_score;
   }else if (var_name == "numu_score"){                return tagger.numu_score;
   }else if (var_name == "shower_energy"){             return tagger.mip_energy;
@@ -850,15 +870,15 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
        ){
     if (flag_generic) return true;
     else return false;
-  }else if (ch_name == "generic_bnb_FC" || ch_name == "generic_ext_FC" || ch_name == "generic_dirt_FC"  || ch_name == "generic_overlay_FC"
-       || ch_name == "generic1_bnb_FC"  || ch_name == "generic1_ext_FC"  || ch_name == "generic1_dirt_FC"  || ch_name == "generic1_overlay_FC"
-       || ch_name == "generic2_bnb_FC"  || ch_name == "generic2_ext_FC"  || ch_name == "generic2_dirt_FC"  || ch_name == "generic2_overlay_FC"
+  }else if (ch_name == "generic_FC_bnb" || ch_name == "generic_FC_ext" || ch_name == "generic_FC_dirt"  || ch_name == "generic_FC_overlay"
+       || ch_name == "generic1_FC_bnb"  || ch_name == "generic1_FC_ext"  || ch_name == "generic1_FC_dirt"  || ch_name == "generic1_FC_overlay"
+       || ch_name == "generic2_FC_bnb"  || ch_name == "generic2_FC_ext"  || ch_name == "generic2_FC_dirt"  || ch_name == "generic2_FC_overlay"
        ){
     if (flag_generic && flag_FC) return true;
     else return false;
-  }else if (ch_name == "generic_bnb_PC" || ch_name == "generic_ext_PC" || ch_name == "generic_dirt_PC"  || ch_name == "generic_overlay_PC"
-       || ch_name == "generic1_bnb_PC"  || ch_name == "generic1_ext_PC"  || ch_name == "generic1_dirt_PC"  || ch_name == "generic1_overlay_PC"
-       || ch_name == "generic2_bnb_PC"  || ch_name == "generic2_ext_PC"  || ch_name == "generic2_dirt_PC"  || ch_name == "generic2_overlay_PC"
+  }else if (ch_name == "generic_PC_bnb" || ch_name == "generic_PC_ext" || ch_name == "generic_PC_dirt"  || ch_name == "generic_PC_overlay"
+       || ch_name == "generic1_PC_bnb"  || ch_name == "generic1_PC_ext"  || ch_name == "generic1_PC_dirt"  || ch_name == "generic1_PC_overlay"
+       || ch_name == "generic2_PC_bnb"  || ch_name == "generic2_PC_ext"  || ch_name == "generic2_PC_dirt"  || ch_name == "generic2_PC_overlay"
        ){
     if (flag_generic && (!flag_FC)) return true;
     else return false;

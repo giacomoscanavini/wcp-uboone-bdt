@@ -1508,15 +1508,15 @@ int main( int argc, char** argv )
         }
 
 
-        //if(obschannel == 1){        gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed E_{#nu} [MeV]"); }
+        if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("E_{#gamma} [MeV]"); }
         //else if(obschannel == 2){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed P_{#pi^{0}} [MeV/c]"); }
         //else if(obschannel == 3){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed #pi^{0} mass [MeV/c^{2}]"); }
         //else if(obschannel == 4){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
         //else if(obschannel >= 5) {  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco #pi^{0} energy [MeV]"); }
 
-        if(obschannel <= 2){        gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed E_{#gamma} [MeV]"); }
-        else if(obschannel == 3){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
-        else if(obschannel == 4){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
+        //if(obschannel <= 2){        gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed E_{#gamma} [MeV]"); }
+        //else if(obschannel == 3){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
+        //else if(obschannel == 4){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
 
         //else gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]");
         /* if(obschannel <=26) */ 

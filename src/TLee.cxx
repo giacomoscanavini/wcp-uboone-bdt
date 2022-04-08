@@ -2076,7 +2076,7 @@ void TLee::Plotting_systematics()
   
   ///////////////////////
 
-  TH2D *h2_relerr_total = new TH2D("h2_relerr_total", "", rows, 0, rows, 100, 0, 2.5);
+  TH2D *h2_relerr_total = new TH2D("h2_relerr_total", "", rows, 0, rows, 100, 0, 1.2);
 
   TCanvas *canv_h2_relerr_total = new TCanvas("canv_h2_relerr_total", "canv_h2_relerr_total", 1300, 700);
   func_canv_margin(canv_h2_relerr_total, 0.15, 0.2, 0.11, 0.15);
@@ -2094,7 +2094,7 @@ void TLee::Plotting_systematics()
   h1_detector_relerr->Draw("same hist"); h1_detector_relerr->SetLineColor(color_detector);
   
   for(int idx=1; idx<num_ch; idx++) {
-    line_root_xx[idx]->Draw(); line_root_xx[idx]->SetLineStyle(7); line_root_xx[idx]->SetY2(2.5);
+    line_root_xx[idx]->Draw(); line_root_xx[idx]->SetLineStyle(7); line_root_xx[idx]->SetY2(1.2);
   }
 
   TLegend *lg_relerr_total = new TLegend(0.82, 0.5, 0.95, 0.89);
@@ -2124,7 +2124,7 @@ void TLee::Plotting_systematics()
   h1_stack_fraction->Add(h1_additional_fraction);
   h1_additional_fraction->SetFillColor(color_additional); h1_additional_fraction->SetLineColor(kBlack);
     
-  TH2D *h2_basic_fraction = new TH2D("h2_basic_fraction", "", rows, 0, rows, 110, 0, 110);
+  TH2D *h2_basic_fraction = new TH2D("h2_basic_fraction", "", rows, 0, rows, 100, 0, 100);
 
   TCanvas *canv_h2_basic_fraction = new TCanvas("canv_h2_basic_fraction", "canv_h2_basic_fraction", 1300, 700);
   func_canv_margin(canv_h2_basic_fraction, 0.15, 0.2, 0.11, 0.15);
@@ -2137,7 +2137,7 @@ void TLee::Plotting_systematics()
   h1_stack_fraction->Draw("same");
   
   for(int idx=1; idx<num_ch; idx++) {
-    line_root_xx[idx]->Draw(); line_root_xx[idx]->SetLineStyle(7); line_root_xx[idx]->SetY2(110);
+    line_root_xx[idx]->Draw(); line_root_xx[idx]->SetLineStyle(7); line_root_xx[idx]->SetY2(100);
   }
 
   TLegend *lg_fraction_total = new TLegend(0.82, 0.55, 0.95, 0.89);
@@ -2399,13 +2399,13 @@ void TLee::Set_Spectra_MatrixCov()
   
   map_input_spectrum_ch_str[1] = "BNB";
   map_input_spectrum_ch_str[2] = "BNB1";
-  map_input_spectrum_ch_str[3] = "BNB2";
-  map_input_spectrum_ch_str[4] = "BNB3";
+  //map_input_spectrum_ch_str[3] = "BNB2";
+  //map_input_spectrum_ch_str[4] = "BNB3";
 
-  map_input_spectrum_ch_str[5] = "ext";
-  map_input_spectrum_ch_str[6] = "ext1";
-  map_input_spectrum_ch_str[7] = "ext2";
-  map_input_spectrum_ch_str[8] = "ext3";
+  map_input_spectrum_ch_str[2] = "ext";
+  map_input_spectrum_ch_str[4] = "ext1";
+  //map_input_spectrum_ch_str[7] = "ext2";
+  //map_input_spectrum_ch_str[8] = "ext3";
   
 
   /// flag for LEE channels corresponding to the cov_input.txt
