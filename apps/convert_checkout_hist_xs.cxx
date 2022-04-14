@@ -267,6 +267,10 @@ int main( int argc, char** argv )
       T_PFeval->SetBranchStatus("muonvtx_diff",1);
       T_PFeval->SetBranchStatus("truth_nuIntType",1);
       T_PFeval->SetBranchStatus("truth_muonMomentum",1);
+      
+      T_PFeval->SetBranchStatus("truth_pio_energy_1",1);
+      T_PFeval->SetBranchStatus("truth_pio_energy_2",1);
+      T_PFeval->SetBranchStatus("truth_pio_angle",1); 
   }
   if (pfeval.flag_NCDelta){
     

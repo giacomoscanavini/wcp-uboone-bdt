@@ -160,19 +160,9 @@ double LEEana::get_weight(TString weight_name, EvalInfo& eval){
 
 double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, TaggerInfo& tagger, bool flag_data , TString var_name){
   
-  
-
-
-
   if (var_name == "truth_nuEnergy"){      return eval.truth_nuEnergy;
-
-
-
   }else if (var_name == "nc_pio_score"){        return tagger.nc_pio_score;
   }else if (var_name == "visible_energy"){      return eval.match_energy;
-
-
-
 
   }else if (var_name == "kine_reco_Enu"){ 
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return get_reco_Enu_corr(kine, flag_data);
@@ -490,17 +480,17 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
     TString cut_name = it->first;
     int number = it->second;
 
-    double Emuon = pfeval.truth_muonMomentum[3]*1000; // MeV
-    double Ehadron = eval.truth_nuEnergy - pfeval.truth_muonMomentum[3]*1000.; // MeV
-
     double truth_pi0_momentum = -1000.;
-    if(pfeval.truth_pio_energy_1 > 0. && pfeval.truth_pio_energy_2 > 0.){
+    if(pfeval.truth_pio_energy_1 >= 0. && pfeval.truth_pio_energy_2 >= 0.){
       double pi0_mass = 135;
-      double alpha = fabs(pfeval.truth_pio_energy_1 - pfeval.truth_pio_energy_2)/(pfeval.truth_pio_energy_1 + pfeval.truth_pio_energy_2);
+      double alpha = (pfeval.truth_pio_energy_1 - pfeval.truth_pio_energy_2)/(pfeval.truth_pio_energy_1 + pfeval.truth_pio_energy_2);
       double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(pfeval.truth_pio_angle/180.*3.1415926)))-1);
       double pi0_total_energy = pi0_mass + pi0_energy;
       truth_pi0_momentum = sqrt(pi0_total_energy*pi0_total_energy - pi0_mass*pi0_mass);
     }
+
+    double Emuon = pfeval.truth_muonMomentum[3]*1000; // MeV
+    double Ehadron = eval.truth_nuEnergy - pfeval.truth_muonMomentum[3]*1000.; // MeV
 
     //float costheta_binning[10] = {-1, -.5, 0, .27, .45, .62, .76, .86, .94, 1};   //fine binning
     //float costheta_binning[5]  = {-1,         .27,      .62,      .86,      1};   //coarse binning
@@ -618,12 +608,12 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }
     }
     else if (cut_file == 8) {
-      if (cut_name == "NCpi0BDT.inside.Enu.le.8000.gt.275"){ if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=8000 && eval.truth_nuEnergy>275) return number;
+      if (cut_name == "NCpi0BDT.inside.Enu.le.8000.gt.275"){ if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>=275) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
     else if (cut_file == 9) {
-      if        (cut_name == "NCpi0BDT.inside.Ppi0.le.100.gt.0"){     if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=100 && truth_pi0_momentum>0) return number;
+      if        (cut_name == "NCpi0BDT.inside.Ppi0.le.100.gt.0"){     if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=100 && truth_pi0_momentum>=0) return number;
       }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.150.gt.100"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=150 && truth_pi0_momentum>100) return number;  
       }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.200.gt.150"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=200 && truth_pi0_momentum>150) return number;
       }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.250.gt.200"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=250 && truth_pi0_momentum>200) return number;
@@ -643,19 +633,19 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
 
 bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, EvalInfo& eval, PFevalInfo& pfeval, TaggerInfo& tagger, KineInfo& kine){
 
-  float reco_Enu = get_reco_Enu_corr(kine, flag_data);
-  double Emuon = pfeval.truth_muonMomentum[3]*1000; // MeV
-  double Ehadron = eval.truth_nuEnergy - pfeval.truth_muonMomentum[3]*1000.; // MeV
-
   double truth_pi0_momentum = -1000.;
-  if(pfeval.truth_pio_energy_1 > 0. && pfeval.truth_pio_energy_2 > 0.){
+  if(pfeval.truth_pio_energy_1 >= 0. && pfeval.truth_pio_energy_2 >= 0.){
     double pi0_mass = 135;
-    double alpha = fabs(pfeval.truth_pio_energy_1 - pfeval.truth_pio_energy_2)/(pfeval.truth_pio_energy_1 + pfeval.truth_pio_energy_2);
+    double alpha = (pfeval.truth_pio_energy_1 - pfeval.truth_pio_energy_2)/(pfeval.truth_pio_energy_1 + pfeval.truth_pio_energy_2);
     double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(pfeval.truth_pio_angle/180.*3.1415926)))-1);
     double pi0_total_energy = pi0_mass + pi0_energy;
     truth_pi0_momentum = sqrt(pi0_total_energy*pi0_total_energy - pi0_mass*pi0_mass);
   }
-  
+
+  float reco_Enu = get_reco_Enu_corr(kine, flag_data);
+  double Emuon = pfeval.truth_muonMomentum[3]*1000; // MeV
+  double Ehadron = eval.truth_nuEnergy - pfeval.truth_muonMomentum[3]*1000.; // MeV
+
   bool flag_truth_inside = false; // in the active volume
   if (eval.truth_vtxX > -1 && eval.truth_vtxX <= 254.3 &&  eval.truth_vtxY >-115.0 && eval.truth_vtxY<=117.0 && eval.truth_vtxZ > 0.6 && eval.truth_vtxZ <=1036.4) flag_truth_inside = true;
 
@@ -713,10 +703,10 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
 
   //NCpi0BDT X-section
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=8000 && eval.truth_nuEnergy > 275) map_cuts_flag["Xs_Enu_NCpi0BDTinFV"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy >= 275) map_cuts_flag["Xs_Enu_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_Enu_NCpi0BDTinFV"] = false;  
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=1500 && truth_pi0_momentum > 0) map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=1500 && truth_pi0_momentum >= 0) map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = false; 
 
 
@@ -1117,7 +1107,7 @@ bool LEEana::is_FC(EvalInfo& eval){
 }
 
 bool LEEana::is_filter_shower(KineInfo& kine){
-  if (kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return true;
+  if (kine.kine_pio_energy_1 >= 0. && kine.kine_pio_energy_2 >= 0.){ return true;
   }else{ return false;
   }
 }
