@@ -1508,11 +1508,26 @@ int main( int argc, char** argv )
         }
 
 
+        if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
+        if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos#theta"); }
+        if(obschannel == 3){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non-#pi^{0} Energy [MeV]"); }
+        if(obschannel == 4){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non-#pi^{0} Energy [MeV]"); }
 
-        if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos#theta"); }
+
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Vertex X [cm]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Vertex Y [cm]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Vertex Z [cm]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos#theta"); }
+        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower #theta [deg]"); }
+        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower #theta [deg]"); }
+        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Energy [MeV]"); }
+        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
+        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Conv. Distance [cm]"); }
+        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conv. Distance [cm]"); }
         //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} momentum [MeV/c]"); }
         //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} mass [MeV/c^{2}]"); }
         //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT score"); }
+        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Visible Energy [MeV]"); }
         //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Corrected Visible Energy [MeV]"); }
 
 

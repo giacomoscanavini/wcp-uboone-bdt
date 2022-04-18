@@ -1548,7 +1548,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
   TMatrixD matrix_Y_under_X = matrix_pred_Y + matrix_YX * matrix_XX_inv * (matrix_data_X - matrix_pred_X);
   TMatrixD matrix_YY_under_XX = matrix_YY - matrix_YX * matrix_XX_inv * matrix_XY;
   // Here, only for systetmaics uncertainty because of no stat in matrix_YY
-  
+
   if( flag_lookelsewhere ) {
     TMatrixD matrix_pred_temp = matrix_Y_under_X; matrix_pred_temp.T();
     TMatrixD matrix_meas_temp = matrix_data_Y; matrix_meas_temp.T();
@@ -1599,11 +1599,15 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     //   }
     // }
 
+    if(val_pred < 0){
+      cout << "Pay attention to val_pred is negative! " << val_pred << endl; 
+      val_pred = val_pred*(-1.);
+    }
     
     int int_data = (int)(val_data+0.1);
     if( int_data>=1 && int_data<=10) {
       if( val_pred<array_pred_protect[int_data] ) {
-	double numerator = pow(val_pred-val_data, 2);
+	      double numerator = pow(val_pred-val_data, 2);
         double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
         matrix_goodness_cov_total_wiConstraint(i,i) = numerator/denominator;
       }
@@ -1611,8 +1615,19 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     
 
     if( (val_pred==val_data) && (val_pred==0) ) matrix_goodness_cov_total_wiConstraint(i,i) = 1e-6;
+
   }  
+
+  for( int i=0; i<num_Y; i++ ) {
+    double val_pred = matrix_Y_under_X(i, 0);
+    double val_data = matrix_data_Y(i, 0);    
+
+    //if(index==1236) cout<< i << " " << val_pred << " " << val_data <<  " " << matrix_goodness_cov_total_wiConstraint(i,i) << " " << matrix_YY_under_XX(i,i) << endl;
+  }
+
   matrix_goodness_cov_total_wiConstraint = matrix_goodness_cov_total_wiConstraint + matrix_YY_under_XX;
+
+   
 
   matrix_Y_under_X.T(); matrix_data_Y.T();
   TMatrixD matrix_delta_wiConstraint = matrix_Y_under_X - matrix_data_Y;
@@ -2398,12 +2413,15 @@ void TLee::Set_Spectra_MatrixCov()
   ////////////////////////////////////// pred
   
   map_input_spectrum_ch_str[1] = "BNB";
-  //map_input_spectrum_ch_str[2] = "BNB1";
-  //map_input_spectrum_ch_str[3] = "BNB2";
+  map_input_spectrum_ch_str[2] = "BNB1";
+  map_input_spectrum_ch_str[3] = "BNB2";
   //map_input_spectrum_ch_str[4] = "BNB3";
 
-  map_input_spectrum_ch_str[2] = "ext";
-  //ap_input_spectrum_ch_str[4] = "ext1";
+  //map_input_spectrum_ch_str[2] = "ext";
+  //map_input_spectrum_ch_str[3] = "ext";
+  map_input_spectrum_ch_str[4] = "ext";
+  map_input_spectrum_ch_str[5] = "ext1";
+  map_input_spectrum_ch_str[6] = "ext2";
   //map_input_spectrum_ch_str[7] = "ext2";
   //map_input_spectrum_ch_str[8] = "ext3";
   

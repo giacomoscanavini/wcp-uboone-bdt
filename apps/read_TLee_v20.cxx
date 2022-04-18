@@ -251,6 +251,43 @@ int main(int argc, char** argv)
   //Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
   //Lee_test->Set_Collapse();
 
+  // chi-square with 2 distributions, set to 1 in case you want it
+  if(1){
+
+    int bins_h1 = 25; // number of bins in cov_input for obsr 1
+    int bins_h2 = 20; // number of bins in cov_input for obsr 2
+    int bins_h3 = 30; // number of bins in cov_input for obsr 3
+
+    // With overflow bins
+    if(1){
+      vector<int>vc_target_chs;
+      //vc_target_chs.push_back(1);
+      //vc_target_chs.push_back(2);
+      vc_target_chs.push_back(3);
+      //vc_target_chs.push_back(4);
+
+      vector<int>vc_support_chs; //for constraint
+      vc_support_chs.push_back(1);
+      vc_support_chs.push_back(2);
+      //vc_support_chs.push_back(3);
+      //vc_support_chs.push_back(4);
+
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1234 );
+    }
+    // Without overflow bins
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h3); i++) vc_target_chs.push_back(bins_h1+1+bins_h2+1+i);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
+      for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 1236 );
+    }
+  }
+
+
   if( config_Lee::flag_GoF_output2file_default_0 ) {
     file_collapsed_covariance_matrix->cd();
 
@@ -259,13 +296,13 @@ int main(int argc, char** argv)
       int size_map = it->second.size();
       int size_before = 0;
       for(int idx=1; idx<val_ch; idx++) {
-	int size_current = Lee_test->map_data_spectrum_ch_bin[idx].size();
-	size_before += size_current;
+	       int size_current = Lee_test->map_data_spectrum_ch_bin[idx].size();
+	       size_before += size_current;
       }
       
       vector<int>vc_target_chs;
       for(int ibin=1; ibin<size_map; ibin++) {
-	vc_target_chs.push_back( size_before + ibin -1 );
+        vc_target_chs.push_back( size_before + ibin -1 );
       }
       
       vector<int>vc_support_chs;
@@ -291,6 +328,9 @@ int main(int argc, char** argv)
   bool flag_nueCC_LowE_FC_by_all   = config_Lee::flag_nueCC_LowE_FC_by_all;// 7
   bool flag_nueCC_FC_by_all        = config_Lee::flag_nueCC_FC_by_all;// 8
   
+
+
+
   ///////////////////////// gof
   
   if( flag_nueCC_FC_by_all ) {

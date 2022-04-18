@@ -161,8 +161,17 @@ double LEEana::get_weight(TString weight_name, EvalInfo& eval){
 double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, TaggerInfo& tagger, bool flag_data , TString var_name){
   
   if (var_name == "truth_nuEnergy"){      return eval.truth_nuEnergy;
+
+  }else if (var_name == "reco_nuvtxX"){           return pfeval.reco_nuvtxX;
+  }else if (var_name == "reco_nuvtxY"){           return pfeval.reco_nuvtxY;
+  }else if (var_name == "reco_nuvtxZ"){           return pfeval.reco_nuvtxZ;
+
+
   }else if (var_name == "nc_pio_score"){        return tagger.nc_pio_score;
   }else if (var_name == "visible_energy"){      return eval.match_energy;
+
+  }else if (var_name == "pi0_total_energy"){ return get_reco_Enu_corr(kine, flag_data) - kine.kine_pio_energy_1 - kine.kine_pio_energy_2;
+
 
   }else if (var_name == "kine_reco_Enu"){ 
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return get_reco_Enu_corr(kine, flag_data);
@@ -232,12 +241,73 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
       }
     }else{ return -1000.; }
 
+  }else if (var_name == "tainted_10_pi0_mass"){
+    if(kine.kine_pio_energy_1 > 10. && kine.kine_pio_energy_2 > 10.){
+      if (kine.kine_pio_mass > 0){
+        //TLorentzVector p1(kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926)*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
+        //TLorentzVector p2(kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926)*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
+        //TLorentzVector pio = p1 + p2;
+        if (flag_data){
+          if (kine.kine_pio_mass * em_charge_scale > 12.){return kine.kine_pio_mass * em_charge_scale;}
+          else{ return -1000.; }
+        }else{
+          if (kine.kine_pio_mass > 12.){return kine.kine_pio_mass;}
+          else{ return -1000.; }
+        }
+      }else{ return -1000.; }
+    }else{ return -1000.; }
+
+  }else if (var_name == "tainted_40_pi0_mass"){
+    if(kine.kine_pio_energy_1 > 40. && kine.kine_pio_energy_2 > 40.){
+      if (kine.kine_pio_mass > 0){
+        //TLorentzVector p1(kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926)*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
+        //TLorentzVector p2(kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926)*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
+        //TLorentzVector pio = p1 + p2;
+        if (flag_data){
+          if (kine.kine_pio_mass * em_charge_scale > 12.){return kine.kine_pio_mass * em_charge_scale;}
+          else{ return -1000.; }
+        }else{
+          if (kine.kine_pio_mass > 12.){return kine.kine_pio_mass;}
+          else{ return -1000.; }
+        }
+      }else{ return -1000.; }
+    }else{ return -1000.; }
+
+  }else if (var_name == "tainted_mix_pi0_mass"){
+    if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2){
+      if(kine.kine_pio_energy_1 > 30. && kine.kine_pio_energy_2 > 20.){
+        if (kine.kine_pio_mass > 0){
+          if (flag_data){
+            if (kine.kine_pio_mass * em_charge_scale > 12.){return kine.kine_pio_mass * em_charge_scale;}
+            else{ return -1000.; }
+          }else{
+            if (kine.kine_pio_mass > 12.){return kine.kine_pio_mass;}
+            else{ return -1000.; }
+          }
+        }else{ return -1000.; }
+      }else{ return -1000.; }
+    }
+    else {
+      if(kine.kine_pio_energy_1 > 20. && kine.kine_pio_energy_2 > 30.){
+        if (kine.kine_pio_mass > 0){
+          if (flag_data){
+            if (kine.kine_pio_mass * em_charge_scale > 12.){return kine.kine_pio_mass * em_charge_scale;}
+            else{ return -1000.; }
+          }else{
+            if (kine.kine_pio_mass > 12.){return kine.kine_pio_mass;}
+            else{ return -1000.; }
+          }
+        }else{ return -1000.; }
+      }else{ return -1000.; }
+    }
   }else if (var_name == "pi0_costheta"){
-    TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
-    TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
-    TLorentzVector pio = p1 + p2;
-    return pio.CosTheta();
-  
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
+      TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
+      TLorentzVector pio = p1 + p2;
+      return pio.CosTheta();
+    }else{ return -1000.; }
+
   }else if (var_name == "pi0_phi"){
     TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
     TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
@@ -251,13 +321,6 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
       return pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
     }else{ return -1000.; }
   
-  }else if (var_name == "pi0_total_energy"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      double pi0_mass = 135;
-      double alpha = fabs(kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
-      return pi0_mass + pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
-    }else{ return -1000.; }
-
   }else if (var_name = "pi0_momentum"){
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
       double pi0_mass = 135;
@@ -265,6 +328,15 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
       double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
       double pi0_total_energy = pi0_mass + pi0_energy;
       return sqrt(pi0_total_energy*pi0_total_energy - pi0_mass*pi0_mass);
+    }else{ return -1000.; }
+
+  }else if (var_name = "non_pi0_energy_OLD"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      double pi0_mass = 135;
+      double alpha = (kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
+      double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
+      double pi0_total_energy = pi0_mass + pi0_energy;
+      return get_reco_Enu_corr(kine, flag_data) - pi0_total_energy;
     }else{ return -1000.; }
 
   }else if (var_name = "pi0_costheta_CM"){
@@ -329,9 +401,7 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
     if(median_dedx>50) median_dedx = 50;
     return median_dedx; // MeV/cm
   }else if (var_name == "reco_showervtxX"){       return pfeval.reco_showervtxX;
-  }else if (var_name == "reco_nuvtxX"){           return pfeval.reco_nuvtxX;
-  }else if (var_name == "reco_nuvtxY"){           return pfeval.reco_nuvtxY;
-  }else if (var_name == "reco_nuvtxZ"){           return pfeval.reco_nuvtxZ;
+  
   }else if (var_name == "reco_nuvtxU"){           return pfeval.reco_nuvtxZ * TMath::Cos(3.1415926/3.) - pfeval.reco_nuvtxY * TMath::Sin(3.1415926/3.);
   }else if (var_name == "reco_nuvtxV"){           return pfeval.reco_nuvtxZ * TMath::Cos(3.1415926/3.) + pfeval.reco_nuvtxY * TMath::Sin(3.1415926/3.);
   }else if (var_name == "mip_quality_n_tracks"){  return tagger.mip_quality_n_tracks;
