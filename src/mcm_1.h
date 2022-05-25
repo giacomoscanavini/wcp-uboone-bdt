@@ -475,12 +475,10 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
     T_BDTvars_cv->SetBranchStatus("nc_pio_score", 1);
   }
 
-  
   T_eval_cv->SetBranchStatus("*",0);
   T_eval_cv->SetBranchStatus("run",1);
   T_eval_cv->SetBranchStatus("subrun",1);
   T_eval_cv->SetBranchStatus("event",1);
-  
   T_eval_cv->SetBranchStatus("match_energy",1);
   T_eval_cv->SetBranchStatus("match_isFC",1);
   T_eval_cv->SetBranchStatus("match_found",1);
@@ -554,10 +552,12 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_PFeval_cv->SetBranchStatus("showervtx_diff",1);
   T_PFeval_cv->SetBranchStatus("muonvtx_diff",1);
   T_PFeval_cv->SetBranchStatus("truth_muonMomentum",1);
+  
   if (pfeval_cv.flag_NCDelta){
     
     T_PFeval_cv->SetBranchStatus("truth_NCDelta",1);
     T_PFeval_cv->SetBranchStatus("truth_NprimPio",1);
+    T_PFeval_cv->SetBranchStatus("truth_nuScatType",1);
   }
   if (pfeval_cv.flag_recoprotonMomentum){
     T_PFeval_cv->SetBranchStatus("reco_protonMomentum",1);
@@ -566,7 +566,7 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
     T_PFeval_cv->SetBranchStatus("reco_showerMomentum",1);
     T_PFeval_cv->SetBranchStatus("reco_Nproton",1);
     T_PFeval_cv->SetBranchStatus("truth_showerMomentum",1);
-    T_PFeval_cv->SetBranchStatus("truth_nuScatType",1);
+    
     // oscillation formula ...
     T_PFeval_cv->SetBranchStatus("truth_nu_momentum",1);
     T_PFeval_cv->SetBranchStatus("neutrino_type",1);
@@ -621,7 +621,6 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_eval_det->SetBranchStatus("run",1);
   T_eval_det->SetBranchStatus("subrun",1);
   T_eval_det->SetBranchStatus("event",1);
-  
   T_eval_det->SetBranchStatus("match_energy",1);
   T_eval_det->SetBranchStatus("match_isFC",1);
   T_eval_det->SetBranchStatus("match_found",1);
@@ -694,10 +693,13 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_PFeval_det->SetBranchStatus("showervtx_diff",1);
   T_PFeval_det->SetBranchStatus("muonvtx_diff",1);
   T_PFeval_det->SetBranchStatus("truth_muonMomentum",1);
+  
+
   if (pfeval_det.flag_NCDelta){
     
       T_PFeval_det->SetBranchStatus("truth_NCDelta",1);
       T_PFeval_det->SetBranchStatus("truth_NprimPio",1);
+      T_PFeval_det->SetBranchStatus("truth_nuScatType",1);
   }
   if (pfeval_det.flag_recoprotonMomentum){
     T_PFeval_det->SetBranchStatus("reco_protonMomentum",1);

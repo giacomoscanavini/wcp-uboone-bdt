@@ -4,12 +4,10 @@
 #include "TVectorD.h"
 #include "TRandom3.h"
 #include "TGraphErrors.h"
-
 #include <math.h>
 #include <iostream>
 #include <fstream>
 #include <string>
-
 //helper class to track indices conversion from 1D to 5D
 class CyclicArray {
   public:
@@ -31,7 +29,6 @@ class CyclicArray {
       }
     }
 };
-
 //helper function to split a string into a vector of strings, split by specified delimiter
 std::vector<std::string> split(std::string line, std::string delimiter){
     std::vector<std::string> list;
@@ -45,61 +42,62 @@ std::vector<std::string> split(std::string line, std::string delimiter){
     list.push_back(line);
     return list;
 }
-
-
 void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::string input_filename, int smoothing_par=0) {
-
-
-//std::cout << "begin GPSmoothing" << std::endl;
-
+std::cout << "begin GPSmoothing" << std::endl;
   int nbins[5];
   std::vector<bool> log_scales;
   std::vector<double> bin_centers_temp, params;
   std::vector<std::vector<double>> bin_centers;
-
   int nbins_mean = vec_mean->GetNrows();
   int nbins_debug = (nbins_mean/6)*10;
   bool do_smoothing = (bool)(smoothing_par % 2);
   bool do_debugging = (bool)(smoothing_par / 2);
-
   TVectorD vec_mean_temp(nbins_mean);
   TVectorD vec_mean_debug(nbins_debug);
   TMatrixD cov_mat_bootstrapping_temp(nbins_mean,nbins_mean);
   TMatrixD cov_mat_bootstrapping_debug(nbins_debug,nbins_debug);
-
-
   if (do_smoothing) {//0 = no smoothing, 1 = smoothing, 2 = no smoothing but do debugging, 3 = smoothing and debugging
+//std::cout << "here 1" << std::endl;
     //read in from config file
     std::string line, temp;
     std::ifstream file;
     file.open(input_filename,std::ios::in);
+//std::cout << "here 1.1" << std::endl;
     if (file.is_open()) {
+//std::cout << "here 1.2" << std::endl;
       //first line specifies which dimensions use log scales
       if (!std::getline(file,line)) { return; }
       std::vector<std::string> v_line = split(line,"\t");
+//std::cout << "here 1.3" << std::endl;
       for (int i=0;i<5;i++) { log_scales.push_back(v_line[i]=="true"); }
       //second line specifies the parameters for GPRegresor
       if (!std::getline(file,line)) { return; }
       v_line = split(line,"\t");
+//std::cout << "here 1.4" << std::endl;
       for (int i=0;i<6;i++) { params.push_back(std::stod(v_line[i])); }
       //next 5 lines specify the bin centers for each dimension
       for (int i=0;i<5;i++) {
+//std::cout << "here 1.5, i = " << i << std::endl;
         bin_centers_temp.clear();
         if (!std::getline(file,line)) { return; }
+//std::cout << "here 1.6" << std::endl;
         v_line = split(line,"\t");
+//std::cout << "here 1.7" << std::endl;
         nbins[i] = v_line.size();
+//std::cout << "here 1.8" << std::endl;
         for (int j=0;j<nbins[i];j++) { bin_centers_temp.push_back(std::stod(v_line[j])); }
+//std::cout << "here 1.9" << std::endl;
         bin_centers.push_back(bin_centers_temp);
+//std::cout << "here 1.10" << std::endl;
       }
-    } else { 
+    } else {
       std::cout << "error: Couldn't find gp_input configuration file" << std::endl;
       return;
     }
     file.close();
-
+//std::cout << "here 2" << std::endl;
     std::vector<GPPoint> gp_points, gp_points_posterior;
     CyclicArray* indices = new CyclicArray(nbins);
-
     //Create vector of GPPoints
     for (int i=0;i<nbins_mean;i++) {
       std::vector<int> bin_indices = indices->X();
@@ -108,13 +106,14 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
       gp_points.push_back(GPPoint(pt_arr));
       gp_points_posterior.push_back(GPPoint(pt_arr));
     }
-
+//std::cout << "here 3" << std::endl;
     //Fit and Predict
     RBFKernel kern = RBFKernel(params,log_scales);
-    GPRegressor reg = GPRegressor(kern, true, cov_mat_bootstrapping);		//bool is for normalizing data
-    reg.Fit(gp_points, (*vec_mean), false);					//bool is for tuning hyperparameters
+    GPRegressor reg = GPRegressor(kern, true, cov_mat_bootstrapping);   //bool is for normalizing data
+    reg.Fit(gp_points, (*vec_mean), false);         //bool is for tuning hyperparameters
+//std::cout << "here 4" << std::endl;
     reg.Predict(gp_points_posterior);
-
+//std::cout << "here 5" << std::endl;
     TVectorD vmt  = reg.PosteriorMean();
     TMatrixD cmbt = reg.PosteriorCov();
     for (int i=0;i<nbins_mean;i++) {
@@ -123,8 +122,7 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
         cov_mat_bootstrapping_temp(i,j) = cmbt(i,j);
       }
     }
-
-
+//std::cout << "here 6" << std::endl;
     if (do_debugging) {
       //compute smoothed prediction points
       std::vector<GPPoint> gp_points_debug;
@@ -142,13 +140,10 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
           cov_mat_bootstrapping_debug(i,j) = cmbd(i,j);
         }
       }
-
     }
   }
     //Debugging -------
-
   if (do_debugging) {
-
     //Rescale cov matrix
     double vec_mean_var = 0;
     double vec_mean_av = 0;
@@ -166,7 +161,6 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
         cov_mat_bootstrapping_scaled(i,j) = (*cov_mat_bootstrapping)(i,j)/TMath::Power(vec_mean_var,1);
       }
     }
-
     //compute correlation matrix
     TMatrixD correlation_matrix(nbins_mean,nbins_mean);
     TMatrixD correlation_matrix_smoothed(nbins_mean,nbins_mean);
@@ -177,7 +171,6 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
         if (i==j)                             { correlation_matrix(i,j) = 1; }
       }
     }
-
     //compute smoothed correlation matrix
     if (do_smoothing) {
       for (int i=0;i<nbins_mean;i++) {
@@ -188,25 +181,22 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
         }
       }
     }
-
     TFile* debug_file = new TFile("./hist_rootfiles/DetVar/debug_smoothing.root","RECREATE");
     debug_file->cd();
     vec_mean->Write("vec_mean_diff");
     correlation_matrix.Write("correlation_matrix");
     cov_mat_bootstrapping->Write("cov_mat_bootstrapping");
     cov_mat_bootstrapping_scaled.Write("cov_mat_scaled");
-
     if (do_smoothing) {
       vec_mean_debug.Write("vec_mean_debug");
       vec_mean_temp.Write("vec_mean_diff_smoothed");
       correlation_matrix_smoothed.Write("correlation_matrix_smoothed");
       cov_mat_bootstrapping_debug.Write("cov_mat_smoothed");
     }
-
     debug_file->Write();
     debug_file->Close();
   }
-  
+  //std::cout << "here 7" << std::endl;
   if (do_smoothing) {
     //Store output,  MUST BE LAST
     int nrows = cov_mat_bootstrapping->GetNrows();
@@ -217,8 +207,5 @@ void GPSmoothing (TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping, std::stri
       }
     }
   }
-//std::cout << "end smoothing" << std::endl;
+  std::cout << "end smoothing" << std::endl;
 }
-
-
-

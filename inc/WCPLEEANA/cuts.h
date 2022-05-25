@@ -94,12 +94,10 @@ double LEEana::get_reco_Enu_corr(KineInfo& kine, bool flag_data){
   if (kine.kine_reco_Enu > 0){
     if (flag_data){
       for ( size_t j=0;j!= kine.kine_energy_particle->size();j++){
-    if (kine.kine_energy_info->at(j) == 2 && kine.kine_particle_type->at(j) == 11){
-      reco_Enu_corr +=  kine.kine_energy_particle->at(j) * em_charge_scale;
-    }else{
-      reco_Enu_corr +=  kine.kine_energy_particle->at(j);
-    }
-    //  std::cout << "p: " << kine.kine_energy_particle->at(j) << " " << kine.kine_energy_info->at(j) << " " << kine.kine_particle_type->at(j) << " " << kine.kine_energy_included->at(j) << std::endl;
+        if (kine.kine_energy_info->at(j) == 2 && kine.kine_particle_type->at(j) == 11){ reco_Enu_corr +=  kine.kine_energy_particle->at(j) * em_charge_scale;
+        }else{ reco_Enu_corr +=  kine.kine_energy_particle->at(j);
+        }
+        //  std::cout << "p: " << kine.kine_energy_particle->at(j) << " " << kine.kine_energy_info->at(j) << " " << kine.kine_particle_type->at(j) << " " << kine.kine_energy_included->at(j) << std::endl;
       }
       reco_Enu_corr += kine.kine_reco_add_energy;
       return reco_Enu_corr;
@@ -109,9 +107,7 @@ double LEEana::get_reco_Enu_corr(KineInfo& kine, bool flag_data){
 }
 
 double LEEana::get_weight(TString weight_name, EvalInfo& eval){
-
   double addtl_weight = 1.0;
-
   // CV correction from numuCC cross section data
   // if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1){
   //   if (eval.truth_nuEnergy>200 && eval.truth_nuEnergy<=540) addtl_weight = 1.28043; 
@@ -129,53 +125,132 @@ double LEEana::get_weight(TString weight_name, EvalInfo& eval){
   // std::cout << "energy: " << eval.truth_nuEnergy << " addtl_weight: " << addtl_weight << std::endl;
   // end of data correction
 
-  if (weight_name == "cv_spline"){
-    return addtl_weight*eval.weight_cv * eval.weight_spline;
-  }else if (weight_name == "cv_spline_cv_spline"){
-    return pow(addtl_weight*eval.weight_cv * eval.weight_spline,2);
-  }else if (weight_name == "unity" || weight_name == "unity_unity"){
-    return 1;
-  }else if (weight_name == "lee_cv_spline"){
-    return (eval.weight_lee * addtl_weight*eval.weight_cv * eval.weight_spline);
-  }else if (weight_name == "lee_cv_spline_lee_cv_spline"){
-    return pow(eval.weight_lee * addtl_weight*eval.weight_cv * eval.weight_spline,2);
-  }else if (weight_name == "lee_cv_spline_cv_spline" || weight_name == "cv_spline_lee_cv_spline"){
-    return eval.weight_lee * pow(addtl_weight*eval.weight_cv * eval.weight_spline,2);
-  }else if (weight_name == "spline"){
-    return eval.weight_spline;
-  }else if (weight_name == "spline_spline"){
-    return pow(eval.weight_spline,2);
-  }else if (weight_name == "lee_spline"){
-    return (eval.weight_lee * eval.weight_spline);
-  }else if (weight_name == "lee_spline_lee_spline"){
-    return pow(eval.weight_lee * eval.weight_spline,2);
-  }else if (weight_name == "lee_spline_spline" || weight_name == "spline_lee_spline"){
-    return eval.weight_lee * pow( eval.weight_spline,2);
-  }else{
-    std::cout <<"Unknown weights: " << weight_name << std::endl;
+  if (weight_name == "cv_spline"){ return addtl_weight*eval.weight_cv * eval.weight_spline;
+  }else if (weight_name == "cv_spline_cv_spline"){ return pow(addtl_weight*eval.weight_cv * eval.weight_spline,2);
+  }else if (weight_name == "unity" || weight_name == "unity_unity"){ return 1;
+  }else if (weight_name == "lee_cv_spline"){ return (eval.weight_lee * addtl_weight*eval.weight_cv * eval.weight_spline);
+  }else if (weight_name == "lee_cv_spline_lee_cv_spline"){ return pow(eval.weight_lee * addtl_weight*eval.weight_cv * eval.weight_spline,2);
+  }else if (weight_name == "lee_cv_spline_cv_spline" || weight_name == "cv_spline_lee_cv_spline"){ return eval.weight_lee * pow(addtl_weight*eval.weight_cv * eval.weight_spline,2);
+  }else if (weight_name == "spline"){ return eval.weight_spline;
+  }else if (weight_name == "spline_spline"){ return pow(eval.weight_spline,2);
+  }else if (weight_name == "lee_spline"){ return (eval.weight_lee * eval.weight_spline);
+  }else if (weight_name == "lee_spline_lee_spline"){ return pow(eval.weight_lee * eval.weight_spline,2);
+  }else if (weight_name == "lee_spline_spline" || weight_name == "spline_lee_spline"){ return eval.weight_lee * pow( eval.weight_spline,2);
+  }else{ std::cout <<"Unknown weights: " << weight_name << std::endl;
   }
-     
   return 1;
 }
 
 double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, TaggerInfo& tagger, bool flag_data , TString var_name){
   
   if (var_name == "truth_nuEnergy"){      return eval.truth_nuEnergy;
+  }else if (var_name == "visible_energy"){      return eval.match_energy;
 
-  }else if (var_name == "reco_nuvtxX"){           return pfeval.reco_nuvtxX;
-  }else if (var_name == "reco_nuvtxY"){           return pfeval.reco_nuvtxY;
-  }else if (var_name == "reco_nuvtxZ"){           return pfeval.reco_nuvtxZ;
 
+  }else if (var_name == "reco_nuvtxX"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return pfeval.reco_nuvtxX;
+    } 
+    else{ return -1000.;}
+  }else if (var_name == "reco_nuvtxY"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return pfeval.reco_nuvtxY;
+    } 
+    else{ return -1000.;}
+  }else if (var_name == "reco_nuvtxZ"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return pfeval.reco_nuvtxZ;
+    } 
+    else{ return -1000.;}
 
   }else if (var_name == "nc_pio_score"){        return tagger.nc_pio_score;
-  }else if (var_name == "visible_energy"){      return eval.match_energy;
+  
+  }else if (var_name == "pi0_phi"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
+      TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
+      TLorentzVector pio = p1 + p2;
+      return pio.Phi();
+    }
+    else{ return -1000.; }
+
+  }else if (var_name = "pi0_costheta_CM"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      double pi0_mass = 135;
+      double alpha = fabs(kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
+      double pi0_total_energy = pi0_mass * sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)));
+      double pi0_momentum = sqrt(pow(pi0_total_energy,2) - pow(pi0_mass,2));
+      return pi0_total_energy/fabs(pi0_momentum) * alpha;
+    }
+    else{ return -1000.; }
+
+
+  }else if (var_name == "pi0_mass"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if (flag_data){
+        if (kine.kine_pio_mass * em_charge_scale > 12.){return kine.kine_pio_mass * em_charge_scale;}
+        else{ return -1000.; }
+      }else{
+        if (kine.kine_pio_mass > 12.){return kine.kine_pio_mass;}
+        else{ return -1000.; }
+      }
+    }
+    else{ return -1000.; }
+
+  }else if (var_name = "pi0_momentum"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      double pi0_mass = 135;
+      double alpha = fabs(kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
+      double pi0_total_energy = pi0_mass * sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)));
+      return sqrt(pow(pi0_total_energy,2) - pow(pi0_mass,2));
+    }
+    else{ return -1000.; }
+
+  }else if (var_name == "pi0_costheta"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
+      TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
+      TLorentzVector pio = p1 + p2;
+      return pio.CosTheta();
+    }
+    else{ return -1000.; }
+
+  }else if (var_name == "kine_reco_Enu"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return get_reco_Enu_corr(kine, flag_data);
+    }
+    else{ return -1000.; }
+
+  
+
+  
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+  }else if (var_name = "non_pi0_energy_OLD"){
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      double pi0_mass = 135;
+      double alpha = (kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
+      double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
+      double pi0_total_energy = pi0_mass + pi0_energy;
+      return get_reco_Enu_corr(kine, flag_data) - pi0_total_energy;
+    }else{ return -1000.; }
+
+
+
 
   }else if (var_name == "pi0_total_energy"){ return get_reco_Enu_corr(kine, flag_data) - kine.kine_pio_energy_1 - kine.kine_pio_energy_2;
 
 
-  }else if (var_name == "kine_reco_Enu"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return get_reco_Enu_corr(kine, flag_data);
-    }else{ return -1000.; }
+  
   }else if (var_name == "kine_pio_energy_1"){   return kine.kine_pio_energy_1;
   }else if (var_name == "kine_pio_energy_2"){   return kine.kine_pio_energy_2;
   }else if (var_name == "kine_pio_theta_1"){    return kine.kine_pio_theta_1;
@@ -227,19 +302,7 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
     }else return -1000.;
 
 
-  }else if (var_name == "pi0_mass"){
-    if (kine.kine_pio_mass > 0){
-      //TLorentzVector p1(kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926)*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
-      //TLorentzVector p2(kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926)*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
-      //TLorentzVector pio = p1 + p2;
-      if (flag_data){
-        if (kine.kine_pio_mass * em_charge_scale > 12.){return kine.kine_pio_mass * em_charge_scale;}
-        else{ return -1000.; }
-      }else{
-        if (kine.kine_pio_mass > 12.){return kine.kine_pio_mass;}
-        else{ return -1000.; }
-      }
-    }else{ return -1000.; }
+  
 
   }else if (var_name == "tainted_10_pi0_mass"){
     if(kine.kine_pio_energy_1 > 10. && kine.kine_pio_energy_2 > 10.){
@@ -300,19 +363,9 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
         }else{ return -1000.; }
       }else{ return -1000.; }
     }
-  }else if (var_name == "pi0_costheta"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
-      TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
-      TLorentzVector pio = p1 + p2;
-      return pio.CosTheta();
-    }else{ return -1000.; }
+  
 
-  }else if (var_name == "pi0_phi"){
-    TLorentzVector p1(kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Sin(kine.kine_pio_phi_1/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1*TMath::Cos(kine.kine_pio_theta_1/180.*3.1415926), kine.kine_pio_energy_1);
-    TLorentzVector p2(kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Sin(kine.kine_pio_phi_2/180.*3.1415926)*TMath::Sin(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2*TMath::Cos(kine.kine_pio_theta_2/180.*3.1415926), kine.kine_pio_energy_2);
-    TLorentzVector pio = p1 + p2;
-    return pio.Phi();
+  
   
   }else if (var_name == "pi0_energy"){
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
@@ -320,35 +373,6 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
       double alpha = fabs(kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
       return pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
     }else{ return -1000.; }
-  
-  }else if (var_name = "pi0_momentum"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      double pi0_mass = 135;
-      double alpha = (kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
-      double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
-      double pi0_total_energy = pi0_mass + pi0_energy;
-      return sqrt(pi0_total_energy*pi0_total_energy - pi0_mass*pi0_mass);
-    }else{ return -1000.; }
-
-  }else if (var_name = "non_pi0_energy_OLD"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      double pi0_mass = 135;
-      double alpha = (kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
-      double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
-      double pi0_total_energy = pi0_mass + pi0_energy;
-      return get_reco_Enu_corr(kine, flag_data) - pi0_total_energy;
-    }else{ return -1000.; }
-
-  }else if (var_name = "pi0_costheta_CM"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      double pi0_mass = 135;
-      double alpha = (kine.kine_pio_energy_1 - kine.kine_pio_energy_2)/(kine.kine_pio_energy_1 + kine.kine_pio_energy_2);
-      double pi0_energy = pi0_mass * (sqrt(2./(1-alpha*alpha)/(1-cos(kine.kine_pio_angle/180.*3.1415926)))-1);
-      double pi0_total_energy = pi0_mass + pi0_energy;
-      double pi0_momentum = sqrt(pi0_total_energy*pi0_total_energy - pi0_mass*pi0_mass);
-      return pi0_total_energy/fabs(pi0_momentum) * alpha;
-    }
-    else{ return -1000.; }
 
   }else if (var_name == "numu_cc_3_max_muon_length"){ return tagger.numu_cc_3_max_muon_length;
   }else if (var_name == "lem_shower_num_segs"){       return tagger.lem_shower_num_segs;
@@ -678,12 +702,17 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }
     }
     else if (cut_file == 8) {
-      if (cut_name == "NCpi0BDT.inside.Enu.le.8000.gt.275"){ if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>=275) return number;
+      if (cut_name == "NCpi0BDT.inside.Enu.le.8000.gt.275"){ if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=8000 && eval.truth_nuEnergy>275) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
     else if (cut_file == 9) {
-      if        (cut_name == "NCpi0BDT.inside.Ppi0.le.100.gt.0"){     if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=100 && truth_pi0_momentum>=0) return number;
+      if (cut_name == "NCpi0BDT.inside.Enu.le.4000.gt.275"){ if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
+    else if (cut_file == 10) {
+      if        (cut_name == "NCpi0BDT.inside.Ppi0.le.100.gt.0"){     if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=100 && truth_pi0_momentum>0) return number;
       }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.150.gt.100"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=150 && truth_pi0_momentum>100) return number;  
       }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.200.gt.150"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=200 && truth_pi0_momentum>150) return number;
       }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.250.gt.200"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=250 && truth_pi0_momentum>200) return number;
@@ -736,17 +765,6 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   if(is_generic(eval)) map_cuts_flag["generic"] = true;
   else map_cuts_flag["generic"] = false;
 
-  if(eval.truth_nuEnergy <=400) map_cuts_flag["LowEintnueCC"] = true;
-  else map_cuts_flag["LowEintnueCC"] = false;
-  
-  if (!(eval.truth_nuEnergy <=400)) map_cuts_flag["antiLowEintnueCC"] = true;
-  else map_cuts_flag["antiLowEintnueCC"] = false;
-
-  if(eval.truth_nuEnergy<=400) map_cuts_flag["LowEnu"] = true;
-  else map_cuts_flag["LowEnu"] = false;
-  
-  if(!(eval.truth_nuEnergy<=400)) map_cuts_flag["antiLowEnu"] = true;
-  else map_cuts_flag["antiLowEnu"] = false;
 
   if(eval.match_completeness_energy<=0.1*eval.truth_energyInside) map_cuts_flag["badmatch"] = true;
   else map_cuts_flag["badmatch"] = false;
@@ -754,61 +772,21 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && abs(eval.truth_nuPdg)==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["numuCCinFV"] = true;
   else map_cuts_flag["numuCCinFV"] = false;
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["RnumuCCinFV"] = true;
-  else map_cuts_flag["RnumuCCinFV"] = false;
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["RnumuCCinFV"] = true;
+  //else map_cuts_flag["RnumuCCinFV"] = false;
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==-14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["AnumuCCinFV"] = true;
-  else map_cuts_flag["AnumuCCinFV"] = false;
-
-  // Xs related cuts ...
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 ) map_cuts_flag["XsnumuCCinFV"] = true;
-  else map_cuts_flag["XsnumuCCinFV"] = false;
-  
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy > 200) map_cuts_flag["Xs_Enu_numuCCinFV"] = true;
-  else map_cuts_flag["Xs_Enu_numuCCinFV"] = false;
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon > 105.7 && Emuon<=2506) map_cuts_flag["Xs_Emu_numuCCinFV"] = true;
-  else map_cuts_flag["Xs_Emu_numuCCinFV"] = false;
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==-14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["AnumuCCinFV"] = true;
+  //else map_cuts_flag["AnumuCCinFV"] = false;
 
 
-  //NCpi0BDT X-section
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy >= 275) map_cuts_flag["Xs_Enu_NCpi0BDTinFV"] = true;
-  else map_cuts_flag["Xs_Enu_NCpi0BDTinFV"] = false;  
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=1500 && truth_pi0_momentum >= 0) map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = true;
-  else map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = false; 
-
-
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron > 30 && Ehadron <=2500) map_cuts_flag["Xs_Ehad_numuCCinFV"] = true;
-  else map_cuts_flag["Xs_Ehad_numuCCinFV"] = false;
-
-  // xs breakdown mode
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200) map_cuts_flag["XsecNumuCCinFV"] = true;
-  else map_cuts_flag["XsecNumuCCinFV"] = false;
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0) map_cuts_flag["XsecNC"] = true;
-  else map_cuts_flag["XsecNC"] = false;
-
-  if(eval.match_completeness_energy<=0.1*eval.truth_energyInside) map_cuts_flag["XsecCosmic"] = true;
-  else map_cuts_flag["XsecCosmic"] = false;
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==1 && !(eval.truth_nuPdg==14 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200)) map_cuts_flag["XsecBkgCC"] = true;
-  else map_cuts_flag["XsecBkgCC"] = false;
-
-  // finish Xs related cuts ...
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy > 200) map_cuts_flag["Xs_Enu_nueCCinFV"] = true;
-  else map_cuts_flag["Xs_Enu_nueCCinFV"] = false;
-  
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && abs(eval.truth_nuPdg)==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["nueCCinFV"] = true;
   else map_cuts_flag["nueCCinFV"] = false;
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["RnueCCinFV"] = true;
-  else map_cuts_flag["RnueCCinFV"] = false;
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["RnueCCinFV"] = true;
+  //else map_cuts_flag["RnueCCinFV"] = false;
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==-12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["AnueCCinFV"] = true;
-  else map_cuts_flag["AnueCCinFV"] = false;
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==-12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["AnueCCinFV"] = true;
+  //else map_cuts_flag["AnueCCinFV"] = false;
   
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["NCinFV"] = true;
   else map_cuts_flag["NCinFV"] = false;
@@ -822,32 +800,86 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0) map_cuts_flag["NCpi0inFV"] = true;
   else map_cuts_flag["NCpi0inFV"] = false;
 
-  if(pfeval.truth_nuScatType==10 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCMEC"] = true;
-  else map_cuts_flag["CCMEC"] = false;
+  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && pfeval.truth_nuScatType==5) map_cuts_flag["NCpi0inFVcoh"] = true;
+  else map_cuts_flag["NCpi0inFVcoh"] = false;
+
+  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && pfeval.truth_nuScatType!=5) map_cuts_flag["NCpi0inFVnoncoh"] = true;
+  else map_cuts_flag["NCpi0inFVnoncoh"] = false;
+
+  //if(pfeval.truth_nuScatType==10 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCMEC"] = true;
+  //else map_cuts_flag["CCMEC"] = false;
   
-  if(pfeval.truth_nuScatType==10 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCMEC"] = true;
-  else map_cuts_flag["NCMEC"] = false;
+  //if(pfeval.truth_nuScatType==10 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCMEC"] = true;
+  //else map_cuts_flag["NCMEC"] = false;
   
-  if(pfeval.truth_nuScatType==1 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCQE"] = true;
-  else map_cuts_flag["CCQE"] = false;
+  //if(pfeval.truth_nuScatType==1 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCQE"] = true;
+  //else map_cuts_flag["CCQE"] = false;
 
-  if(pfeval.truth_nuScatType==1 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCQE"] = true;
-  else map_cuts_flag["NCQE"] = false;
+  //if(pfeval.truth_nuScatType==1 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCQE"] = true;
+  //else map_cuts_flag["NCQE"] = false;
 
-  if(pfeval.truth_nuScatType==4 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCRES"] = true;
-  else map_cuts_flag["CCRES"] = false;
+  //if(pfeval.truth_nuScatType==4 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCRES"] = true;
+  //else map_cuts_flag["CCRES"] = false;
 
-  if(pfeval.truth_nuScatType==4 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCRES"] = true;
-  else map_cuts_flag["NCRES"] = false;
+  //if(pfeval.truth_nuScatType==4 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCRES"] = true;
+  //else map_cuts_flag["NCRES"] = false;
 
-  if(pfeval.truth_nuScatType==3 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCDIS"] = true;
-  else map_cuts_flag["CCDIS"] = false;
+  //if(pfeval.truth_nuScatType==3 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCDIS"] = true;
+  //else map_cuts_flag["CCDIS"] = false;
 
-  if(pfeval.truth_nuScatType==3 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCDIS"] = true;
-  else map_cuts_flag["NCDIS"] = false;
+  //if(pfeval.truth_nuScatType==3 && eval.truth_isCC==0 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["NCDIS"] = true;
+  //else map_cuts_flag["NCDIS"] = false;
   
-  if(pfeval.truth_nuScatType!=10 && pfeval.truth_nuScatType!=1 && pfeval.truth_nuScatType!=3 && pfeval.truth_nuScatType!=4 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["OTHER"] = true;
-  else map_cuts_flag["OTHER"] = false;
+  //if(pfeval.truth_nuScatType!=10 && pfeval.truth_nuScatType!=1 && pfeval.truth_nuScatType!=3 && pfeval.truth_nuScatType!=4 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["OTHER"] = true;
+  //else map_cuts_flag["OTHER"] = false;
+
+    // Xs related cuts ...
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 ) map_cuts_flag["XsnumuCCinFV"] = true;
+  //else map_cuts_flag["XsnumuCCinFV"] = false;
+  
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy > 200) map_cuts_flag["Xs_Enu_numuCCinFV"] = true;
+  //else map_cuts_flag["Xs_Enu_numuCCinFV"] = false;
+
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon > 105.7 && Emuon<=2506) map_cuts_flag["Xs_Emu_numuCCinFV"] = true;
+  //else map_cuts_flag["Xs_Emu_numuCCinFV"] = false;
+
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron > 30 && Ehadron <=2500) map_cuts_flag["Xs_Ehad_numuCCinFV"] = true;
+  //else map_cuts_flag["Xs_Ehad_numuCCinFV"] = false;
+
+  // xs breakdown mode
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200) map_cuts_flag["XsecNumuCCinFV"] = true;
+  //else map_cuts_flag["XsecNumuCCinFV"] = false;
+
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0) map_cuts_flag["XsecNC"] = true;
+  //else map_cuts_flag["XsecNC"] = false;
+
+  //if(eval.match_completeness_energy<=0.1*eval.truth_energyInside) map_cuts_flag["XsecCosmic"] = true;
+  //else map_cuts_flag["XsecCosmic"] = false;
+
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==1 && !(eval.truth_nuPdg==14 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200)) map_cuts_flag["XsecBkgCC"] = true;
+  //else map_cuts_flag["XsecBkgCC"] = false;
+
+  // finish Xs related cuts ...
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy > 200) map_cuts_flag["Xs_Enu_nueCCinFV"] = true;
+  //else map_cuts_flag["Xs_Enu_nueCCinFV"] = false;
+
+
+
+
+  //NCpi0BDT X-section
+
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=8000 && eval.truth_nuEnergy >275) map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"] = false;  
+
+    if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy >275) map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"] = false;  
+
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && truth_pi0_momentum<=1500 && truth_pi0_momentum >= 0) map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_Ppi0_1500_NCpi0BDTinFV"] = false; 
+
+
+
+
 
   // figure out additional cuts and flag_data ...
   bool flag_add = true;
@@ -924,21 +956,21 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   ////////////////////////////////////////////////////////
   // GENERIC All events
   ////////////////////////////////////////////////////////
-  }else if (ch_name == "generic_bnb" || ch_name == "generic_ext" || ch_name == "generic_dirt"  || ch_name == "generic_overlay"
-       || ch_name == "generic1_bnb"  || ch_name == "generic1_ext"  || ch_name == "generic1_dirt"  || ch_name == "generic1_overlay"
-       || ch_name == "generic2_bnb"  || ch_name == "generic2_ext"  || ch_name == "generic2_dirt"  || ch_name == "generic2_overlay"
+  }else if (ch_name == "generic_bnb" || ch_name == "generic_ext" || ch_name == "generic_dirt"  || ch_name == "generic_overlay" || ch_name == "generic_ncpi0"
+       || ch_name == "generic1_bnb"  || ch_name == "generic1_ext"  || ch_name == "generic1_dirt"  || ch_name == "generic1_overlay" || ch_name == "generic1_ncpi0"
+       || ch_name == "generic2_bnb"  || ch_name == "generic2_ext"  || ch_name == "generic2_dirt"  || ch_name == "generic2_overlay" || ch_name == "generic2_ncpi0"
        ){
     if (flag_generic) return true;
     else return false;
-  }else if (ch_name == "generic_FC_bnb" || ch_name == "generic_FC_ext" || ch_name == "generic_FC_dirt"  || ch_name == "generic_FC_overlay"
-       || ch_name == "generic1_FC_bnb"  || ch_name == "generic1_FC_ext"  || ch_name == "generic1_FC_dirt"  || ch_name == "generic1_FC_overlay"
-       || ch_name == "generic2_FC_bnb"  || ch_name == "generic2_FC_ext"  || ch_name == "generic2_FC_dirt"  || ch_name == "generic2_FC_overlay"
+  }else if (ch_name == "generic_FC_bnb" || ch_name == "generic_FC_ext" || ch_name == "generic_FC_dirt"  || ch_name == "generic_FC_overlay" || ch_name == "generic_FC_ncpi0"
+       || ch_name == "generic1_FC_bnb"  || ch_name == "generic1_FC_ext"  || ch_name == "generic1_FC_dirt"  || ch_name == "generic1_FC_overlay" || ch_name == "generic1_FC_ncpi0"
+       || ch_name == "generic2_FC_bnb"  || ch_name == "generic2_FC_ext"  || ch_name == "generic2_FC_dirt"  || ch_name == "generic2_FC_overlay" || ch_name == "generic2_FC_ncpi0"
        ){
     if (flag_generic && flag_FC) return true;
     else return false;
-  }else if (ch_name == "generic_PC_bnb" || ch_name == "generic_PC_ext" || ch_name == "generic_PC_dirt"  || ch_name == "generic_PC_overlay"
-       || ch_name == "generic1_PC_bnb"  || ch_name == "generic1_PC_ext"  || ch_name == "generic1_PC_dirt"  || ch_name == "generic1_PC_overlay"
-       || ch_name == "generic2_PC_bnb"  || ch_name == "generic2_PC_ext"  || ch_name == "generic2_PC_dirt"  || ch_name == "generic2_PC_overlay"
+  }else if (ch_name == "generic_PC_bnb" || ch_name == "generic_PC_ext" || ch_name == "generic_PC_dirt"  || ch_name == "generic_PC_overlay" || ch_name == "generic_PC_ncpi0"
+       || ch_name == "generic1_PC_bnb"  || ch_name == "generic1_PC_ext"  || ch_name == "generic1_PC_dirt"  || ch_name == "generic1_PC_overlay" || ch_name == "generic1_PC_ncpi0"
+       || ch_name == "generic2_PC_bnb"  || ch_name == "generic2_PC_ext"  || ch_name == "generic2_PC_dirt"  || ch_name == "generic2_PC_overlay" || ch_name == "generic2_PC_ncpi0"
        ){
     if (flag_generic && (!flag_FC)) return true;
     else return false;
@@ -946,29 +978,29 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   ////////////////////////////////////////////////////////
   // FC+PC NCpi0 selection events
   ////////////////////////////////////////////////////////
-  }else if (ch_name == "NCpi0BDT_bnb" || ch_name == "NCpi0BDT_ext" || ch_name == "NCpi0BDT_dirt"  || ch_name == "NCpi0BDT_overlay"
-       || ch_name == "NCpi0BDT1_bnb" || ch_name == "NCpi0BDT1_ext"  || ch_name == "NCpi0BDT1_dirt"  || ch_name == "NCpi0BDT1_overlay"
-       || ch_name == "NCpi0BDT2_bnb"  || ch_name == "NCpi0BDT2_ext"  || ch_name == "NCpi0BDT2_dirt"  || ch_name == "NCpi0BDT2_overlay"
-       || ch_name == "NCpi0BDT3_bnb"  || ch_name == "NCpi0BDT3_ext"  || ch_name == "NCpi0BDT3_dirt"  || ch_name == "NCpi0BDT3_overlay"
-       || ch_name == "NCpi0BDT4_bnb"  || ch_name == "NCpi0BDT4_ext"  || ch_name == "NCpi0BDT4_dirt"  || ch_name == "NCpi0BDT4_overlay"
+  }else if (ch_name == "NCpi0BDT_bnb" || ch_name == "NCpi0BDT_ext" || ch_name == "NCpi0BDT_dirt"  || ch_name == "NCpi0BDT_overlay" || ch_name == "NCpi0BDT_ncpi0"
+       || ch_name == "NCpi0BDT1_bnb" || ch_name == "NCpi0BDT1_ext"  || ch_name == "NCpi0BDT1_dirt"  || ch_name == "NCpi0BDT1_overlay" || ch_name == "NCpi0BDT1_ncpi0"
+       || ch_name == "NCpi0BDT2_bnb"  || ch_name == "NCpi0BDT2_ext"  || ch_name == "NCpi0BDT2_dirt"  || ch_name == "NCpi0BDT2_overlay" || ch_name == "NCpi0BDT2_ncpi0"
+       || ch_name == "NCpi0BDT3_bnb"  || ch_name == "NCpi0BDT3_ext"  || ch_name == "NCpi0BDT3_dirt"  || ch_name == "NCpi0BDT3_overlay" || ch_name == "NCpi0BDT3_ncpi0"
+       || ch_name == "NCpi0BDT4_bnb"  || ch_name == "NCpi0BDT4_ext"  || ch_name == "NCpi0BDT4_dirt"  || ch_name == "NCpi0BDT4_overlay" || ch_name == "NCpi0BDT4_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers) return true;
     else return false;
   // FC+PC 0p NCpi0 selection events
-  }else if (ch_name == "NCpi0BDT_0p_bnb" || ch_name == "NCpi0BDT_0p_ext" || ch_name == "NCpi0BDT_0p_dirt"  || ch_name == "NCpi0BDT_0p_overlay"
-       || ch_name == "NCpi0BDT1_0p_bnb" || ch_name == "NCpi0BDT1_0p_ext"  || ch_name == "NCpi0BDT1_0p_dirt"  || ch_name == "NCpi0BDT1_0p_overlay"
-       || ch_name == "NCpi0BDT2_0p_bnb"  || ch_name == "NCpi0BDT2_0p_ext"  || ch_name == "NCpi0BDT2_0p_dirt"  || ch_name == "NCpi0BDT2_0p_overlay"
-       || ch_name == "NCpi0BDT3_0p_bnb"  || ch_name == "NCpi0BDT3_0p_ext"  || ch_name == "NCpi0BDT3_0p_dirt"  || ch_name == "NCpi0BDT3_0p_overlay"
-       || ch_name == "NCpi0BDT4_0p_bnb"  || ch_name == "NCpi0BDT4_0p_ext"  || ch_name == "NCpi0BDT4_0p_dirt"  || ch_name == "NCpi0BDT4_0p_overlay"
+  }else if (ch_name == "NCpi0BDT_0p_bnb" || ch_name == "NCpi0BDT_0p_ext" || ch_name == "NCpi0BDT_0p_dirt"  || ch_name == "NCpi0BDT_0p_overlay" || ch_name == "NCpi0BDT_0p_ncpi0"
+       || ch_name == "NCpi0BDT1_0p_bnb" || ch_name == "NCpi0BDT1_0p_ext"  || ch_name == "NCpi0BDT1_0p_dirt"  || ch_name == "NCpi0BDT1_0p_overlay" || ch_name == "NCpi0BDT1_0p_ncpi0"
+       || ch_name == "NCpi0BDT2_0p_bnb"  || ch_name == "NCpi0BDT2_0p_ext"  || ch_name == "NCpi0BDT2_0p_dirt"  || ch_name == "NCpi0BDT2_0p_overlay" || ch_name == "NCpi0BDT2_0p_ncpi0"
+       || ch_name == "NCpi0BDT3_0p_bnb"  || ch_name == "NCpi0BDT3_0p_ext"  || ch_name == "NCpi0BDT3_0p_dirt"  || ch_name == "NCpi0BDT3_0p_overlay" || ch_name == "NCpi0BDT3_0p_ncpi0"
+       || ch_name == "NCpi0BDT4_0p_bnb"  || ch_name == "NCpi0BDT4_0p_ext"  || ch_name == "NCpi0BDT4_0p_dirt"  || ch_name == "NCpi0BDT4_0p_overlay" || ch_name == "NCpi0BDT4_0p_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p) return true;
     else return false;
   // FC+PC Np NCpi0 selection events
-  }else if (ch_name == "NCpi0BDT_Np_bnb" || ch_name == "NCpi0BDT_Np_ext" || ch_name == "NCpi0BDT_Np_dirt"  || ch_name == "NCpi0BDT_Np_overlay"
-       || ch_name == "NCpi0BDT1_Np_bnb" || ch_name == "NCpi0BDT1_Np_ext"  || ch_name == "NCpi0BDT1_Np_dirt"  || ch_name == "NCpi0BDT1_Np_overlay"
-       || ch_name == "NCpi0BDT2_Np_bnb"  || ch_name == "NCpi0BDT2_Np_ext"  || ch_name == "NCpi0BDT2_Np_dirt"  || ch_name == "NCpi0BDT2_Np_overlay"
-       || ch_name == "NCpi0BDT3_Np_bnb"  || ch_name == "NCpi0BDT3_Np_ext"  || ch_name == "NCpi0BDT3_Np_dirt"  || ch_name == "NCpi0BDT3_Np_overlay"
-       || ch_name == "NCpi0BDT4_Np_bnb"  || ch_name == "NCpi0BDT4_Np_ext"  || ch_name == "NCpi0BDT4_Np_dirt"  || ch_name == "NCpi0BDT4_Np_overlay"
+  }else if (ch_name == "NCpi0BDT_Np_bnb" || ch_name == "NCpi0BDT_Np_ext" || ch_name == "NCpi0BDT_Np_dirt"  || ch_name == "NCpi0BDT_Np_overlay" || ch_name == "NCpi0BDT_Np_ncpi0"
+       || ch_name == "NCpi0BDT1_Np_bnb" || ch_name == "NCpi0BDT1_Np_ext"  || ch_name == "NCpi0BDT1_Np_dirt"  || ch_name == "NCpi0BDT1_Np_overlay" || ch_name == "NCpi0BDT1_Np_ncpi0"
+       || ch_name == "NCpi0BDT2_Np_bnb"  || ch_name == "NCpi0BDT2_Np_ext"  || ch_name == "NCpi0BDT2_Np_dirt"  || ch_name == "NCpi0BDT2_Np_overlay" || ch_name == "NCpi0BDT2_Np_ncpi0"
+       || ch_name == "NCpi0BDT3_Np_bnb"  || ch_name == "NCpi0BDT3_Np_ext"  || ch_name == "NCpi0BDT3_Np_dirt"  || ch_name == "NCpi0BDT3_Np_overlay" || ch_name == "NCpi0BDT3_Np_ncpi0"
+       || ch_name == "NCpi0BDT4_Np_bnb"  || ch_name == "NCpi0BDT4_Np_ext"  || ch_name == "NCpi0BDT4_Np_dirt"  || ch_name == "NCpi0BDT4_Np_overlay" || ch_name == "NCpi0BDT4_Np_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)) return true;
     else return false;
@@ -977,25 +1009,25 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   // FC only NCpi0 selection events 
   ////////////////////////////////////////////////////////
   }else if (ch_name == "NCpi0BDT_FC_bnb" || ch_name == "NCpi0BDT_FC_ext" || ch_name == "NCpi0BDT_FC_dirt"  || ch_name == "NCpi0BDT_FC_overlay" || ch_name == "BG_NCpi0BDT_FC_ext" || ch_name == "BG_NCpi0BDT_FC_dirt"
-       || ch_name == "NCpi0BDT1_FC_bnb" || ch_name == "NCpi0BDT1_FC_ext"  || ch_name == "NCpi0BDT1_FC_dirt"  || ch_name == "NCpi0BDT1_FC_overlay"
-       || ch_name == "NCpi0BDT2_FC_bnb" || ch_name == "NCpi0BDT2_FC_ext"  || ch_name == "NCpi0BDT2_FC_dirt"  || ch_name == "NCpi0BDT2_FC_overlay"
-       || ch_name == "NCpi0BDT3_FC_bnb" || ch_name == "NCpi0BDT3_FC_ext"  || ch_name == "NCpi0BDT3_FC_dirt"  || ch_name == "NCpi0BDT3_FC_overlay"
+       || ch_name == "NCpi0BDT1_FC_bnb" || ch_name == "NCpi0BDT1_FC_ext"  || ch_name == "NCpi0BDT1_FC_dirt"  || ch_name == "NCpi0BDT1_FC_overlay" || ch_name == "NCpi0BDT1_FC_ncpi0"
+       || ch_name == "NCpi0BDT2_FC_bnb" || ch_name == "NCpi0BDT2_FC_ext"  || ch_name == "NCpi0BDT2_FC_dirt"  || ch_name == "NCpi0BDT2_FC_overlay" || ch_name == "NCpi0BDT2_FC_ncpi0"
+       || ch_name == "NCpi0BDT3_FC_bnb" || ch_name == "NCpi0BDT3_FC_ext"  || ch_name == "NCpi0BDT3_FC_dirt"  || ch_name == "NCpi0BDT3_FC_overlay" || ch_name == "NCpi0BDT3_FC_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC) return true;
     else return false;
   // FC 0p NCpi0 selection events
   }else if (ch_name == "NCpi0BDT_FC_0p_bnb" || ch_name == "NCpi0BDT_FC_0p_ext" || ch_name == "NCpi0BDT_FC_0p_dirt"  || ch_name == "NCpi0BDT_FC_0p_overlay" || ch_name == "BG_NCpi0BDT_FC_0p_ext" || ch_name == "BG_NCpi0BDT_FC_0p_dirt"
-       || ch_name == "NCpi0BDT1_FC_0p_bnb" || ch_name == "NCpi0BDT1_FC_0p_ext"  || ch_name == "NCpi0BDT1_FC_0p_dirt"  || ch_name == "NCpi0BDT1_FC_0p_overlay"
-       || ch_name == "NCpi0BDT2_FC_0p_bnb" || ch_name == "NCpi0BDT2_FC_0p_ext"  || ch_name == "NCpi0BDT2_FC_0p_dirt"  || ch_name == "NCpi0BDT2_FC_0p_overlay"
-       || ch_name == "NCpi0BDT3_FC_0p_bnb" || ch_name == "NCpi0BDT3_FC_0p_ext"  || ch_name == "NCpi0BDT3_FC_0p_dirt"  || ch_name == "NCpi0BDT3_FC_0p_overlay"
+       || ch_name == "NCpi0BDT1_FC_0p_bnb" || ch_name == "NCpi0BDT1_FC_0p_ext"  || ch_name == "NCpi0BDT1_FC_0p_dirt"  || ch_name == "NCpi0BDT1_FC_0p_overlay" || ch_name == "NCpi0BDT1_FC_0p_ncpi0"
+       || ch_name == "NCpi0BDT2_FC_0p_bnb" || ch_name == "NCpi0BDT2_FC_0p_ext"  || ch_name == "NCpi0BDT2_FC_0p_dirt"  || ch_name == "NCpi0BDT2_FC_0p_overlay" || ch_name == "NCpi0BDT2_FC_0p_ncpi0"
+       || ch_name == "NCpi0BDT3_FC_0p_bnb" || ch_name == "NCpi0BDT3_FC_0p_ext"  || ch_name == "NCpi0BDT3_FC_0p_dirt"  || ch_name == "NCpi0BDT3_FC_0p_overlay" || ch_name == "NCpi0BDT3_FC_0p_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && flag_0p) return true;
     else return false;
   // FC Np NCpi0 selection events
   }else if (ch_name == "NCpi0BDT_FC_Np_bnb" || ch_name == "NCpi0BDT_FC_Np_ext" || ch_name == "NCpi0BDT_FC_Np_dirt"  || ch_name == "NCpi0BDT_FC_Np_overlay" || ch_name == "BG_NCpi0BDT_FC_Np_ext" || ch_name == "BG_NCpi0BDT_FC_Np_dirt"
-       || ch_name == "NCpi0BDT1_FC_Np_bnb" || ch_name == "NCpi0BDT1_FC_Np_ext"  || ch_name == "NCpi0BDT1_FC_Np_dirt"  || ch_name == "NCpi0BDT1_FC_Np_overlay"
-       || ch_name == "NCpi0BDT2_FC_Np_bnb" || ch_name == "NCpi0BDT2_FC_Np_ext"  || ch_name == "NCpi0BDT2_FC_Np_dirt"  || ch_name == "NCpi0BDT2_FC_Np_overlay"
-       || ch_name == "NCpi0BDT3_FC_Np_bnb" || ch_name == "NCpi0BDT3_FC_Np_ext"  || ch_name == "NCpi0BDT3_FC_Np_dirt"  || ch_name == "NCpi0BDT3_FC_Np_overlay"
+       || ch_name == "NCpi0BDT1_FC_Np_bnb" || ch_name == "NCpi0BDT1_FC_Np_ext"  || ch_name == "NCpi0BDT1_FC_Np_dirt"  || ch_name == "NCpi0BDT1_FC_Np_overlay" || ch_name == "NCpi0BDT1_FC_Np_ncpi0"
+       || ch_name == "NCpi0BDT2_FC_Np_bnb" || ch_name == "NCpi0BDT2_FC_Np_ext"  || ch_name == "NCpi0BDT2_FC_Np_dirt"  || ch_name == "NCpi0BDT2_FC_Np_overlay" || ch_name == "NCpi0BDT2_FC_Np_ncpi0"
+       || ch_name == "NCpi0BDT3_FC_Np_bnb" || ch_name == "NCpi0BDT3_FC_Np_ext"  || ch_name == "NCpi0BDT3_FC_Np_dirt"  || ch_name == "NCpi0BDT3_FC_Np_overlay" || ch_name == "NCpi0BDT3_FC_Np_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (!flag_0p)) return true;
     else return false;
@@ -1004,29 +1036,30 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   // PC only NCpi0 selection events 
   ////////////////////////////////////////////////////////
   }else if (ch_name == "NCpi0BDT_PC_bnb" || ch_name == "NCpi0BDT_PC_ext" || ch_name == "NCpi0BDT_PC_dirt"  || ch_name == "NCpi0BDT_PC_overlay" || ch_name == "BG_NCpi0BDT_PC_ext" || ch_name == "BG_NCpi0BDT_PC_dirt"
-       || ch_name == "NCpi0BDT1_PC_bnb" || ch_name == "NCpi0BDT1_PC_ext"  || ch_name == "NCpi0BDT1_PC_dirt"  || ch_name == "NCpi0BDT1_PC_overlay"
-       || ch_name == "NCpi0BDT2_PC_bnb" || ch_name == "NCpi0BDT2_PC_ext"  || ch_name == "NCpi0BDT2_PC_dirt"  || ch_name == "NCpi0BDT2_PC_overlay"
-       || ch_name == "NCpi0BDT3_PC_bnb" || ch_name == "NCpi0BDT3_PC_ext"  || ch_name == "NCpi0BDT3_PC_dirt"  || ch_name == "NCpi0BDT3_PC_overlay"
+       || ch_name == "NCpi0BDT1_PC_bnb" || ch_name == "NCpi0BDT1_PC_ext"  || ch_name == "NCpi0BDT1_PC_dirt"  || ch_name == "NCpi0BDT1_PC_overlay" || ch_name == "NCpi0BDT1_PC_ncpi0"
+       || ch_name == "NCpi0BDT2_PC_bnb" || ch_name == "NCpi0BDT2_PC_ext"  || ch_name == "NCpi0BDT2_PC_dirt"  || ch_name == "NCpi0BDT2_PC_overlay" || ch_name == "NCpi0BDT2_PC_ncpi0"
+       || ch_name == "NCpi0BDT3_PC_bnb" || ch_name == "NCpi0BDT3_PC_ext"  || ch_name == "NCpi0BDT3_PC_dirt"  || ch_name == "NCpi0BDT3_PC_overlay" || ch_name == "NCpi0BDT3_PC_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)) return true;
     else return false;
   // PC 0p NCpi0 selection events
   }else if (ch_name == "NCpi0BDT_PC_0p_bnb" || ch_name == "NCpi0BDT_PC_0p_ext" || ch_name == "NCpi0BDT_PC_0p_dirt"  || ch_name == "NCpi0BDT_PC_0p_overlay" || ch_name == "BG_NCpi0BDT_PC_0p_ext" || ch_name == "BG_NCpi0BDT_PC_0p_dirt"
-       || ch_name == "NCpi0BDT1_PC_0p_bnb" || ch_name == "NCpi0BDT1_PC_0p_ext"  || ch_name == "NCpi0BDT1_PC_0p_dirt"  || ch_name == "NCpi0BDT1_PC_0p_overlay"
-       || ch_name == "NCpi0BDT2_PC_0p_bnb" || ch_name == "NCpi0BDT2_PC_0p_ext"  || ch_name == "NCpi0BDT2_PC_0p_dirt"  || ch_name == "NCpi0BDT2_PC_0p_overlay"
-       || ch_name == "NCpi0BDT3_PC_0p_bnb" || ch_name == "NCpi0BDT3_PC_0p_ext"  || ch_name == "NCpi0BDT3_PC_0p_dirt"  || ch_name == "NCpi0BDT3_PC_0p_overlay"
+       || ch_name == "NCpi0BDT1_PC_0p_bnb" || ch_name == "NCpi0BDT1_PC_0p_ext"  || ch_name == "NCpi0BDT1_PC_0p_dirt"  || ch_name == "NCpi0BDT1_PC_0p_overlay" || ch_name == "NCpi0BDT1_PC_0p_ncpi0"
+       || ch_name == "NCpi0BDT2_PC_0p_bnb" || ch_name == "NCpi0BDT2_PC_0p_ext"  || ch_name == "NCpi0BDT2_PC_0p_dirt"  || ch_name == "NCpi0BDT2_PC_0p_overlay" || ch_name == "NCpi0BDT2_PC_0p_ncpi0"
+       || ch_name == "NCpi0BDT3_PC_0p_bnb" || ch_name == "NCpi0BDT3_PC_0p_ext"  || ch_name == "NCpi0BDT3_PC_0p_dirt"  || ch_name == "NCpi0BDT3_PC_0p_overlay" || ch_name == "NCpi0BDT3_PC_0p_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && flag_0p) return true;
     else return false;
   // PC Np NCpi0 selection events
   }else if (ch_name == "NCpi0BDT_PC_Np_bnb" || ch_name == "NCpi0BDT_PC_Np_ext" || ch_name == "NCpi0BDT_PC_Np_dirt"  || ch_name == "NCpi0BDT_PC_Np_overlay" || ch_name == "BG_NCpi0BDT_PC_Np_ext" || ch_name == "BG_NCpi0BDT_PC_Np_dirt"
-       || ch_name == "NCpi0BDT1_PC_Np_bnb" || ch_name == "NCpi0BDT1_PC_Np_ext"  || ch_name == "NCpi0BDT1_PC_Np_dirt"  || ch_name == "NCpi0BDT1_PC_Np_overlay"
-       || ch_name == "NCpi0BDT2_PC_Np_bnb" || ch_name == "NCpi0BDT2_PC_Np_ext"  || ch_name == "NCpi0BDT2_PC_Np_dirt"  || ch_name == "NCpi0BDT2_PC_Np_overlay"
-       || ch_name == "NCpi0BDT3_PC_Np_bnb" || ch_name == "NCpi0BDT3_PC_Np_ext"  || ch_name == "NCpi0BDT3_PC_Np_dirt"  || ch_name == "NCpi0BDT3_PC_Np_overlay"
+       || ch_name == "NCpi0BDT1_PC_Np_bnb" || ch_name == "NCpi0BDT1_PC_Np_ext"  || ch_name == "NCpi0BDT1_PC_Np_dirt"  || ch_name == "NCpi0BDT1_PC_Np_overlay" || ch_name == "NCpi0BDT1_PC_Np_ncpi0"
+       || ch_name == "NCpi0BDT2_PC_Np_bnb" || ch_name == "NCpi0BDT2_PC_Np_ext"  || ch_name == "NCpi0BDT2_PC_Np_dirt"  || ch_name == "NCpi0BDT2_PC_Np_overlay" || ch_name == "NCpi0BDT2_PC_Np_ncpi0"
+       || ch_name == "NCpi0BDT3_PC_Np_bnb" || ch_name == "NCpi0BDT3_PC_Np_ext"  || ch_name == "NCpi0BDT3_PC_Np_dirt"  || ch_name == "NCpi0BDT3_PC_Np_overlay" || ch_name == "NCpi0BDT3_PC_Np_ncpi0"
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)) return true;
     else return false;
 
+  /*
   ////////////////////////////////////////////////////////
   // numuCC XSEC 
   //////////////////////////////////////////////////////// 
@@ -1061,21 +1094,34 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "numuCC_background_Enu_overlay"){    if (flag_numuCC &&                (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
     }
     return false;
-
+  */
   ////////////////////////////////////////////////////////
   // NCpi0BDT XSEC - Enu
   //////////////////////////////////////////////////////// 
-  } else if (ch_name == "NCpi0BDT_signal_Enu_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_PC_overlay" 
-       || ch_name == "NCpi0BDT_signal_Enu_overlay" || ch_name == "NCpi0BDT_background_Enu_overlay"
+  } else if (ch_name == "NCpi0BDT_signal_Enu_8000_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_8000_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_8000_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_8000_PC_overlay" 
+       || ch_name == "NCpi0BDT_signal_Enu_8000_overlay" || ch_name == "NCpi0BDT_background_Enu_8000_overlay"
       ){
-    if (ch_name == "NCpi0BDT_signal_Enu_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_signal_Enu_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_NCpi0BDTinFV"]))  return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_NCpi0BDTinFV"]))  return true;
-    }else if (ch_name == "NCpi0BDT_signal_Enu_overlay"){        if (flag_ncpio_bdt && flag_generic && flag_filter_showers &&                 map_cuts_flag["Xs_Enu_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_overlay"){    if (flag_ncpio_bdt && flag_generic && flag_filter_showers &&                 (!map_cuts_flag["Xs_Enu_NCpi0BDTinFV"]))  return true;
+    if (ch_name == "NCpi0BDT_signal_Enu_8000_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_8000_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_8000_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_8000_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_8000_overlay"){        if (flag_ncpio_bdt && flag_generic && flag_filter_showers &&                 map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_8000_overlay"){    if (flag_ncpio_bdt && flag_generic && flag_filter_showers &&                 (!map_cuts_flag["Xs_Enu_8000_NCpi0BDTinFV"]))  return true;
     }
     return false;
+
+  } else if (ch_name == "NCpi0BDT_signal_Enu_4000_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_PC_overlay" 
+       || ch_name == "NCpi0BDT_signal_Enu_4000_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_overlay"
+      ){
+    if (ch_name == "NCpi0BDT_signal_Enu_4000_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_overlay"){        if (flag_ncpio_bdt && flag_generic && flag_filter_showers &&                 map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_overlay"){    if (flag_ncpio_bdt && flag_generic && flag_filter_showers &&                 (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
+    }
+    return false;
+
 
   ////////////////////////////////////////////////////////
   // NCpi0BDT 0p XSEC - Enu 
@@ -1177,7 +1223,7 @@ bool LEEana::is_FC(EvalInfo& eval){
 }
 
 bool LEEana::is_filter_shower(KineInfo& kine){
-  if (kine.kine_pio_energy_1 >= 0. && kine.kine_pio_energy_2 >= 0.){ return true;
+  if (kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return true;
   }else{ return false;
   }
 }

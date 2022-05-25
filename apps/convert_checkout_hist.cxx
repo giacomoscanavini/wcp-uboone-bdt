@@ -262,6 +262,7 @@ int main( int argc, char** argv )
       T_PFeval->SetBranchStatus("muonvtx_diff",1);
       T_PFeval->SetBranchStatus("truth_nuIntType",1);
       T_PFeval->SetBranchStatus("truth_muonMomentum",1);
+      T_PFeval->SetBranchStatus("truth_nuScatType",1);
 
       T_PFeval->SetBranchStatus("truth_pio_energy_1",1);
       T_PFeval->SetBranchStatus("truth_pio_energy_2",1);
@@ -284,7 +285,6 @@ int main( int argc, char** argv )
     T_PFeval->SetBranchStatus("reco_Nproton",1);
     if (!flag_data){
       T_PFeval->SetBranchStatus("truth_showerMomentum",1);
-      T_PFeval->SetBranchStatus("truth_nuScatType",1);
       // oscillation formula ...
       T_PFeval->SetBranchStatus("truth_nu_momentum",1);
       T_PFeval->SetBranchStatus("neutrino_type",1);

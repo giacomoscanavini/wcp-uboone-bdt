@@ -711,9 +711,11 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   T_PFeval->SetBranchStatus("showervtx_diff",1);
   T_PFeval->SetBranchStatus("muonvtx_diff",1);
   T_PFeval->SetBranchStatus("truth_muonMomentum",1);
+
   if (pfeval.flag_NCDelta){
     T_PFeval->SetBranchStatus("truth_NCDelta",1);
     T_PFeval->SetBranchStatus("truth_NprimPio",1);
+    T_PFeval->SetBranchStatus("truth_nuScatType",1);
   }
   if (pfeval.flag_recoprotonMomentum){
     T_PFeval->SetBranchStatus("reco_protonMomentum",1);
@@ -722,7 +724,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     T_PFeval->SetBranchStatus("reco_showerMomentum",1);
     T_PFeval->SetBranchStatus("reco_Nproton",1);
     T_PFeval->SetBranchStatus("truth_showerMomentum",1);
-    T_PFeval->SetBranchStatus("truth_nuScatType",1);
+    
     // oscillation formula ...
     T_PFeval->SetBranchStatus("truth_nu_momentum",1);
     T_PFeval->SetBranchStatus("neutrino_type",1);

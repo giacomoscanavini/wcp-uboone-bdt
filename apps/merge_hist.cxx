@@ -716,28 +716,30 @@ int main( int argc, char** argv )
         pad1->Draw();
         pad2->Draw();
         hstack[obschannel-1] = new THStack(Form("hs%d", obschannel),"");
-        legend[obschannel-1] = new TLegend(0.3, 0.65, 0.85, 0.92);
+        legend[obschannel-1] = new TLegend(0.15, 0.65, 0.85, 0.90);
         TH1F* hdata = (TH1F*)map_obsch_histos[obschannel].at(0)->Clone("hdata");
         TH1F* hbadmatch = (TH1F*)hdata->Clone("hbadmatch");
         TH1F* hnumuCCinFV = (TH1F*)hdata->Clone("hnumuCCinFV");
         TH1F* hnueCCinFV = (TH1F*)hdata->Clone("hnueCCinFV");
         TH1F* hNCinFV = (TH1F*)hdata->Clone("hNCinFV");
         TH1F* hCCpi0inFV = (TH1F*)hdata->Clone("hCCpi0inFV");
-        TH1F* hNCpi0inFV = (TH1F*)hdata->Clone("hNCpi0inFV");
+        //TH1F* hNCpi0inFV = (TH1F*)hdata->Clone("hNCpi0inFV");
+        TH1F* hNCpi0inFVcoh = (TH1F*)hdata->Clone("hNCpi0inFVcoh");
+        TH1F* hNCpi0inFVnoncoh = (TH1F*)hdata->Clone("hNCpi0inFVnoncoh");
         TH1F* houtFV = (TH1F*)hdata->Clone("houtFV");
         TH1F* hext = (TH1F*)hdata->Clone("hext");
         TH1F* hdirt = (TH1F*)hdata->Clone("hdirt");
-        TH1F* hLEE = (TH1F*)hdata->Clone("hLEE");
+        
         hbadmatch->Reset();
         hnumuCCinFV->Reset();
         hnueCCinFV->Reset();
         hNCinFV->Reset();
         hCCpi0inFV->Reset();
-        hNCpi0inFV->Reset();
+        hNCpi0inFVcoh->Reset();
+        hNCpi0inFVnoncoh->Reset();
         houtFV->Reset();
         hext->Reset();
         hdirt->Reset();
-        hLEE->Reset();
         bool flag_leeexist = false;
         for(size_t i=0; i<it->second.size(); i++){
             TH1F* htemp = map_obsch_subhistos[obschannel].at(i);
@@ -769,9 +771,19 @@ int main( int argc, char** argv )
                     hCCpi0inFV->Add(htemp);
                     break;
                 }
-                if(line == "NCpi0inFV") {
-                    std::cout<<"NCpi0inFV"<<" "<<histname<<std::endl;
-                    hNCpi0inFV->Add(htemp);
+                //if(line == "NCpi0inFV") {
+                //    std::cout<<"NCpi0inFV"<<" "<<histname<<std::endl;
+                //    hNCpi0inFV->Add(htemp);
+                //    break;
+                //}
+                if(line == "NCpi0inFVcoh") {
+                    std::cout<<"NCpi0inFVcoh"<<" "<<histname<<std::endl;
+                    hNCpi0inFVcoh->Add(htemp);
+                    break;
+                }
+                if(line == "NCpi0inFVnoncoh") {
+                    std::cout<<"NCpi0inFVnoncoh"<<" "<<histname<<std::endl;
+                    hNCpi0inFVnoncoh->Add(htemp);
                     break;
                 }
                 if(line == "outFV") {
@@ -789,12 +801,6 @@ int main( int argc, char** argv )
                     hdirt->Add(htemp);
                     break;
                 }
-                if(line == "LEE") {
-                    std::cout<<"LEE"<<" "<<histname<<std::endl;
-                    flag_leeexist = true;
-                    hLEE->Add(htemp);
-                    break;
-                }
             }
         }
         pad1->cd(); 
@@ -808,80 +814,88 @@ int main( int argc, char** argv )
 
         gr[obschannel-1] = new TGraphAsymmErrors();
         legend[obschannel-1]->SetNColumns(2);
-        legend[obschannel-1]->AddEntry((TObject*)0, Form("Data POT: %.3e", datapot), "");
-        legend[obschannel-1]->AddEntry(gr[obschannel-1], Form("BNB data, %.1f", hdata->Integral()), "lp");
+        legend[obschannel-1]->AddEntry((TObject*)0, Form("POT: %.2e", datapot), "");
+        legend[obschannel-1]->AddEntry(gr[obschannel-1], Form("BNB Data, %.1f", hdata->Integral()), "lp");
+
         hstack[obschannel-1]->Add(hbadmatch); 
         legend[obschannel-1]->AddEntry(hbadmatch, Form("Cosmic, %.1f", hbadmatch->Integral()), "F"); 
         hbadmatch->SetFillStyle(3004);
-        hbadmatch->SetFillColorAlpha(kRed+2, 0.5);
-        hbadmatch->SetLineColor(kRed+2);
+        hbadmatch->SetFillColorAlpha(kRed-4, 0.5);
+        hbadmatch->SetLineColor(kRed-4);
         hbadmatch->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hext); 
         legend[obschannel-1]->AddEntry(hext, Form("EXT, %.1f", hext->Integral()), "F"); 
-        hext->SetFillStyle(3004);
+        hext->SetFillStyle(3005);
         hext->SetFillColorAlpha(kOrange+3, 0.5);
         hext->SetLineColor(kOrange+3);
         hext->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hdirt); 
         legend[obschannel-1]->AddEntry(hdirt, Form("Dirt, %.1f", hdirt->Integral()), "F"); 
-        hdirt->SetFillStyle(3224);
-        hdirt->SetFillColorAlpha(kGray, 0.5);
-        hdirt->SetLineColor(kGray+2);
+        hdirt->SetFillStyle(3004);
+        hdirt->SetFillColorAlpha(kOrange+1, 0.5);
+        hdirt->SetLineColor(kOrange+1);
         hdirt->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(houtFV);
-        legend[obschannel-1]->AddEntry(houtFV, Form("out FV, %.1f", houtFV->Integral()), "F"); 
-        houtFV->SetFillStyle(3224);
-        houtFV->SetFillColorAlpha(kOrange+1, 0.5);
-        houtFV->SetLineColor(kOrange+1);
+        legend[obschannel-1]->AddEntry(houtFV, Form("Out FV, %.1f", houtFV->Integral()), "F"); 
+        houtFV->SetFillStyle(3005);
+        houtFV->SetFillColorAlpha(kGreen-2, 0.5);
+        houtFV->SetLineColor(kGreen-2);
         houtFV->SetLineWidth(1);
 
-        hstack[obschannel-1]->Add(hNCpi0inFV); 
-        legend[obschannel-1]->AddEntry(hNCpi0inFV, Form("NC #pi^{0} in FV,  %.1f", hNCpi0inFV->Integral()), "F"); 
-        hNCpi0inFV->SetFillStyle(1001);
-        hNCpi0inFV->SetFillColorAlpha(38, 0.5);
-        hNCpi0inFV->SetLineColor(38);
-        hNCpi0inFV->SetLineWidth(1);
+        hstack[obschannel-1]->Add(hNCpi0inFVcoh); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVcoh, Form("NC#pi^{0} COH,  %.1f", hNCpi0inFVcoh->Integral()), "F"); 
+        hNCpi0inFVcoh->SetFillStyle(1001);
+        hNCpi0inFVcoh->SetFillColorAlpha(kRed, 0.5);
+        hNCpi0inFVcoh->SetLineColor(kRed);
+        hNCpi0inFVcoh->SetLineWidth(1);
+
+        hstack[obschannel-1]->Add(hNCpi0inFVnoncoh); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVnoncoh, Form("NC#pi^{0} non-COH,  %.1f", hNCpi0inFVnoncoh->Integral()), "F"); 
+        hNCpi0inFVnoncoh->SetFillStyle(1001);
+        hNCpi0inFVnoncoh->SetFillColorAlpha(kMagenta-9, 0.5);
+        hNCpi0inFVnoncoh->SetLineColor(kMagenta-9);
+        hNCpi0inFVnoncoh->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hCCpi0inFV); 
-        legend[obschannel-1]->AddEntry(hCCpi0inFV, Form("CC #pi^{0} in FV, %.1f", hCCpi0inFV->Integral()), "F"); 
+        legend[obschannel-1]->AddEntry(hCCpi0inFV, Form("CC#pi^{0}, %.1f", hCCpi0inFV->Integral()), "F"); 
         hCCpi0inFV->SetFillStyle(1001);
-        hCCpi0inFV->SetFillColorAlpha(30, 0.5);
-        hCCpi0inFV->SetLineColor(30);
+        hCCpi0inFV->SetFillColorAlpha(kAzure+6, 0.5);
+        hCCpi0inFV->SetLineColor(kAzure+6);
         hCCpi0inFV->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hNCinFV); 
-        legend[obschannel-1]->AddEntry(hNCinFV, Form("NC in FV, %.1f", hNCinFV->Integral()), "F"); 
+        legend[obschannel-1]->AddEntry(hNCinFV, Form("NC Other, %.1f", hNCinFV->Integral()), "F"); 
         hNCinFV->SetFillStyle(1001);
-        hNCinFV->SetFillColorAlpha(kOrange+1, 0.5);
-        hNCinFV->SetLineColor(kOrange+1);
+        hNCinFV->SetFillColorAlpha(kGray+1, 0.5);
+        hNCinFV->SetLineColor(kGray+1);
         hNCinFV->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hnumuCCinFV); 
-        legend[obschannel-1]->AddEntry(hnumuCCinFV, Form("#nu_{#mu} CC in FV, %.1f", hnumuCCinFV->Integral()), "F"); 
+        legend[obschannel-1]->AddEntry(hnumuCCinFV, Form("CC Other, %.1f", hnumuCCinFV->Integral()), "F"); 
         hnumuCCinFV->SetFillStyle(1001);
-        hnumuCCinFV->SetFillColorAlpha(kAzure+6, 0.5);
-        hnumuCCinFV->SetLineColor(kAzure+6);
+        hnumuCCinFV->SetFillColorAlpha(kGray, 0.5);
+        hnumuCCinFV->SetLineColor(kGray);
         hnumuCCinFV->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hnueCCinFV); 
-        legend[obschannel-1]->AddEntry(hnueCCinFV, Form("#nu_{e} CC in FV, %.1f", hnueCCinFV->Integral()), "F"); 
+        legend[obschannel-1]->AddEntry(hnueCCinFV, Form("#nu_{e}/#bar{#nu}_{e} CC, %.1f", hnueCCinFV->Integral()), "F"); 
         hnueCCinFV->SetFillStyle(1001);
-        hnueCCinFV->SetFillColorAlpha(kGreen+1, 0.5);
-        hnueCCinFV->SetLineColor(kGreen+1);
+        hnueCCinFV->SetFillColorAlpha(kSpring-3, 0.5);
+        hnueCCinFV->SetLineColor(kSpring-3);
         hnueCCinFV->SetLineWidth(1);
-       
+        /*
         if(flag_leeexist){
-        hstack[obschannel-1]->Add(hLEE); 
-        legend[obschannel-1]->AddEntry(hLEE, Form("LEE, %.1f", hLEE->Integral()), "F");
-        hLEE->SetFillStyle(1001);
-        hLEE->SetFillColorAlpha(kMagenta, 0.5);
-        hLEE->SetLineColor(kMagenta);
-        hLEE->SetLineWidth(1);
+          hstack[obschannel-1]->Add(hLEE); 
+          legend[obschannel-1]->AddEntry(hLEE, Form("LEE, %.1f", hLEE->Integral()), "F");
+          hLEE->SetFillStyle(1001);
+          hLEE->SetFillColorAlpha(kMagenta, 0.5);
+          hLEE->SetLineColor(kMagenta);
+          hLEE->SetLineWidth(1);
         }
-
+        */
         TH1F* hmc = (TH1F*)map_obsch_histos[obschannel].at(1)->Clone("hmc");
         hmc->Draw("hist");
         hmc->GetYaxis()->SetTitle("Event counts");
@@ -937,7 +951,9 @@ int main( int argc, char** argv )
         gr[obschannel-1]->SetLineColor(kBlack);
 
         //legend[obschannel-1]->SetFillStyle(0);
-        legend[obschannel-1]->SetHeader(Form("#SigmaDATA/#Sigma(MC+EXT)=%.2f", hdata->Integral()/hmc->Integral()), "C");
+        //legend[obschannel-1]->SetHeader(Form("#SigmaDATA/#Sigma(MC+EXT)=%.2f", hdata->Integral()/hmc->Integral()), "C");
+        legend[obschannel-1]->SetHeader(Form("#SigmaData/#SigmaPrediction=%.2f", hdata->Integral()/hmc->Integral()), "C");
+        legend[obschannel-1]->SetMargin(0.3);
         legend[obschannel-1]->Draw();
         pad2->cd();
         gratio_mc[obschannel-1]->Draw("a2");
@@ -946,6 +962,15 @@ int main( int argc, char** argv )
         gratio_mc[obschannel-1]->GetXaxis()->SetRangeUser(hmc->GetXaxis()->GetXmin(),hmc->GetXaxis()->GetXmax());
         gratio_mc[obschannel-1]->GetYaxis()->SetTitle("Data/Pred");
         gratio_mc[obschannel-1]->GetYaxis()->SetTitleOffset(0.5);
+        
+
+
+
+
+
+
+
+
         if(obschannel>=5) //hard coded at this moment
         {
             gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco #pi^{0} mass [MeV]");
@@ -970,11 +995,11 @@ int main( int argc, char** argv )
         line->Draw();
         line->SetLineWidth(2);
         line->SetLineStyle(kDashed);
-        legend2[obschannel-1] = new TLegend(0.2, 0.7, 0.8, 0.95);
+        legend2[obschannel-1] = new TLegend(0.15, 0.75, 0.7, 0.95);
         legend2[obschannel-1]->SetNColumns(2);
         legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat. uncertainty (Bayesian)", "F");
         legend2[obschannel-1]->AddEntry(gratio_data[obschannel-1],"Data stat. uncertainty (Bayesian)", "lp");
-        legend2[obschannel-1]->SetTextSize(0.06);
+        legend2[obschannel-1]->SetTextSize(0.07);
         legend2[obschannel-1]->SetFillStyle(0);
         legend2[obschannel-1]->Draw();
 

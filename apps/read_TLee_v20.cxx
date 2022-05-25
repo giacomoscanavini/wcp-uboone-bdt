@@ -254,16 +254,32 @@ int main(int argc, char** argv)
   // chi-square with 2 distributions, set to 1 in case you want it
   if(1){
 
-    int bins_h1 = 25; // number of bins in cov_input for obsr 1
-    int bins_h2 = 20; // number of bins in cov_input for obsr 2
-    int bins_h3 = 30; // number of bins in cov_input for obsr 3
+    int bins_h1 = 32; // number of bins in cov_input for obsr 1
+    int bins_h2 = 32; // number of bins in cov_input for obsr 2
+    //int bins_h3 = 30; // number of bins in cov_input for obsr 3
+    //int bins_h4 = 14; // number of bins in cov_input for obsr 4
 
     // With overflow bins
     if(1){
       vector<int>vc_target_chs;
+      vc_target_chs.push_back(1);
+      vc_target_chs.push_back(2);
+      //vc_target_chs.push_back(3);
+      //vc_target_chs.push_back(4);
+
+      vector<int>vc_support_chs; //for constraint
+      //vc_support_chs.push_back(1);
+      //vc_support_chs.push_back(2);
+      //vc_support_chs.push_back(3);
+      //vc_support_chs.push_back(4);
+
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1234 );
+    }
+    if(0){
+      vector<int>vc_target_chs;
       //vc_target_chs.push_back(1);
       //vc_target_chs.push_back(2);
-      vc_target_chs.push_back(3);
+      vc_target_chs.push_back(4);
       //vc_target_chs.push_back(4);
 
       vector<int>vc_support_chs; //for constraint
@@ -272,16 +288,18 @@ int main(int argc, char** argv)
       //vc_support_chs.push_back(3);
       //vc_support_chs.push_back(4);
 
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1234 );
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1235 );
     }
     // Without overflow bins
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h3); i++) vc_target_chs.push_back(bins_h1+1+bins_h2+1+i);
+      for(int i=0; i<(bins_h1); i++) vc_target_chs.push_back(i);
+      for(int i=0; i<(bins_h2); i++) vc_target_chs.push_back(bins_h1+1+i);
+      //for(int i=0; i<(bins_h3); i++) vc_target_chs.push_back(bins_h1+1+bins_h2+1+i);
 
       vector<int>vc_support_chs; //for constraint, need bin index
-      for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
-      for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
+      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
+      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
 
       Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 1236 );
     }
