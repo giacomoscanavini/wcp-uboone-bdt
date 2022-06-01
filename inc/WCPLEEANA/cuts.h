@@ -145,22 +145,69 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   
   if (var_name == "truth_nuEnergy"){      return eval.truth_nuEnergy;
   }else if (var_name == "visible_energy"){      return eval.match_energy;
-
-
-  }else if (var_name == "reco_nuvtxX"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return pfeval.reco_nuvtxX;
-    } 
-    else{ return -1000.;}
-  }else if (var_name == "reco_nuvtxY"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return pfeval.reco_nuvtxY;
-    } 
-    else{ return -1000.;}
-  }else if (var_name == "reco_nuvtxZ"){
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return pfeval.reco_nuvtxZ;
-    } 
-    else{ return -1000.;}
-
   }else if (var_name == "nc_pio_score"){        return tagger.nc_pio_score;
+  }else if (var_name == "reco_nuvtxX"){ 
+    //if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.) return pfeval.reco_nuvtxX;
+    //else return -1000.;
+    return pfeval.reco_nuvtxX;
+  }else if (var_name == "reco_nuvtxY"){
+    //if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.) return pfeval.reco_nuvtxY;
+    //else return -1000.;
+    return pfeval.reco_nuvtxY;
+  }else if (var_name == "reco_nuvtxZ"){
+    //if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.) return pfeval.reco_nuvtxZ;
+    //else return -1000.;
+    return pfeval.reco_nuvtxZ;
+
+
+
+
+  }else if (var_name == "kine_pio_theta_low"){      
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_theta_1;
+      else return kine.kine_pio_theta_2;
+    }else return -1000.;
+
+  }else if (var_name == "kine_pio_phi_low"){      
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_phi_1/180.*3.1415926;
+      else return kine.kine_pio_phi_2/180.*3.1415926;
+    }else return -1000.;
+
+
+  }else if (var_name == "kine_pio_gap_low"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_dis_1;
+      else return kine.kine_pio_dis_2;
+    }else return -1000.;
+
+  }else if (var_name == "kine_pio_energy_low"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
+      else return kine.kine_pio_energy_2;
+    }else return -1000.;
+
+  }else if (var_name == "kine_pio_phi_high"){      
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_phi_1/180.*3.1415926;
+      else return kine.kine_pio_phi_2/180.*3.1415926;
+    }else return -1000.;
+  
+  }else if (var_name == "kine_pio_gap_high"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_dis_1;
+      else return kine.kine_pio_dis_2;
+    }else return -1000.;
+
+  }else if (var_name == "kine_pio_energy_high"){ 
+    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
+      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
+      else return kine.kine_pio_energy_2;
+    }else return -1000.;
+
+  
+
+  
   
   }else if (var_name == "pi0_phi"){
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
@@ -260,46 +307,8 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   }else if (var_name == "kine_pio_phi_1"){      return kine.kine_pio_phi_1/180.*3.1415926;
   }else if (var_name == "kine_pio_phi_2"){      return kine.kine_pio_phi_2/180.*3.1415926;
 
-  }else if (var_name == "kine_pio_energy_high"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
-      else return kine.kine_pio_energy_2;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_energy_low"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_energy_1;
-      else return kine.kine_pio_energy_2;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_gap_high"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_dis_1;
-      else return kine.kine_pio_dis_2;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_gap_low"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_dis_1;
-      else return kine.kine_pio_dis_2;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_costheta_high"){    
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_theta_1;
-      else return kine.kine_pio_theta_2;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_costheta_low"){    
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_theta_1;
-      else return kine.kine_pio_theta_2;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_phi_high"){      
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 >= kine.kine_pio_energy_2) return kine.kine_pio_phi_1/180.*3.1415926;
-      else return kine.kine_pio_phi_2/180.*3.1415926;
-    }else return -1000.;
-  }else if (var_name == "kine_pio_phi_low"){      
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
-      if(kine.kine_pio_energy_1 <= kine.kine_pio_energy_2) return kine.kine_pio_phi_1/180.*3.1415926;
-      else return kine.kine_pio_phi_2/180.*3.1415926;
-    }else return -1000.;
+  
+  
 
 
   
@@ -973,6 +982,19 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
        || ch_name == "generic2_PC_bnb"  || ch_name == "generic2_PC_ext"  || ch_name == "generic2_PC_dirt"  || ch_name == "generic2_PC_overlay" || ch_name == "generic2_PC_ncpi0"
        ){
     if (flag_generic && (!flag_FC)) return true;
+    else return false;
+
+  }else if (ch_name == "generic_0p_bnb" || ch_name == "generic_0p_ext" || ch_name == "generic_0p_dirt"  || ch_name == "generic_0p_overlay" || ch_name == "generic_0p_ncpi0"
+       || ch_name == "generic1_0p_bnb"  || ch_name == "generic1_0p_ext"  || ch_name == "generic1_0p_dirt"  || ch_name == "generic1_0p_overlay" || ch_name == "generic1_0p_ncpi0"
+       || ch_name == "generic2_0p_bnb"  || ch_name == "generic2_0p_ext"  || ch_name == "generic2_0p_dirt"  || ch_name == "generic2_0p_overlay" || ch_name == "generic2_0p_ncpi0"
+       ){
+    if (flag_generic && flag_0p) return true;
+    else return false;
+  }else if (ch_name == "generic_Np_bnb" || ch_name == "generic_Np_ext" || ch_name == "generic_Np_dirt"  || ch_name == "generic_Np_overlay" || ch_name == "generic_Np_ncpi0"
+       || ch_name == "generic1_Np_bnb"  || ch_name == "generic1_Np_ext"  || ch_name == "generic1_Np_dirt"  || ch_name == "generic1_Np_overlay" || ch_name == "generic1_Np_ncpi0"
+       || ch_name == "generic2_Np_bnb"  || ch_name == "generic2_Np_ext"  || ch_name == "generic2_Np_dirt"  || ch_name == "generic2_Np_overlay" || ch_name == "generic2_Np_ncpi0"
+       ){
+    if (flag_generic && (!flag_0p)) return true;
     else return false;
   
   ////////////////////////////////////////////////////////

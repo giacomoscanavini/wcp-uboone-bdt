@@ -1437,7 +1437,7 @@ int main( int argc, char** argv )
         float dataymax = hdata->GetBinContent(hdata->GetMaximumBin())*scalePOT/normalization;
         if(dataymax>mcymax) mcymax = dataymax;
         hmc->SetMaximum(2.0*mcymax);
-        hmc->GetYaxis()->SetRangeUser(-0.02*mcymax, 1.6*mcymax);
+        hmc->GetYaxis()->SetRangeUser(-0.02*mcymax, 2*mcymax);
         hmc->SetLineColor(kBlack);
         hmc->SetLineWidth(5);
 
@@ -1532,7 +1532,7 @@ int main( int argc, char** argv )
         gratio_mc[obschannel-1]->SetFillColor(kBlue-10);
         //gratio_mc[obschannel-1]->SetFillColor(kRed-10);
         //gratio_mc[obschannel-1]->GetYaxis()->SetRangeUser(0,int(1.5*maxratio)<2?int(1.5*maxratio):2);
-        gratio_mc[obschannel-1]->GetYaxis()->SetRangeUser(0,int(2*maxratio)<2?int(2*maxratio):2);
+        gratio_mc[obschannel-1]->GetYaxis()->SetRangeUser(0,int(2.2*maxratio)<2?int(2.2*maxratio):2);
         gratio_mc[obschannel-1]->GetXaxis()->SetRangeUser(hmc->GetXaxis()->GetXmin(),hmc->GetXaxis()->GetXmax());
         gratio_mc[obschannel-1]->GetYaxis()->SetNdivisions(210);
         //if(obschannel==5 || obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetRangeUser(0,1200);
@@ -1553,11 +1553,24 @@ int main( int argc, char** argv )
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Corrected Visible Energy [MeV]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta_{CM}"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} #phi [degree]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Azimuthal Angle #phi [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT Score"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#nu Vertex X [cm]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#nu Vertex Y [cm]"); }
         if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#nu Vertex Z [cm]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Visible Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Conversion Distance [cm]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Polar Angle #theta [degree]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Azimuthal Angle #phi [rad]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conversion Distance [cm]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Polar Angle #theta [degree]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Azimuthal Angle #phi [rad]"); }
+
+
+
+
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
         //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos#theta"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non-#pi^{0} Energy [MeV]"); }
