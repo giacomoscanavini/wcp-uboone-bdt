@@ -8,7 +8,7 @@ namespace config_Lee
   TString mc_directory = "/home/gs627/LEEana/mc_stat/";
 
 
-  int channels_observation = 2;// data channels (=hdata_obsch_# in spectra_file above)
+  int channels_observation = 9;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 
   int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
@@ -46,7 +46,7 @@ namespace config_Lee
 
   bool flag_GoF_output2file_default_0 = 1;
 
-  bool flag_lookelsewhere             = 0;
+  bool flag_lookelsewhere             = 1;
   
   bool flag_both_numuCC            = 0;// 1
   bool flag_CCpi0_FC_by_numuCC     = 0;// 2

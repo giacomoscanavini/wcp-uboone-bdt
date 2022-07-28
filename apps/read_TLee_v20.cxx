@@ -253,55 +253,182 @@ int main(int argc, char** argv)
 
   // chi-square with 2 distributions, set to 1 in case you want it
   if(1){
+    int Nbins = 25;
+    int bins_h1 = Nbins; // number of bins in cov_input for obsr 1
+    int bins_h2 = Nbins; // number of bins in cov_input for obsr 2
+    int bins_h3 = Nbins; // number of bins in cov_input for obsr 3
+    int bins_h4 = Nbins; // number of bins in cov_input for obsr 4
+    int bins_h5 = Nbins; // number of bins in cov_input for obsr 5
+    int bins_h6 = Nbins; // number of bins in cov_input for obsr 6
+    int bins_h7 = Nbins; // number of bins in cov_input for obsr 7
+    int bins_h8 = Nbins; // number of bins in cov_input for obsr 8
+    int bins_h9 = Nbins; // number of bins in cov_input for obsr 9
 
-    int bins_h1 = 32; // number of bins in cov_input for obsr 1
-    int bins_h2 = 32; // number of bins in cov_input for obsr 2
-    //int bins_h3 = 30; // number of bins in cov_input for obsr 3
-    //int bins_h4 = 14; // number of bins in cov_input for obsr 4
-
-    // With overflow bins
+    // With 1 right-side overflow bin
     if(1){
-      vector<int>vc_target_chs;
-      vc_target_chs.push_back(1);
+      // FC, PC next to each other
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(2);
-      //vc_target_chs.push_back(3);
-      //vc_target_chs.push_back(4);
+      vc_target_chs.push_back(3);
 
-      vector<int>vc_support_chs; //for constraint
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
       //vc_support_chs.push_back(1);
       //vc_support_chs.push_back(2);
-      //vc_support_chs.push_back(3);
-      //vc_support_chs.push_back(4);
-
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1234 );
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1123);
     }
-    if(0){
-      vector<int>vc_target_chs;
-      //vc_target_chs.push_back(1);
-      //vc_target_chs.push_back(2);
+    if(1){
+      // FC
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(2);
+      // PC
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(3);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3323);
+    }
+    if(1){
+      // 0p, Np next to each other
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(4);
-      //vc_target_chs.push_back(4);
+      vc_target_chs.push_back(5);
 
-      vector<int>vc_support_chs; //for constraint
-      vc_support_chs.push_back(1);
-      vc_support_chs.push_back(2);
-      //vc_support_chs.push_back(3);
-      //vc_support_chs.push_back(4);
-
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1235 );
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      //vc_support_chs.push_back(1);
+      //vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1145);
     }
-    // Without overflow bins
+    if(1){
+      // 0p
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(4);
+      // Np
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(5);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3345);
+    }
+    if(1){
+      // FC 0p, FC Np next to each other
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(6);
+      vc_target_chs.push_back(7);
+
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      //vc_support_chs.push_back(1);
+      //vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1167);
+    }
+    if(1){
+      // FC 0p
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(6);
+      // FC Np
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(7);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3367);
+    }
+    if(1){
+      // PC 0p, PC Np next to each other
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(8);
+      vc_target_chs.push_back(9);
+
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      //vc_support_chs.push_back(1);
+      //vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1189);
+    }
+    if(1){
+      // PC 0p
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(8);
+      // PC Np
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(9);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3389);
+    }
+
+    int all_bins = bins_h1+1;
+    // Without any overflow bin
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h1); i++) vc_target_chs.push_back(i);
-      for(int i=0; i<(bins_h2); i++) vc_target_chs.push_back(bins_h1+1+i);
-      //for(int i=0; i<(bins_h3); i++) vc_target_chs.push_back(bins_h1+1+bins_h2+1+i);
+      for(int i=0; i<(bins_h2); i++) vc_target_chs.push_back(all_bins+i);
+      for(int i=0; i<(bins_h3); i++) vc_target_chs.push_back(all_bins+bins_h2+1+i);
 
       vector<int>vc_support_chs; //for constraint, need bin index
       //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
       //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
 
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 1236 );
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2223);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h2); i++) vc_target_chs.push_back(all_bins+i);
+      vector<int>vc_support_chs; //for constraint, need bin index
+      for(int i=0; i<(bins_h3); i++) vc_support_chs.push_back(all_bins+bins_h2+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5523);
+    }
+    all_bins += bins_h2+1;
+    all_bins += bins_h3+1;
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h4); i++) vc_target_chs.push_back(all_bins+i);
+      for(int i=0; i<(bins_h5); i++) vc_target_chs.push_back(all_bins+bins_h4+1+i);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
+      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2245);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h4); i++) vc_target_chs.push_back(all_bins+i);
+      vector<int>vc_support_chs; //for constraint, need bin index
+      for(int i=0; i<(bins_h5); i++) vc_support_chs.push_back(all_bins+bins_h4+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5545);
+    }
+    all_bins += bins_h4+1;
+    all_bins += bins_h5+1;
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h6); i++) vc_target_chs.push_back(all_bins+i);
+      for(int i=0; i<(bins_h7); i++) vc_target_chs.push_back(all_bins+bins_h6+1+i);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
+      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2267);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h6); i++) vc_target_chs.push_back(all_bins+i);
+      vector<int>vc_support_chs; //for constraint, need bin index
+      for(int i=0; i<(bins_h7); i++) vc_support_chs.push_back(all_bins+bins_h6+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5567);
+    }
+    all_bins += bins_h6+1;
+    all_bins += bins_h7+1;
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h8); i++) vc_target_chs.push_back(all_bins+i);
+      for(int i=0; i<(bins_h9); i++) vc_target_chs.push_back(all_bins+bins_h8+1+i);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
+      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2289);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      for(int i=0; i<(bins_h8); i++) vc_target_chs.push_back(all_bins+i);
+      vector<int>vc_support_chs; //for constraint, need bin index
+      for(int i=0; i<(bins_h9); i++) vc_support_chs.push_back(all_bins+bins_h8+1+i);
+
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5589);
     }
   }
 

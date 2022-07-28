@@ -2412,19 +2412,25 @@ void TLee::Set_Spectra_MatrixCov()
 
   ////////////////////////////////////// pred
   
-  map_input_spectrum_ch_str[1] = "BNB";
-  map_input_spectrum_ch_str[2] = "BNB1";
-  map_input_spectrum_ch_str[3] = "ext";
-  map_input_spectrum_ch_str[4] = "ext1";
+  map_input_spectrum_ch_str[1] = "bnb";
+  map_input_spectrum_ch_str[2] = "bnb1";
+  map_input_spectrum_ch_str[3] = "bnb2";
+  map_input_spectrum_ch_str[4] = "bnb3";
+  map_input_spectrum_ch_str[5] = "bnb4";
+  map_input_spectrum_ch_str[6] = "bnb5";
+  map_input_spectrum_ch_str[7] = "bnb6";
+  map_input_spectrum_ch_str[8] = "bnb7";
+  map_input_spectrum_ch_str[9] = "bnb8";
 
-  //map_input_spectrum_ch_str[2] = "ext";
-  //map_input_spectrum_ch_str[3] = "ext";
-  //map_input_spectrum_ch_str[4] = "ext";
-  //map_input_spectrum_ch_str[5] = "ext";
-  //map_input_spectrum_ch_str[6] = "ext1";
-  //map_input_spectrum_ch_str[7] = "ext2";
-  //map_input_spectrum_ch_str[8] = "ext3";
-  
+  map_input_spectrum_ch_str[10] = "ext";
+  map_input_spectrum_ch_str[11] = "ext1";
+  map_input_spectrum_ch_str[12] = "ext2";
+  map_input_spectrum_ch_str[13] = "ext3";
+  map_input_spectrum_ch_str[14] = "ext4";
+  map_input_spectrum_ch_str[15] = "ext5";
+  map_input_spectrum_ch_str[16] = "ext6";
+  map_input_spectrum_ch_str[17] = "ext7";
+  map_input_spectrum_ch_str[18] = "ext8";  
 
   /// flag for LEE channels corresponding to the cov_input.txt
   //map_Lee_ch[8] = 1;

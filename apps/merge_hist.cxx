@@ -716,7 +716,7 @@ int main( int argc, char** argv )
         pad1->Draw();
         pad2->Draw();
         hstack[obschannel-1] = new THStack(Form("hs%d", obschannel),"");
-        legend[obschannel-1] = new TLegend(0.15, 0.65, 0.85, 0.90);
+        legend[obschannel-1] = new TLegend(0.25, 0.6, 0.85, 0.93);        
         TH1F* hdata = (TH1F*)map_obsch_histos[obschannel].at(0)->Clone("hdata");
         TH1F* hbadmatch = (TH1F*)hdata->Clone("hbadmatch");
         TH1F* hnumuCCinFV = (TH1F*)hdata->Clone("hnumuCCinFV");
@@ -725,7 +725,12 @@ int main( int argc, char** argv )
         TH1F* hCCpi0inFV = (TH1F*)hdata->Clone("hCCpi0inFV");
         //TH1F* hNCpi0inFV = (TH1F*)hdata->Clone("hNCpi0inFV");
         TH1F* hNCpi0inFVcoh = (TH1F*)hdata->Clone("hNCpi0inFVcoh");
-        TH1F* hNCpi0inFVnoncoh = (TH1F*)hdata->Clone("hNCpi0inFVnoncoh");
+        TH1F* hNCpi0inFVqe = (TH1F*)hdata->Clone("hNCpi0inFVqe");
+        TH1F* hNCpi0inFVres = (TH1F*)hdata->Clone("hNCpi0inFVres");
+        TH1F* hNCpi0inFVdis = (TH1F*)hdata->Clone("hNCpi0inFVdis");
+        TH1F* hNCpi0inFVmec = (TH1F*)hdata->Clone("hNCpi0inFVmec");
+        TH1F* hNCpi0inFVother = (TH1F*)hdata->Clone("hNCpi0inFVother");
+        //TH1F* hNCpi0inFVnoncoh = (TH1F*)hdata->Clone("hNCpi0inFVnoncoh");
         TH1F* houtFV = (TH1F*)hdata->Clone("houtFV");
         TH1F* hext = (TH1F*)hdata->Clone("hext");
         TH1F* hdirt = (TH1F*)hdata->Clone("hdirt");
@@ -735,8 +740,14 @@ int main( int argc, char** argv )
         hnueCCinFV->Reset();
         hNCinFV->Reset();
         hCCpi0inFV->Reset();
+        //hNCpi0inFV->Reset();
         hNCpi0inFVcoh->Reset();
-        hNCpi0inFVnoncoh->Reset();
+        hNCpi0inFVqe->Reset();
+        hNCpi0inFVres->Reset();
+        hNCpi0inFVdis->Reset();
+        hNCpi0inFVmec->Reset();
+        hNCpi0inFVother->Reset();
+        //hNCpi0inFVnoncoh->Reset();
         houtFV->Reset();
         hext->Reset();
         hdirt->Reset();
@@ -781,11 +792,36 @@ int main( int argc, char** argv )
                     hNCpi0inFVcoh->Add(htemp);
                     break;
                 }
-                if(line == "NCpi0inFVnoncoh") {
-                    std::cout<<"NCpi0inFVnoncoh"<<" "<<histname<<std::endl;
-                    hNCpi0inFVnoncoh->Add(htemp);
+                if(line == "NCpi0inFVqe") {
+                    std::cout<<"NCpi0inFVqe"<<" "<<histname<<std::endl;
+                    hNCpi0inFVqe->Add(htemp);
                     break;
                 }
+                if(line == "NCpi0inFVres") {
+                    std::cout<<"NCpi0inFVres"<<" "<<histname<<std::endl;
+                    hNCpi0inFVres->Add(htemp);
+                    break;
+                }
+                if(line == "NCpi0inFVdis") {
+                    std::cout<<"NCpi0inFVdis"<<" "<<histname<<std::endl;
+                    hNCpi0inFVdis->Add(htemp);
+                    break;
+                }
+                if(line == "NCpi0inFVmec") {
+                    std::cout<<"NCpi0inFVmec"<<" "<<histname<<std::endl;
+                    hNCpi0inFVmec->Add(htemp);
+                    break;
+                }
+                if(line == "NCpi0inFVother") {
+                    std::cout<<"NCpi0inFVother"<<" "<<histname<<std::endl;
+                    hNCpi0inFVother->Add(htemp);
+                    break;
+                }
+                //if(line == "NCpi0inFVnoncoh") {
+                //    std::cout<<"NCpi0inFVnoncoh"<<" "<<histname<<std::endl;
+                //    hNCpi0inFVnoncoh->Add(htemp);
+                //    break;
+                //}
                 if(line == "outFV") {
                     std::cout<<"outFV"<<" "<<histname<<std::endl;
                     houtFV->Add(htemp);
@@ -845,6 +881,13 @@ int main( int argc, char** argv )
         houtFV->SetLineColor(kGreen-2);
         houtFV->SetLineWidth(1);
 
+        //hstack[obschannel-1]->Add(hNCpi0inFV); 
+        //legend[obschannel-1]->AddEntry(hNCpi0inFV, Form("NC#pi^{0},  %.1f", hNCpi0inFV->Integral()), "F"); 
+        //hNCpi0inFV->SetFillStyle(1001);
+        //hNCpi0inFV->SetFillColorAlpha(kRed, 0.5);
+        //hNCpi0inFV->SetLineColor(kRed);
+        //hNCpi0inFV->SetLineWidth(1);
+
         hstack[obschannel-1]->Add(hNCpi0inFVcoh); 
         legend[obschannel-1]->AddEntry(hNCpi0inFVcoh, Form("NC#pi^{0} COH,  %.1f", hNCpi0inFVcoh->Integral()), "F"); 
         hNCpi0inFVcoh->SetFillStyle(1001);
@@ -852,12 +895,47 @@ int main( int argc, char** argv )
         hNCpi0inFVcoh->SetLineColor(kRed);
         hNCpi0inFVcoh->SetLineWidth(1);
 
-        hstack[obschannel-1]->Add(hNCpi0inFVnoncoh); 
-        legend[obschannel-1]->AddEntry(hNCpi0inFVnoncoh, Form("NC#pi^{0} non-COH,  %.1f", hNCpi0inFVnoncoh->Integral()), "F"); 
-        hNCpi0inFVnoncoh->SetFillStyle(1001);
-        hNCpi0inFVnoncoh->SetFillColorAlpha(kMagenta-9, 0.5);
-        hNCpi0inFVnoncoh->SetLineColor(kMagenta-9);
-        hNCpi0inFVnoncoh->SetLineWidth(1);
+        hstack[obschannel-1]->Add(hNCpi0inFVqe); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVqe, Form("NC#pi^{0} QE,  %.1f", hNCpi0inFVqe->Integral()), "F"); 
+        hNCpi0inFVqe->SetFillStyle(1001);
+        hNCpi0inFVqe->SetFillColorAlpha(kYellow, 0.5);
+        hNCpi0inFVqe->SetLineColor(kYellow);
+        hNCpi0inFVqe->SetLineWidth(1);
+
+        hstack[obschannel-1]->Add(hNCpi0inFVres); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVres, Form("NC#pi^{0} RES,  %.1f", hNCpi0inFVres->Integral()), "F"); 
+        hNCpi0inFVres->SetFillStyle(1001);
+        hNCpi0inFVres->SetFillColorAlpha(kTeal+2, 0.5);
+        hNCpi0inFVres->SetLineColor(kTeal+2);
+        hNCpi0inFVres->SetLineWidth(1);
+
+        hstack[obschannel-1]->Add(hNCpi0inFVdis); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVdis, Form("NC#pi^{0} DIS,  %.1f", hNCpi0inFVdis->Integral()), "F"); 
+        hNCpi0inFVdis->SetFillStyle(1001);
+        hNCpi0inFVdis->SetFillColorAlpha(kMagenta-4, 0.5);
+        hNCpi0inFVdis->SetLineColor(kMagenta-4);
+        hNCpi0inFVdis->SetLineWidth(1);
+
+        hstack[obschannel-1]->Add(hNCpi0inFVmec); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVmec, Form("NC#pi^{0} MEC,  %.1f", hNCpi0inFVmec->Integral()), "F"); 
+        hNCpi0inFVmec->SetFillStyle(1001);
+        hNCpi0inFVmec->SetFillColorAlpha(kTeal-2, 0.5);
+        hNCpi0inFVmec->SetLineColor(kTeal-2);
+        hNCpi0inFVmec->SetLineWidth(1);
+
+        hstack[obschannel-1]->Add(hNCpi0inFVother); 
+        legend[obschannel-1]->AddEntry(hNCpi0inFVother, Form("NC#pi^{0} other,  %.1f", hNCpi0inFVother->Integral()), "F"); 
+        hNCpi0inFVother->SetFillStyle(1001);
+        hNCpi0inFVother->SetFillColorAlpha(kMagenta+2, 0.5);
+        hNCpi0inFVother->SetLineColor(kMagenta+2);
+        hNCpi0inFVother->SetLineWidth(1);
+
+        //hstack[obschannel-1]->Add(hNCpi0inFVnoncoh); 
+        //legend[obschannel-1]->AddEntry(hNCpi0inFVnoncoh, Form("NC#pi^{0} non-COH,  %.1f", hNCpi0inFVnoncoh->Integral()), "F"); 
+        //hNCpi0inFVnoncoh->SetFillStyle(1001);
+        //hNCpi0inFVnoncoh->SetFillColorAlpha(kMagenta-9, 0.5);
+        //hNCpi0inFVnoncoh->SetLineColor(kMagenta-9);
+        //hNCpi0inFVnoncoh->SetLineWidth(1);
 
         hstack[obschannel-1]->Add(hCCpi0inFV); 
         legend[obschannel-1]->AddEntry(hCCpi0inFV, Form("CC#pi^{0}, %.1f", hCCpi0inFV->Integral()), "F"); 
@@ -903,7 +981,7 @@ int main( int argc, char** argv )
         float dataymax = hdata->GetBinContent(hdata->GetMaximumBin());
         if(dataymax>mcymax) mcymax = dataymax;
         hmc->SetMaximum(2.0*mcymax);
-        hmc->GetYaxis()->SetRangeUser(-0.02*mcymax, 1.6*mcymax);
+        hmc->GetYaxis()->SetRangeUser(-0.02*mcymax, 2.1*mcymax);
         hmc->SetLineColor(kBlack);
         hmc->SetLineWidth(5);
         hstack[obschannel-1]->Draw("hist same");

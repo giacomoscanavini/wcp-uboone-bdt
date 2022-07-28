@@ -201,6 +201,7 @@ int main( int argc, char** argv )
     T_eval->SetBranchStatus("weight_change",1);
     // MC enable truth information ...
     T_eval->SetBranchStatus("truth_isCC",1);
+    T_eval->SetBranchStatus("truth_isFC",1);
     T_eval->SetBranchStatus("truth_nuPdg",1);
     T_eval->SetBranchStatus("truth_vtxInside",1);
     T_eval->SetBranchStatus("truth_nuEnergy",1);
@@ -209,10 +210,6 @@ int main( int argc, char** argv )
     T_eval->SetBranchStatus("truth_vtxY",1);
     T_eval->SetBranchStatus("truth_vtxZ",1);
     T_eval->SetBranchStatus("match_completeness_energy",1);
-
-
-
-
   }
 
   
@@ -263,10 +260,14 @@ int main( int argc, char** argv )
       T_PFeval->SetBranchStatus("truth_nuIntType",1);
       T_PFeval->SetBranchStatus("truth_muonMomentum",1);
       T_PFeval->SetBranchStatus("truth_nuScatType",1);
-
       T_PFeval->SetBranchStatus("truth_pio_energy_1",1);
       T_PFeval->SetBranchStatus("truth_pio_energy_2",1);
-      T_PFeval->SetBranchStatus("truth_pio_angle",1);      
+      T_PFeval->SetBranchStatus("truth_pio_angle",1); 
+      if (T_PFeval->GetBranch("truth_mother")){    
+        T_PFeval->SetBranchStatus("truth_mother",1);
+        T_PFeval->SetBranchStatus("truth_pdg",1);
+        T_PFeval->SetBranchStatus("truth_startMomentum",1); 
+      }
   }
   if (pfeval.flag_NCDelta){
     

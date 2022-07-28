@@ -1259,8 +1259,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   kine.kine_energy_info = new std::vector<int>;
   kine.kine_particle_type = new std::vector<int>;
   kine.kine_energy_included = new std::vector<int>;
-  
-  
+
   tagger.pio_2_v_dis2 = new std::vector<float>;
   tagger.pio_2_v_angle2 = new std::vector<float>;
   tagger.pio_2_v_acc_length = new std::vector<float>;
@@ -1590,6 +1589,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   T_eval->SetBranchStatus("weight_change",1);
   // MC enable truth information ...
   T_eval->SetBranchStatus("truth_isCC",1);
+  T_eval->SetBranchStatus("truth_isFC",1);
   T_eval->SetBranchStatus("truth_nuPdg",1);
   T_eval->SetBranchStatus("truth_vtxInside",1);
   T_eval->SetBranchStatus("truth_nuEnergy",1);
@@ -1643,6 +1643,12 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   T_PFeval->SetBranchStatus("showervtx_diff",1);
   T_PFeval->SetBranchStatus("muonvtx_diff",1);
   T_PFeval->SetBranchStatus("truth_muonMomentum",1);
+  if (T_PFeval->GetBranch("truth_mother")){
+    T_PFeval->SetBranchStatus("truth_pdg",1);
+    T_PFeval->SetBranchStatus("truth_mother",1);
+    T_PFeval->SetBranchStatus("truth_startMomentum",1);
+  }
+
   if (pfeval.flag_NCDelta){
     
     T_PFeval->SetBranchStatus("truth_NCDelta",1);
@@ -1656,6 +1662,8 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     T_PFeval->SetBranchStatus("reco_Nproton",1);
     T_PFeval->SetBranchStatus("truth_showerMomentum",1);
     T_PFeval->SetBranchStatus("truth_nuScatType",1);
+    
+
   }
 
 

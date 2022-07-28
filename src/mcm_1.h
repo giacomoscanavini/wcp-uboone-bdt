@@ -498,6 +498,7 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_eval_cv->SetBranchStatus("weight_change",1);
   // MC enable truth information ...
   T_eval_cv->SetBranchStatus("truth_isCC",1);
+  T_eval_cv->SetBranchStatus("truth_isFC",1);
   T_eval_cv->SetBranchStatus("truth_nuPdg",1);
   T_eval_cv->SetBranchStatus("truth_vtxInside",1);
   T_eval_cv->SetBranchStatus("truth_nuEnergy",1);
@@ -552,7 +553,12 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_PFeval_cv->SetBranchStatus("showervtx_diff",1);
   T_PFeval_cv->SetBranchStatus("muonvtx_diff",1);
   T_PFeval_cv->SetBranchStatus("truth_muonMomentum",1);
-  
+  if (T_PFeval_cv->GetBranch("truth_mother")){
+    T_PFeval_cv->SetBranchStatus("truth_mother",1);
+    T_PFeval_cv->SetBranchStatus("truth_pdg",1);
+    T_PFeval_cv->SetBranchStatus("truth_startMomentum",1);
+  }
+
   if (pfeval_cv.flag_NCDelta){
     
     T_PFeval_cv->SetBranchStatus("truth_NCDelta",1);
@@ -640,6 +646,7 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_eval_det->SetBranchStatus("weight_change",1);
   // MC enable truth information ...
   T_eval_det->SetBranchStatus("truth_isCC",1);
+  T_eval_det->SetBranchStatus("truth_isFC",1);
   T_eval_det->SetBranchStatus("truth_nuPdg",1);
   T_eval_det->SetBranchStatus("truth_vtxInside",1);
   T_eval_det->SetBranchStatus("truth_nuEnergy",1);
@@ -693,7 +700,11 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
   T_PFeval_det->SetBranchStatus("showervtx_diff",1);
   T_PFeval_det->SetBranchStatus("muonvtx_diff",1);
   T_PFeval_det->SetBranchStatus("truth_muonMomentum",1);
-  
+  if (T_PFeval_det->GetBranch("truth_mother")){
+    T_PFeval_det->SetBranchStatus("truth_mother",1);
+    T_PFeval_det->SetBranchStatus("truth_pdg",1);
+    T_PFeval_det->SetBranchStatus("truth_startMomentum",1);
+  }
 
   if (pfeval_det.flag_NCDelta){
     

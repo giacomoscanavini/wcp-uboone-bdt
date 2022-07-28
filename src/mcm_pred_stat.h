@@ -378,7 +378,7 @@ void LEEana::CovMatrix::get_pred_events_info(TString input_filename, std::map<TS
   kine.kine_energy_particle = new std::vector<float>;
   kine.kine_energy_info = new std::vector<int>;
   kine.kine_particle_type = new std::vector<int>;
-  kine.kine_energy_included = new std::vector<int>;
+  kine.kine_energy_included = new std::vector<int>;  
   
   tagger.pio_2_v_dis2 = new std::vector<float>;
   tagger.pio_2_v_angle2 = new std::vector<float>;
@@ -727,6 +727,7 @@ void LEEana::CovMatrix::get_pred_events_info(TString input_filename, std::map<TS
     T_eval->SetBranchStatus("weight_change",1);
     // MC enable truth information ...
     T_eval->SetBranchStatus("truth_isCC",1);
+    T_eval->SetBranchStatus("truth_isFC",1);
     T_eval->SetBranchStatus("truth_nuPdg",1);
     T_eval->SetBranchStatus("truth_vtxInside",1);
     T_eval->SetBranchStatus("truth_nuEnergy",1);
@@ -788,6 +789,11 @@ void LEEana::CovMatrix::get_pred_events_info(TString input_filename, std::map<TS
     if (!flag_data){
       T_PFeval->SetBranchStatus("truth_NCDelta",1);
       T_PFeval->SetBranchStatus("truth_NprimPio",1);
+      if (T_PFeval->GetBranch("truth_mother")){
+        T_PFeval->SetBranchStatus("truth_pdg",1);
+        T_PFeval->SetBranchStatus("truth_mother",1);
+        T_PFeval->SetBranchStatus("truth_startMomentum",1);
+      }
     }
   }
   if (pfeval.flag_recoprotonMomentum){
