@@ -170,8 +170,25 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
     //return pfeval.reco_nuvtxZ; // This is only needed for generic neutrino selection
 
   }else if (var_name == "visible_energy_transferred"){ 
-    if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.) return get_reco_Enu_corr(kine, flag_data);
-    else return -1000.;
+    return get_reco_Enu_corr(kine, flag_data);
+
+  }else if (var_name == "Emuon"){ 
+    return pfeval.reco_muonMomentum[3]*1000; // GeV --> MeV
+
+  }else if (var_name == "Ehadron"){
+    if (pfeval.reco_muonMomentum[3]>0)
+      return get_reco_Enu_corr(kine, flag_data) - pfeval.reco_muonMomentum[3]*1000.;
+    else
+      return -1000;
+    //  }else if (var_name == "Ehadron"){
+      /* Float_t Ehadron = kine.kine_reco_Enu; */
+      /* for(size_t i=0; i<kine.kine_energy_particle->size(); i++) */
+      /* { */
+      /*     int pdgcode = kine.kine_particle_type->at(i); */
+      /*     if(abs(pdgcode)==13) Ehadron = Ehadron - kine.kine_energy_particle->at(i) - 105.658; */ 
+      /*     //if(abs(pdgcode)==11) Ehadron = Ehadron - kine.kine_energy_particle->at(i); */ 
+      /* } */
+    // return kine.kine_reco_Enu - pfeval.reco_muonMomentum[3]*1000.;
 
   }else if (var_name == "p_multi"){ 
     if(kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){
@@ -327,25 +344,6 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
       else return kine.kine_pio_dis_2;
     }else return -1000.;
 
-  
-
-  
-  
-  
-
-  
-
-  
-
-  
-  
-  
-
-  
-
-  
-
-  
 
   }else if (var_name == "numu_cc_3_max_muon_length"){ return tagger.numu_cc_3_max_muon_length;
   }else if (var_name == "lem_shower_num_segs"){       return tagger.lem_shower_num_segs;
@@ -405,7 +403,7 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   }else if (var_name == "mip_quality_n_showers"){ return tagger.mip_quality_n_showers;
   }else if (var_name == "gap_n_bad"){             return tagger.gap_n_bad;
   }else if (var_name == "muon_KE"){               return pfeval.reco_muonMomentum[3]*1000.-105.66; // GeV --> MeV
-  }else if (var_name == "reco_Emuon"){            return pfeval.reco_muonMomentum[3]*1000; // GeV --> MeV  
+    
   }else if (var_name == "muon_momentum"){
       float KE_muon = pfeval.reco_muonMomentum[3]*1000.-105.66; // GeV --> MeV
       return (TMath::Sqrt(pow(KE_muon,2) + 2*KE_muon*105.66));
@@ -435,20 +433,7 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   }else if (var_name == "proton_phi"){
       TLorentzVector protonMomentum(pfeval.reco_protonMomentum[0], pfeval.reco_protonMomentum[1], pfeval.reco_protonMomentum[2], pfeval.reco_protonMomentum[3]);
       return protonMomentum.Phi()/TMath::Pi()*180.;
-  }else if (var_name == "Ehadron"){
-    if (pfeval.reco_muonMomentum[3]>0)
-      return get_reco_Enu_corr(kine, flag_data) - pfeval.reco_muonMomentum[3]*1000.;
-    else
-      return -1000;
-    //  }else if (var_name == "Ehadron"){
-      /* Float_t Ehadron = kine.kine_reco_Enu; */
-      /* for(size_t i=0; i<kine.kine_energy_particle->size(); i++) */
-      /* { */
-      /*     int pdgcode = kine.kine_particle_type->at(i); */
-      /*     if(abs(pdgcode)==13) Ehadron = Ehadron - kine.kine_energy_particle->at(i) - 105.658; */ 
-      /*     //if(abs(pdgcode)==11) Ehadron = Ehadron - kine.kine_energy_particle->at(i); */ 
-      /* } */
-    // return kine.kine_reco_Enu - pfeval.reco_muonMomentum[3]*1000.;
+  
   }else if (var_name == "Q2"){
     Float_t Enu = get_reco_Enu_corr(kine, flag_data);
     Float_t Emu = pfeval.reco_muonMomentum[3]*1000.;
@@ -597,87 +582,88 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
     TLorentzVector muonMomentum(pfeval.truth_muonMomentum[0], pfeval.truth_muonMomentum[1], pfeval.truth_muonMomentum[2], pfeval.truth_muonMomentum[3]);
 
     if (cut_file == 1){
-      if (cut_name == "numuCC.inside.Enu.le.300"){                if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=300) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.400"){          if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=400 ) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.500"){          if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=500 ) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.400.gt.300"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=400 && eval.truth_nuEnergy>300) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.500.gt.400"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=500 && eval.truth_nuEnergy>400) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.600.gt.500"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=600 && eval.truth_nuEnergy>500) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.700.gt.600"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=700 && eval.truth_nuEnergy>600) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.800.gt.700"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=800 && eval.truth_nuEnergy>700) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.900.gt.800"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=900 && eval.truth_nuEnergy>800) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1000.gt.900"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1000 && eval.truth_nuEnergy>900) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1100.gt.1000"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1100 && eval.truth_nuEnergy>1000) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1200.gt.1100"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1200 && eval.truth_nuEnergy>1100) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1200.gt.1000"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1200 && eval.truth_nuEnergy>1000) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1500.gt.1200"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1500 && eval.truth_nuEnergy>1200) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.2100.gt.1500"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=2100 && eval.truth_nuEnergy>1500) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1400.gt.1200"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1400 && eval.truth_nuEnergy>1200) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.1600.gt.1400"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1600 && eval.truth_nuEnergy>1400) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.2000.gt.1600"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=2000 && eval.truth_nuEnergy>1600) return number;
-      }else if (cut_name == "numuCC.inside.Enu.le.2500.gt.2000"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=2500 && eval.truth_nuEnergy>2000) return number;
-      }else if (cut_name == "numuCC.inside.Enu.gt.2500"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy>2500) return number;
-      }else if (cut_name == "numuCC.inside.Enu.gt.2100"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy>2100) return number;
-      }else if (cut_name == "numuCC.inside.Enu.gt.1500"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy>1500) return number;
+      if (cut_name == "numuCC.inside.Enu.le.540.gt.200"){           if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=540 && eval.truth_nuEnergy>200) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.705.gt.540"){     if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=705 && eval.truth_nuEnergy>540) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.805.gt.705"){     if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=805 && eval.truth_nuEnergy>705) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.920.gt.805"){     if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=920 && eval.truth_nuEnergy>805) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.1050.gt.920"){    if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1050 && eval.truth_nuEnergy>920) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.1200.gt.1050"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1200 && eval.truth_nuEnergy>1050) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.1375.gt.1200"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1375 && eval.truth_nuEnergy>1200) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.1570.gt.1375"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1570 && eval.truth_nuEnergy>1375) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.2050.gt.1570"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=2050 && eval.truth_nuEnergy>1570) return number;
+      }else if (cut_name == "numuCC.inside.Enu.le.4000.gt.2050"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>2050) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
     else if (cut_file == 2) {
-      if (cut_name == "numuCC.inside.Emuon.le.100"){                if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=100 && Emuon>0) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.200.gt.100"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=200 && Emuon>100) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.300.gt.200"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=300 && Emuon>200) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.400.gt.300"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=400 && Emuon>300) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.500.gt.400"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=500 && Emuon>400) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.600.gt.500"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=600 && Emuon>500) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.700.gt.600"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=700 && Emuon>600) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.800.gt.700"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=800 && Emuon>700) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.900.gt.800"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=900 && Emuon>800) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.1000.gt.900"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=1000 && Emuon>900) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.le.1200.gt.1000"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=1200 && Emuon>1000) return number;
-      }else if (cut_name == "numuCC.inside.Emuon.gt.1200"){          if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon>1200) return number;
+      if (cut_name == "numuCC.inside.Emuon.le.226.gt.106"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=226 && Emuon>106) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.296.gt.226"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=296 && Emuon>226) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.386.gt.296"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=386 && Emuon>296) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.505.gt.386"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=505 && Emuon>386) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.577.gt.505"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=577 && Emuon>505) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.659.gt.577"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=659 && Emuon>577) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.753.gt.659"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=753 && Emuon>659) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.861.gt.753"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=861 && Emuon>753) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.984.gt.861"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=984 && Emuon>861) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.1285.gt.984"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=1285 && Emuon>984) return number;
+      }else if (cut_name == "numuCC.inside.Emuon.le.2506.gt.1285"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon<=2506 && Emuon>1285) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
     else if (cut_file == 3) {
-      if (cut_name == "numuCC.inside.Ehadron.le.100"){                if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=100) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.200.gt.100"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=200 && Ehadron>100) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.300.gt.200"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=300 && Ehadron>200) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.400.gt.300"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=400 && Ehadron>300) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.500.gt.400"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=500 && Ehadron>400) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.600.gt.500"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=600 && Ehadron>500) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.700.gt.600"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=700 && Ehadron>600) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.800.gt.700"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=800 && Ehadron>700) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.900.gt.800"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=900 && Ehadron>800) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.le.1000.gt.900"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=1000 && Ehadron>900) return number;
-      }else if (cut_name == "numuCC.inside.Ehadron.gt.1000"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron>1000) return number;
+      if (cut_name == "numuCC.inside.Ehadron.le.150.gt.030"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=150 && Ehadron>30) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.275.gt.150"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=275 && Ehadron>150) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.411.gt.275"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=411 && Ehadron>275) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.502.gt.411"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=502 && Ehadron>411) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.614.gt.502"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=614 && Ehadron>502) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.750.gt.614"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=750 && Ehadron>614) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.1120.gt.750"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=1120 && Ehadron>750) return number;
+      }else if (cut_name == "numuCC.inside.Ehadron.le.2500.gt.1120"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron<=2500 && Ehadron>1120) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }       
     }
     else if (cut_file == 4){
-      if (cut_name == "NCpi0.inside.Enu.le.540.gt.200"){          if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=540 && eval.truth_nuEnergy>200) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.705.gt.540"){    if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=705 && eval.truth_nuEnergy>540) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.805.gt.705"){    if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=805 && eval.truth_nuEnergy>705) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.920.gt.805"){    if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=920 && eval.truth_nuEnergy>805) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.1050.gt.920"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1050 && eval.truth_nuEnergy>920) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.1200.gt.1050"){  if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1200 && eval.truth_nuEnergy>1050) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.1375.gt.1200"){  if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1375 && eval.truth_nuEnergy>1200) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.1570.gt.1375"){  if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1570 && eval.truth_nuEnergy>1375) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.2050.gt.1570"){  if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=2050 && eval.truth_nuEnergy>1570) return number;
-      }else if (cut_name == "NCpi0.inside.Enu.le.4000.gt.2050"){  if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy>2050 && eval.truth_nuEnergy<=4000) return number;
+      if (cut_name == "CCpi0.inside.Enu.le.540.gt.200"){           if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=540 && eval.truth_nuEnergy>200) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.705.gt.540"){     if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=705 && eval.truth_nuEnergy>540) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.805.gt.705"){     if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=805 && eval.truth_nuEnergy>705) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.920.gt.805"){     if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=920 && eval.truth_nuEnergy>805) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.1050.gt.920"){    if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1050 && eval.truth_nuEnergy>920) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.1200.gt.1050"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1200 && eval.truth_nuEnergy>1050) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.1375.gt.1200"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1375 && eval.truth_nuEnergy>1200) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.1570.gt.1375"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=1570 && eval.truth_nuEnergy>1375) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.2050.gt.1570"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=2050 && eval.truth_nuEnergy>1570) return number;
+      }else if (cut_name == "CCpi0.inside.Enu.le.4000.gt.2050"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>2050) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
     else if (cut_file == 5) {
-      if (cut_name == "numuCC.inside.Enu.le.4000.gt.200"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200) return number;
+      if (cut_name == "CCpi0.inside.Emuon.le.226.gt.106"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=226 && Emuon>106) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.296.gt.226"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=296 && Emuon>226) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.386.gt.296"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=386 && Emuon>296) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.505.gt.386"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=505 && Emuon>386) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.577.gt.505"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=577 && Emuon>505) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.659.gt.577"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=659 && Emuon>577) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.753.gt.659"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=753 && Emuon>659) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.861.gt.753"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=861 && Emuon>753) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.984.gt.861"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=984 && Emuon>861) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.1285.gt.984"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=1285 && Emuon>984) return number;
+      }else if (cut_name == "CCpi0.inside.Emuon.le.2506.gt.1285"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon<=2506 && Emuon>1285) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
-    else if (cut_file == 6){
-      if (cut_name == "nueCC.inside.Enu.le.1200.gt.200"){         if (eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=1200 && eval.truth_nuEnergy>200) return number;
-      }else if (cut_name == "nueCC.inside.Enu.le.4000.gt.1200"){  if (eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>1200) return number;
+    else if (cut_file == 6) {
+      if (cut_name == "CCpi0.inside.Ehadron.le.150.gt.030"){         if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=150 && Ehadron>30) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.275.gt.150"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=275 && Ehadron>150) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.411.gt.275"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=411 && Ehadron>275) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.502.gt.411"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=502 && Ehadron>411) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.614.gt.502"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=614 && Ehadron>502) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.750.gt.614"){   if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=750 && Ehadron>614) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.1120.gt.750"){  if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=1120 && Ehadron>750) return number;
+      }else if (cut_name == "CCpi0.inside.Ehadron.le.2500.gt.1120"){ if (eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron<=2500 && Ehadron>1120) return number;
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
-      }
+      }       
     }
+
     //very coarse angle binning
     else if (cut_file == 7){
       if (number==-1) { std::cout << "cut_name, number = " << cut_name << ", " << number << std::endl; }
@@ -797,6 +783,47 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
+    else if (cut_file == 15) {
+      if        (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0620.gt.1000"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.620 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0340.gt.0620"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.340 && truth_pi0_costheta>-0.620) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0130.gt.0340"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.130 && truth_pi0_costheta>-0.340) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0060.gt.0130"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.060 && truth_pi0_costheta>-0.130) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0200.gt.0060"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.200 && truth_pi0_costheta>0.060) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0320.gt.0200"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.320 && truth_pi0_costheta>0.200) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0420.gt.0320"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.420 && truth_pi0_costheta>0.320) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0520.gt.0420"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.520 && truth_pi0_costheta>0.420) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0600.gt.0520"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.600 && truth_pi0_costheta>0.520) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0670.gt.0600"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.670 && truth_pi0_costheta>0.600) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0730.gt.0670"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.730 && truth_pi0_costheta>0.670) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0780.gt.0730"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.780 && truth_pi0_costheta>0.730) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0830.gt.0780"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.830 && truth_pi0_costheta>0.780) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0870.gt.0830"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.870 && truth_pi0_costheta>0.830) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0910.gt.0870"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.910 && truth_pi0_costheta>0.870) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0950.gt.0910"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.950 && truth_pi0_costheta>0.910) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0975.gt.0950"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.975 && truth_pi0_costheta>0.950) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.1000.gt.0975"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.975) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0620.gt.1000"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.620 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0340.gt.0620"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.340 && truth_pi0_costheta>-0.620) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0130.gt.0340"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.130 && truth_pi0_costheta>-0.340) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0060.gt.0130"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.060 && truth_pi0_costheta>-0.130) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0200.gt.0060"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.200 && truth_pi0_costheta>0.060) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0320.gt.0200"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.320 && truth_pi0_costheta>0.200) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0420.gt.0320"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.420 && truth_pi0_costheta>0.320) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0520.gt.0420"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.520 && truth_pi0_costheta>0.420) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0600.gt.0520"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.600 && truth_pi0_costheta>0.520) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0670.gt.0600"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.670 && truth_pi0_costheta>0.600) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0730.gt.0670"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.730 && truth_pi0_costheta>0.670) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0780.gt.0730"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.780 && truth_pi0_costheta>0.730) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0830.gt.0780"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.830 && truth_pi0_costheta>0.780) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0870.gt.0830"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.870 && truth_pi0_costheta>0.830) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0910.gt.0870"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.910 && truth_pi0_costheta>0.870) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0950.gt.0910"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.950 && truth_pi0_costheta>0.910) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0975.gt.0950"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.975 && truth_pi0_costheta>0.950) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.1000.gt.0975"){   if (eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.975) return number;
+      
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
   }
   return -1;
 }
@@ -880,7 +907,6 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==-14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==0) map_cuts_flag["AnumuCCinFV"] = true;
   //else map_cuts_flag["AnumuCCinFV"] = false;
 
-
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && abs(eval.truth_nuPdg)==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["nueCCinFV"] = true;
   else map_cuts_flag["nueCCinFV"] = false;
 
@@ -950,44 +976,35 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   //if(pfeval.truth_nuScatType!=10 && pfeval.truth_nuScatType!=1 && pfeval.truth_nuScatType!=3 && pfeval.truth_nuScatType!=4 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["OTHER"] = true;
   //else map_cuts_flag["OTHER"] = false;
 
-    // Xs related cuts ...
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 ) map_cuts_flag["XsnumuCCinFV"] = true;
-  //else map_cuts_flag["XsnumuCCinFV"] = false;
+  // XSEC cuts - numuCC
+  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 ) map_cuts_flag["Xs_numuCCinFV"] = true;
+  //else map_cuts_flag["Xs_numuCCinFV"] = false;
   
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy > 200) map_cuts_flag["Xs_Enu_numuCCinFV"] = true;
-  //else map_cuts_flag["Xs_Enu_numuCCinFV"] = false;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy>200 && eval.truth_nuEnergy<=4000) map_cuts_flag["Xs_Enu_numuCCinFV"] = true;
+  else map_cuts_flag["Xs_Enu_numuCCinFV"] = false;
 
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon > 105.7 && Emuon<=2506) map_cuts_flag["Xs_Emu_numuCCinFV"] = true;
-  //else map_cuts_flag["Xs_Emu_numuCCinFV"] = false;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Emuon>105.7 && Emuon<=2506) map_cuts_flag["Xs_Emu_numuCCinFV"] = true;
+  else map_cuts_flag["Xs_Emu_numuCCinFV"] = false;
 
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron > 30 && Ehadron <=2500) map_cuts_flag["Xs_Ehad_numuCCinFV"] = true;
-  //else map_cuts_flag["Xs_Ehad_numuCCinFV"] = false;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && Ehadron>30 && Ehadron <=2500) map_cuts_flag["Xs_Ehadron_numuCCinFV"] = true;
+  else map_cuts_flag["Xs_Ehadron_numuCCinFV"] = false;
 
-  // xs breakdown mode
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200) map_cuts_flag["XsecNumuCCinFV"] = true;
-  //else map_cuts_flag["XsecNumuCCinFV"] = false;
+  // XSEC cuts - CCpi0
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0) map_cuts_flag["Xs_CCpi0inFV"] = true;
+  else map_cuts_flag["Xs_CCpi0inFV"] = false;
+  
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy>200 && eval.truth_nuEnergy<=4000) map_cuts_flag["Xs_Enu_CCpi0inFV"] = true;
+  else map_cuts_flag["Xs_Enu_CCpi0inFV"] = false;
 
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0) map_cuts_flag["XsecNC"] = true;
-  //else map_cuts_flag["XsecNC"] = false;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Emuon>105.7 && Emuon<=2506) map_cuts_flag["Xs_Emu_CCpi0inFV"] = true;
+  else map_cuts_flag["Xs_Emu_CCpi0inFV"] = false;
 
-  //if(eval.match_completeness_energy<=0.1*eval.truth_energyInside) map_cuts_flag["XsecCosmic"] = true;
-  //else map_cuts_flag["XsecCosmic"] = false;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && Ehadron>30 && Ehadron<=2500) map_cuts_flag["Xs_Ehadron_CCpi0inFV"] = true;
+  else map_cuts_flag["Xs_Ehadron_CCpi0inFV"] = false;
 
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==1 && !(eval.truth_nuPdg==14 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>200)) map_cuts_flag["XsecBkgCC"] = true;
-  //else map_cuts_flag["XsecBkgCC"] = false;
-
-  // finish Xs related cuts ...
-  //if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_nuPdg==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy > 200) map_cuts_flag["Xs_Enu_nueCCinFV"] = true;
-  //else map_cuts_flag["Xs_Enu_nueCCinFV"] = false;
-
-
-  //NCpi0BDT X-section
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275) map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"] = true;
+  // XSEC cuts - NCpi0BDT
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy>275 && eval.truth_nuEnergy<=4000) map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"] = false;   
-
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_50<=1) map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV_gLEE_def"] = true;
-  else map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV_gLEE_def"] = false;
 
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && 
     truth_pi0_momentum<=1500 && truth_pi0_momentum>0) map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"] = true;
@@ -996,6 +1013,10 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio>0 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && 
     truth_pi0_costheta<=1 && truth_pi0_costheta>-1) map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"] = false; 
+
+  // XSEC cuts - NCpi0 gLEE-like
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_50<=1) map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV_gLEE_def"] = true;
+  else map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV_gLEE_def"] = false;
 
 
   // figure out additional cuts and flag_data ...
@@ -1070,10 +1091,9 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   }else if (ch_name == "BG_nueCC_PC_overlay"){
     if (flag_nueCC && (!flag_FC) && !(eval.truth_isCC==1 && abs(eval.truth_nuPdg)==12 && flag_truth_inside)) return true;
     else return false;
-  
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // GENERIC NEUTRINO SELECTION
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ////////////////////////// Reco selection - Generic Neutrino Selection (eLEE analysis)
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   }else if (ch_name == "generic_bnb" || ch_name == "generic_ext" || ch_name == "generic_dirt"  || ch_name == "generic_overlay" || ch_name == "generic_ncpi0"
        || ch_name == "generic1_bnb"  || ch_name == "generic1_ext"  || ch_name == "generic1_dirt"  || ch_name == "generic1_overlay" || ch_name == "generic1_ncpi0"
        ){
@@ -1119,39 +1139,252 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
        ){
     if (flag_generic && (!flag_FC) && (!flag_0p)) return true;
     else return false;
-  
 
-  }else if (ch_name == "CCpi0_bnb" || ch_name == "CCpi0_ext" || ch_name == "CCpi0_dirt"  || ch_name == "CCpi0_overlay" || ch_name == "CCpi0_ncpi0"){
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ////////////////////////// Reco selection - numuCC (as for eLEE analysis)
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  }else if (ch_name == "numuCC_bnb" || ch_name == "numuCC_ext" || ch_name == "numuCC_dirt"  || ch_name == "numuCC_overlay" || ch_name == "numuCC_ncpi0" || ch_name == "BG_numuCC_ext" || ch_name == "BG_numuCC_dirt"){
+    if (flag_numuCC) return true;
+    else return false;
+  }else if (ch_name == "numuCC_FC_bnb" || ch_name == "numuCC_FC_ext" || ch_name == "numuCC_FC_dirt"  || ch_name == "numuCC_FC_overlay" || ch_name == "numuCC_FC_ncpi0" || ch_name == "BG_numuCC_FC_ext" || ch_name == "BG_numuCC_FC_dirt"){
+    if (flag_numuCC && flag_FC) return true;
+    else return false;
+  }else if (ch_name == "numuCC_PC_bnb" || ch_name == "numuCC_PC_ext" || ch_name == "numuCC_PC_dirt"  || ch_name == "numuCC_PC_overlay" || ch_name == "numuCC_PC_ncpi0" || ch_name == "BG_numuCC_PC_ext" || ch_name == "BG_numuCC_PC_dirt"){
+    if (flag_numuCC && (!flag_FC)) return true;
+    else return false;
+  }else if (ch_name == "numuCC_0p_bnb" || ch_name == "numuCC_0p_ext" || ch_name == "numuCC_0p_dirt"  || ch_name == "numuCC_0p_overlay" || ch_name == "numuCC_0p_ncpi0" || ch_name == "BG_numuCC_0p_ext" || ch_name == "BG_numuCC_0p_dirt"){
+    if (flag_numuCC && flag_0p) return true;
+    else return false;
+  }else if (ch_name == "numuCC_Np_bnb" || ch_name == "numuCC_Np_ext" || ch_name == "numuCC_Np_dirt"  || ch_name == "numuCC_Np_overlay" || ch_name == "numuCC_Np_ncpi0" || ch_name == "BG_numuCC_Np_ext" || ch_name == "BG_numuCC_Np_dirt"){
+    if (flag_numuCC && (!flag_0p)) return true;
+    else return false;
+  }else if (ch_name == "numuCC_FC_0p_bnb" || ch_name == "numuCC_FC_0p_ext" || ch_name == "numuCC_FC_0p_dirt"  || ch_name == "numuCC_FC_0p_overlay" || ch_name == "numuCC_FC_0p_ncpi0" || ch_name == "BG_numuCC_FC_0p_ext" || ch_name == "BG_numuCC_FC_0p_dirt"
+         || ch_name == "numuCC1_FC_0p_bnb" || ch_name == "numuCC1_FC_0p_ext" || ch_name == "numuCC1_FC_0p_dirt"  || ch_name == "numuCC1_FC_0p_overlay" || ch_name == "numuCC1_FC_0p_ncpi0" || ch_name == "BG_numuCC1_FC_0p_ext" || ch_name == "BG_numuCC1_FC_0p_dirt"
+         || ch_name == "numuCC2_FC_0p_bnb" || ch_name == "numuCC2_FC_0p_ext" || ch_name == "numuCC2_FC_0p_dirt"  || ch_name == "numuCC2_FC_0p_overlay" || ch_name == "numuCC2_FC_0p_ncpi0" || ch_name == "BG_numuCC2_FC_0p_ext" || ch_name == "BG_numuCC2_FC_0p_dirt"
+    ){
+    if (flag_numuCC && flag_FC && flag_0p) return true;
+    else return false;
+  }else if (ch_name == "numuCC_FC_Np_bnb" || ch_name == "numuCC_FC_Np_ext" || ch_name == "numuCC_FC_Np_dirt"  || ch_name == "numuCC_FC_Np_overlay" || ch_name == "numuCC_FC_Np_ncpi0" || ch_name == "BG_numuCC_FC_Np_ext" || ch_name == "BG_numuCC_FC_Np_dirt"
+         || ch_name == "numuCC1_FC_Np_bnb" || ch_name == "numuCC1_FC_Np_ext" || ch_name == "numuCC1_FC_Np_dirt"  || ch_name == "numuCC1_FC_Np_overlay" || ch_name == "numuCC1_FC_Np_ncpi0" || ch_name == "BG_numuCC1_FC_Np_ext" || ch_name == "BG_numuCC1_FC_Np_dirt"
+         || ch_name == "numuCC2_FC_Np_bnb" || ch_name == "numuCC2_FC_Np_ext" || ch_name == "numuCC2_FC_Np_dirt"  || ch_name == "numuCC2_FC_Np_overlay" || ch_name == "numuCC2_FC_Np_ncpi0" || ch_name == "BG_numuCC2_FC_Np_ext" || ch_name == "BG_numuCC2_FC_Np_dirt"
+    ){
+    if (flag_numuCC && flag_FC && (!flag_0p)) return true;
+    else return false;
+  }else if (ch_name == "numuCC_PC_0p_bnb" || ch_name == "numuCC_PC_0p_ext" || ch_name == "numuCC_PC_0p_dirt"  || ch_name == "numuCC_PC_0p_overlay" || ch_name == "numuCC_PC_0p_ncpi0" || ch_name == "BG_numuCC_PC_0p_ext" || ch_name == "BG_numuCC_PC_0p_dirt"
+         || ch_name == "numuCC1_PC_0p_bnb" || ch_name == "numuCC1_PC_0p_ext" || ch_name == "numuCC1_PC_0p_dirt"  || ch_name == "numuCC1_PC_0p_overlay" || ch_name == "numuCC1_PC_0p_ncpi0" || ch_name == "BG_numuCC1_PC_0p_ext" || ch_name == "BG_numuCC1_PC_0p_dirt"
+         || ch_name == "numuCC2_PC_0p_bnb" || ch_name == "numuCC2_PC_0p_ext" || ch_name == "numuCC2_PC_0p_dirt"  || ch_name == "numuCC2_PC_0p_overlay" || ch_name == "numuCC2_PC_0p_ncpi0" || ch_name == "BG_numuCC2_PC_0p_ext" || ch_name == "BG_numuCC2_PC_0p_dirt"
+    ){
+    if (flag_numuCC && (!flag_FC) && flag_0p) return true;
+    else return false;
+  }else if (ch_name == "numuCC_PC_Np_bnb" || ch_name == "numuCC_PC_Np_ext" || ch_name == "numuCC_PC_Np_dirt"  || ch_name == "numuCC_PC_Np_overlay" || ch_name == "numuCC_PC_Np_ncpi0" || ch_name == "BG_numuCC_PC_Np_ext" || ch_name == "BG_numuCC_PC_Np_dirt"
+         || ch_name == "numuCC1_PC_Np_bnb" || ch_name == "numuCC1_PC_Np_ext" || ch_name == "numuCC1_PC_Np_dirt"  || ch_name == "numuCC1_PC_Np_overlay" || ch_name == "numuCC1_PC_Np_ncpi0" || ch_name == "BG_numuCC1_PC_Np_ext" || ch_name == "BG_numuCC1_PC_Np_dirt"
+         || ch_name == "numuCC2_PC_Np_bnb" || ch_name == "numuCC2_PC_Np_ext" || ch_name == "numuCC2_PC_Np_dirt"  || ch_name == "numuCC2_PC_Np_overlay" || ch_name == "numuCC2_PC_Np_ncpi0" || ch_name == "BG_numuCC2_PC_Np_ext" || ch_name == "BG_numuCC2_PC_Np_dirt"
+    ){
+    if (flag_numuCC && (!flag_FC) && (!flag_0p)) return true;
+    else return false;
+  ////////////////////////////////////////////////////////
+  // numuCC XSEC - WC definition Enu 200-4000 MeV
+  ////////////////////////////////////////////////////////
+  }else if (ch_name == "numuCC_signal_Enu_FC_0p_overlay" || ch_name == "numuCC_signal_Enu_FC_Np_overlay" || ch_name == "numuCC_background_Enu_FC_0p_overlay" || ch_name == "numuCC_background_Enu_FC_Np_overlay"
+    || ch_name == "numuCC_signal_Enu_PC_0p_overlay" || ch_name == "numuCC_signal_Enu_PC_Np_overlay" || ch_name == "numuCC_background_Enu_PC_0p_overlay" || ch_name == "numuCC_background_Enu_PC_Np_overlay"){
+    //numuCC_FC_0p_bnb
+    //BG_numuCC_FC_0p_ext
+    //BG_numuCC_FC_0p_dirt
+    //numuCC_FC_Np_bnb
+    //BG_numuCC_FC_Np_ext
+    //BG_numuCC_FC_Np_dirt
+    if (ch_name == "numuCC_signal_Enu_FC_0p_overlay"){           if (flag_numuCC && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_signal_Enu_FC_Np_overlay"){     if (flag_numuCC && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_background_Enu_FC_0p_overlay"){ if (flag_numuCC && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
+    }else if (ch_name == "numuCC_background_Enu_FC_Np_overlay"){ if (flag_numuCC && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
+    //numuCC_PC_0p_bnb
+    //BG_numuCC_PC_0p_ext
+    //BG_numuCC_PC_0p_dirt
+    //numuCC_PC_Np_bnb
+    //BG_numuCC_PC_Np_ext
+    //BG_numuCC_PC_Np_dirt
+    }else if (ch_name == "numuCC_signal_Enu_PC_0p_overlay"){     if (flag_numuCC && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_signal_Enu_PC_Np_overlay"){     if (flag_numuCC && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_background_Enu_PC_0p_overlay"){ if (flag_numuCC && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
+    }else if (ch_name == "numuCC_background_Enu_PC_Np_overlay"){ if (flag_numuCC && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
+    }return false;
+  ////////////////////////////////////////////////////////
+  // numuCC XSEC - WC definition Emu 105.7-2506 MeV
+  //////////////////////////////////////////////////////// 
+  }else if (ch_name == "numuCC_signal_Emu_FC_0p_overlay" || ch_name == "numuCC_signal_Emu_FC_Np_overlay" || ch_name == "numuCC_background_Emu_FC_0p_overlay" || ch_name == "numuCC_background_Emu_FC_Np_overlay"
+    || ch_name == "numuCC_signal_Emu_PC_0p_overlay" || ch_name == "numuCC_signal_Emu_PC_Np_overlay" || ch_name == "numuCC_background_Emu_PC_0p_overlay" || ch_name == "numuCC_background_Emu_PC_Np_overlay"){
+    //numuCC_FC_0p_bnb
+    //BG_numuCC_FC_0p_ext
+    //BG_numuCC_FC_0p_dirt
+    //numuCC_FC_Np_bnb
+    //BG_numuCC_FC_Np_ext
+    //BG_numuCC_FC_Np_dirt
+    if (ch_name == "numuCC_signal_Emu_FC_0p_overlay"){           if (flag_numuCC && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Emu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_signal_Emu_FC_Np_overlay"){     if (flag_numuCC && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Emu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_background_Emu_FC_0p_overlay"){ if (flag_numuCC && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Emu_numuCCinFV"]))  return true;
+    }else if (ch_name == "numuCC_background_Emu_FC_Np_overlay"){ if (flag_numuCC && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Emu_numuCCinFV"]))  return true;
+    //numuCC_PC_0p_bnb
+    //BG_numuCC_PC_0p_ext
+    //BG_numuCC_PC_0p_dirt
+    //numuCC_PC_Np_bnb
+    //BG_numuCC_PC_Np_ext
+    //BG_numuCC_PC_Np_dirt
+    }else if (ch_name == "numuCC_signal_Emu_PC_0p_overlay"){     if (flag_numuCC && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Emu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_signal_Emu_PC_Np_overlay"){     if (flag_numuCC && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Emu_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_background_Emu_PC_0p_overlay"){ if (flag_numuCC && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Emu_numuCCinFV"]))  return true;
+    }else if (ch_name == "numuCC_background_Emu_PC_Np_overlay"){ if (flag_numuCC && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Emu_numuCCinFV"]))  return true;
+    }return false;
+  ////////////////////////////////////////////////////////
+  // numuCC XSEC - WC definition Ehadron 30-2500 MeV
+  //////////////////////////////////////////////////////// 
+  }else if (ch_name == "numuCC_signal_Ehadron_FC_0p_overlay" || ch_name == "numuCC_signal_Ehadron_FC_Np_overlay" || ch_name == "numuCC_background_Ehadron_FC_0p_overlay" || ch_name == "numuCC_background_Ehadron_FC_Np_overlay"
+    || ch_name == "numuCC_signal_Ehadron_PC_0p_overlay" || ch_name == "numuCC_signal_Ehadron_PC_Np_overlay" || ch_name == "numuCC_background_Ehadron_PC_0p_overlay" || ch_name == "numuCC_background_Ehadron_PC_Np_overlay"){
+    //numuCC_FC_0p_bnb
+    //BG_numuCC_FC_0p_ext
+    //BG_numuCC_FC_0p_dirt
+    //numuCC_FC_Np_bnb
+    //BG_numuCC_FC_Np_ext
+    //BG_numuCC_FC_Np_dirt
+    if (ch_name == "numuCC_signal_Ehadron_FC_0p_overlay"){           if (flag_numuCC && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Ehadron_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_signal_Ehadron_FC_Np_overlay"){     if (flag_numuCC && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Ehadron_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_background_Ehadron_FC_0p_overlay"){ if (flag_numuCC && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Ehadron_numuCCinFV"]))  return true;
+    }else if (ch_name == "numuCC_background_Ehadron_FC_Np_overlay"){ if (flag_numuCC && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Ehadron_numuCCinFV"]))  return true;
+    //numuCC_PC_0p_bnb
+    //BG_numuCC_PC_0p_ext
+    //BG_numuCC_PC_0p_dirt
+    //numuCC_PC_Np_bnb
+    //BG_numuCC_PC_Np_ext
+    //BG_numuCC_PC_Np_dirt
+    }else if (ch_name == "numuCC_signal_Ehadron_PC_0p_overlay"){     if (flag_numuCC && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Ehadron_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_signal_Ehadron_PC_Np_overlay"){     if (flag_numuCC && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Ehadron_numuCCinFV"])     return true;
+    }else if (ch_name == "numuCC_background_Ehadron_PC_0p_overlay"){ if (flag_numuCC && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Ehadron_numuCCinFV"]))  return true;
+    }else if (ch_name == "numuCC_background_Ehadron_PC_Np_overlay"){ if (flag_numuCC && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Ehadron_numuCCinFV"]))  return true;
+    }return false;
+
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ////////////////////////// Reco selection - CCpi0 (as for eLEE analysis)
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  }else if (ch_name == "CCpi0_bnb" || ch_name == "CCpi0_ext" || ch_name == "CCpi0_dirt"  || ch_name == "CCpi0_overlay" || ch_name == "CCpi0_ncpi0" || ch_name == "BG_CCpi0_ext" || ch_name == "BG_CCpi0_dirt"){
     if (flag_numuCC && flag_pi0) return true;
     else return false;
-  }else if (ch_name == "CCpi0_FC_bnb" || ch_name == "CCpi0_FC_ext" || ch_name == "CCpi0_FC_dirt"  || ch_name == "CCpi0_FC_overlay" || ch_name == "CCpi0_FC_ncpi0"){
+  }else if (ch_name == "CCpi0_FC_bnb" || ch_name == "CCpi0_FC_ext" || ch_name == "CCpi0_FC_dirt"  || ch_name == "CCpi0_FC_overlay" || ch_name == "CCpi0_FC_ncpi0" || ch_name == "BG_CCpi0_FC_ext" || ch_name == "BG_CCpi0_FC_dirt"){
     if (flag_numuCC && flag_pi0 && flag_FC) return true;
     else return false;
-  }else if (ch_name == "CCpi0_PC_bnb" || ch_name == "CCpi0_PC_ext" || ch_name == "CCpi0_PC_dirt"  || ch_name == "CCpi0_PC_overlay" || ch_name == "CCpi0_PC_ncpi0"){
+  }else if (ch_name == "CCpi0_PC_bnb" || ch_name == "CCpi0_PC_ext" || ch_name == "CCpi0_PC_dirt"  || ch_name == "CCpi0_PC_overlay" || ch_name == "CCpi0_PC_ncpi0" || ch_name == "BG_CCpi0_PC_ext" || ch_name == "BG_CCpi0_PC_dirt"){
     if (flag_numuCC && flag_pi0 && (!flag_FC)) return true;
     else return false;
-  }else if (ch_name == "CCpi0_0p_bnb" || ch_name == "CCpi0_0p_ext" || ch_name == "CCpi0_0p_dirt"  || ch_name == "CCpi0_0p_overlay" || ch_name == "CCpi0_0p_ncpi0"){
+  }else if (ch_name == "CCpi0_0p_bnb" || ch_name == "CCpi0_0p_ext" || ch_name == "CCpi0_0p_dirt"  || ch_name == "CCpi0_0p_overlay" || ch_name == "CCpi0_0p_ncpi0" || ch_name == "BG_CCpi0_0p_ext" || ch_name == "BG_CCpi0_0p_dirt"){
     if (flag_numuCC && flag_pi0 && flag_0p) return true;
     else return false;
-  }else if (ch_name == "CCpi0_Np_bnb" || ch_name == "CCpi0_Np_ext" || ch_name == "CCpi0_Np_dirt"  || ch_name == "CCpi0_Np_overlay" || ch_name == "CCpi0_Np_ncpi0"){
+  }else if (ch_name == "CCpi0_Np_bnb" || ch_name == "CCpi0_Np_ext" || ch_name == "CCpi0_Np_dirt"  || ch_name == "CCpi0_Np_overlay" || ch_name == "CCpi0_Np_ncpi0" || ch_name == "BG_CCpi0_Np_ext" || ch_name == "BG_CCpi0_Np_dirt"){
     if (flag_numuCC && flag_pi0 && (!flag_0p)) return true;
     else return false;
-  }else if (ch_name == "CCpi0_FC_0p_bnb" || ch_name == "CCpi0_FC_0p_ext" || ch_name == "CCpi0_FC_0p_dirt"  || ch_name == "CCpi0_FC_0p_overlay" || ch_name == "CCpi0_FC_0p_ncpi0"){
+  }else if (ch_name == "CCpi0_FC_0p_bnb" || ch_name == "CCpi0_FC_0p_ext" || ch_name == "CCpi0_FC_0p_dirt"  || ch_name == "CCpi0_FC_0p_overlay" || ch_name == "CCpi0_FC_0p_ncpi0" || ch_name == "BG_CCpi0_FC_0p_ext" || ch_name == "BG_CCpi0_FC_0p_dirt"
+         || ch_name == "CCpi01_FC_0p_bnb" || ch_name == "CCpi01_FC_0p_ext" || ch_name == "CCpi01_FC_0p_dirt"  || ch_name == "CCpi01_FC_0p_overlay" || ch_name == "CCpi01_FC_0p_ncpi0" || ch_name == "BG_CCpi01_FC_0p_ext" || ch_name == "BG_CCpi01_FC_0p_dirt"
+         || ch_name == "CCpi02_FC_0p_bnb" || ch_name == "CCpi02_FC_0p_ext" || ch_name == "CCpi02_FC_0p_dirt"  || ch_name == "CCpi02_FC_0p_overlay" || ch_name == "CCpi02_FC_0p_ncpi0" || ch_name == "BG_CCpi02_FC_0p_ext" || ch_name == "BG_CCpi02_FC_0p_dirt"
+    ){
     if (flag_numuCC && flag_pi0 && flag_FC && flag_0p) return true;
     else return false;
-  }else if (ch_name == "CCpi0_FC_Np_bnb" || ch_name == "CCpi0_FC_Np_ext" || ch_name == "CCpi0_FC_Np_dirt"  || ch_name == "CCpi0_FC_Np_overlay" || ch_name == "CCpi0_FC_Np_ncpi0"){
+  }else if (ch_name == "CCpi0_FC_Np_bnb" || ch_name == "CCpi0_FC_Np_ext" || ch_name == "CCpi0_FC_Np_dirt"  || ch_name == "CCpi0_FC_Np_overlay" || ch_name == "CCpi0_FC_Np_ncpi0" || ch_name == "BG_CCpi0_FC_Np_ext" || ch_name == "BG_CCpi0_FC_Np_dirt"
+         || ch_name == "CCpi01_FC_Np_bnb" || ch_name == "CCpi01_FC_Np_ext" || ch_name == "CCpi01_FC_Np_dirt"  || ch_name == "CCpi01_FC_Np_overlay" || ch_name == "CCpi01_FC_Np_ncpi0" || ch_name == "BG_CCpi01_FC_Np_ext" || ch_name == "BG_CCpi01_FC_Np_dirt"
+         || ch_name == "CCpi02_FC_Np_bnb" || ch_name == "CCpi02_FC_Np_ext" || ch_name == "CCpi02_FC_Np_dirt"  || ch_name == "CCpi02_FC_Np_overlay" || ch_name == "CCpi02_FC_Np_ncpi0" || ch_name == "BG_CCpi02_FC_Np_ext" || ch_name == "BG_CCpi02_FC_Np_dirt"
+    ){
     if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)) return true;
     else return false;
-  }else if (ch_name == "CCpi0_PC_0p_bnb" || ch_name == "CCpi0_PC_0p_ext" || ch_name == "CCpi0_PC_0p_dirt"  || ch_name == "CCpi0_PC_0p_overlay" || ch_name == "CCpi0_PC_0p_ncpi0"){
+  }else if (ch_name == "CCpi0_PC_0p_bnb" || ch_name == "CCpi0_PC_0p_ext" || ch_name == "CCpi0_PC_0p_dirt"  || ch_name == "CCpi0_PC_0p_overlay" || ch_name == "CCpi0_PC_0p_ncpi0" || ch_name == "BG_CCpi0_PC_0p_ext" || ch_name == "BG_CCpi0_PC_0p_dirt"
+         || ch_name == "CCpi01_PC_0p_bnb" || ch_name == "CCpi01_PC_0p_ext" || ch_name == "CCpi01_PC_0p_dirt"  || ch_name == "CCpi01_PC_0p_overlay" || ch_name == "CCpi01_PC_0p_ncpi0" || ch_name == "BG_CCpi01_PC_0p_ext" || ch_name == "BG_CCpi01_PC_0p_dirt"
+         || ch_name == "CCpi02_PC_0p_bnb" || ch_name == "CCpi02_PC_0p_ext" || ch_name == "CCpi02_PC_0p_dirt"  || ch_name == "CCpi02_PC_0p_overlay" || ch_name == "CCpi02_PC_0p_ncpi0" || ch_name == "BG_CCpi02_PC_0p_ext" || ch_name == "BG_CCpi02_PC_0p_dirt"
+    ){
     if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p) return true;
     else return false;
-  }else if (ch_name == "CCpi0_PC_Np_bnb" || ch_name == "CCpi0_PC_Np_ext" || ch_name == "CCpi0_PC_Np_dirt"  || ch_name == "CCpi0_PC_Np_overlay" || ch_name == "CCpi0_PC_Np_ncpi0"){
+  }else if (ch_name == "CCpi0_PC_Np_bnb" || ch_name == "CCpi0_PC_Np_ext" || ch_name == "CCpi0_PC_Np_dirt"  || ch_name == "CCpi0_PC_Np_overlay" || ch_name == "CCpi0_PC_Np_ncpi0" || ch_name == "BG_CCpi0_PC_Np_ext" || ch_name == "BG_CCpi0_PC_Np_dirt"
+         || ch_name == "CCpi01_PC_Np_bnb" || ch_name == "CCpi01_PC_Np_ext" || ch_name == "CCpi01_PC_Np_dirt"  || ch_name == "CCpi01_PC_Np_overlay" || ch_name == "CCpi01_PC_Np_ncpi0" || ch_name == "BG_CCpi01_PC_Np_ext" || ch_name == "BG_CCpi01_PC_Np_dirt"
+         || ch_name == "CCpi02_PC_Np_bnb" || ch_name == "CCpi02_PC_Np_ext" || ch_name == "CCpi02_PC_Np_dirt"  || ch_name == "CCpi02_PC_Np_overlay" || ch_name == "CCpi02_PC_Np_ncpi0" || ch_name == "BG_CCpi02_PC_Np_ext" || ch_name == "BG_CCpi02_PC_Np_dirt"
+    ){
     if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)) return true;
     else return false;
+  ////////////////////////////////////////////////////////
+  // CCpi0 XSEC - WC definition Enu 200-4000 MeV
+  ////////////////////////////////////////////////////////
+  }else if (ch_name == "CCpi0_signal_Enu_FC_0p_overlay" || ch_name == "CCpi0_signal_Enu_FC_Np_overlay" || ch_name == "CCpi0_background_Enu_FC_0p_overlay" || ch_name == "CCpi0_background_Enu_FC_Np_overlay"
+    || ch_name == "CCpi0_signal_Enu_PC_0p_overlay" || ch_name == "CCpi0_signal_Enu_PC_Np_overlay" || ch_name == "CCpi0_background_Enu_PC_0p_overlay" || ch_name == "CCpi0_background_Enu_PC_Np_overlay"){
+    //CCpi0_FC_0p_bnb
+    //BG_CCpi0_FC_0p_ext
+    //BG_CCpi0_FC_0p_dirt
+    //CCpi0_FC_Np_bnb
+    //BG_CCpi0_FC_Np_ext
+    //BG_CCpi0_FC_Np_dirt
+    if (ch_name == "CCpi0_signal_Enu_FC_0p_overlay"){           if (flag_numuCC && flag_pi0 && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Enu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_signal_Enu_FC_Np_overlay"){     if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_background_Enu_FC_0p_overlay"){ if (flag_numuCC && flag_pi0 && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Enu_CCpi0inFV"]))  return true;
+    }else if (ch_name == "CCpi0_background_Enu_FC_Np_overlay"){ if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_CCpi0inFV"]))  return true;
+    //CCpi0_PC_0p_bnb
+    //BG_CCpi0_PC_0p_ext
+    //BG_CCpi0_PC_0p_dirt
+    //CCpi0_PC_Np_bnb
+    //BG_CCpi0_PC_Np_ext
+    //BG_CCpi0_PC_Np_dirt
+    }else if (ch_name == "CCpi0_signal_Enu_PC_0p_overlay"){     if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Enu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_signal_Enu_PC_Np_overlay"){     if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_background_Enu_PC_0p_overlay"){ if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Enu_CCpi0inFV"]))  return true;
+    }else if (ch_name == "CCpi0_background_Enu_PC_Np_overlay"){ if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_CCpi0inFV"]))  return true;
+    }return false;
+  ////////////////////////////////////////////////////////
+  // numuCC XSEC - WC definition Emu 105.7-2506 MeV
+  //////////////////////////////////////////////////////// 
+  }else if (ch_name == "CCpi0_signal_Emu_FC_0p_overlay" || ch_name == "CCpi0_signal_Emu_FC_Np_overlay" || ch_name == "CCpi0_background_Emu_FC_0p_overlay" || ch_name == "CCpi0_background_Emu_FC_Np_overlay"
+    || ch_name == "CCpi0_signal_Emu_PC_0p_overlay" || ch_name == "CCpi0_signal_Emu_PC_Np_overlay" || ch_name == "CCpi0_background_Emu_PC_0p_overlay" || ch_name == "CCpi0_background_Emu_PC_Np_overlay"){
+    //CCpi0_FC_0p_bnb
+    //BG_CCpi0_FC_0p_ext
+    //BG_CCpi0_FC_0p_dirt
+    //CCpi0_FC_Np_bnb
+    //BG_CCpi0_FC_Np_ext
+    //BG_CCpi0_FC_Np_dirt
+    if (ch_name == "CCpi0_signal_Emu_FC_0p_overlay"){           if (flag_numuCC && flag_pi0 && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Emu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_signal_Emu_FC_Np_overlay"){     if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Emu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_background_Emu_FC_0p_overlay"){ if (flag_numuCC && flag_pi0 && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Emu_CCpi0inFV"]))  return true;
+    }else if (ch_name == "CCpi0_background_Emu_FC_Np_overlay"){ if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Emu_CCpi0inFV"]))  return true;
+    //CCpi0_PC_0p_bnb
+    //BG_CCpi0_PC_0p_ext
+    //BG_CCpi0_PC_0p_dirt
+    //CCpi0_PC_Np_bnb
+    //BG_CCpi0_PC_Np_ext
+    //BG_CCpi0_PC_Np_dirt
+    }else if (ch_name == "CCpi0_signal_Emu_PC_0p_overlay"){     if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Emu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_signal_Emu_PC_Np_overlay"){     if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Emu_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_background_Emu_PC_0p_overlay"){ if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Emu_CCpi0inFV"]))  return true;
+    }else if (ch_name == "CCpi0_background_Emu_PC_Np_overlay"){ if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Emu_CCpi0inFV"]))  return true;
+    }return false;
+  ////////////////////////////////////////////////////////
+  // numuCC XSEC - WC definition Ehadron 30-2500 MeV
+  //////////////////////////////////////////////////////// 
+  }else if (ch_name == "CCpi0_signal_Ehadron_FC_0p_overlay" || ch_name == "CCpi0_signal_Ehadron_FC_Np_overlay" || ch_name == "CCpi0_background_Ehadron_FC_0p_overlay" || ch_name == "CCpi0_background_Ehadron_FC_Np_overlay"
+    || ch_name == "CCpi0_signal_Ehadron_PC_0p_overlay" || ch_name == "CCpi0_signal_Ehadron_PC_Np_overlay" || ch_name == "CCpi0_background_Ehadron_PC_0p_overlay" || ch_name == "CCpi0_background_Ehadron_PC_Np_overlay"){
+    //CCpi0_FC_0p_bnb
+    //BG_CCpi0_FC_0p_ext
+    //BG_CCpi0_FC_0p_dirt
+    //CCpi0_FC_Np_bnb
+    //BG_CCpi0_FC_Np_ext
+    //BG_CCpi0_FC_Np_dirt
+    if (ch_name == "CCpi0_signal_Ehadron_FC_0p_overlay"){           if (flag_numuCC && flag_pi0 && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Ehadron_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_signal_Ehadron_FC_Np_overlay"){     if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Ehadron_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_background_Ehadron_FC_0p_overlay"){ if (flag_numuCC && flag_pi0 && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Ehadron_CCpi0inFV"]))  return true;
+    }else if (ch_name == "CCpi0_background_Ehadron_FC_Np_overlay"){ if (flag_numuCC && flag_pi0 && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Ehadron_CCpi0inFV"]))  return true;
+    //CCpi0_PC_0p_bnb
+    //BG_CCpi0_PC_0p_ext
+    //BG_CCpi0_PC_0p_dirt
+    //CCpi0_PC_Np_bnb
+    //BG_CCpi0_PC_Np_ext
+    //BG_CCpi0_PC_Np_dirt
+    }else if (ch_name == "CCpi0_signal_Ehadron_PC_0p_overlay"){     if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Ehadron_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_signal_Ehadron_PC_Np_overlay"){     if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Ehadron_CCpi0inFV"])     return true;
+    }else if (ch_name == "CCpi0_background_Ehadron_PC_0p_overlay"){ if (flag_numuCC && flag_pi0 && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Ehadron_CCpi0inFV"]))  return true;
+    }else if (ch_name == "CCpi0_background_Ehadron_PC_Np_overlay"){ if (flag_numuCC && flag_pi0 && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Ehadron_CCpi0inFV"]))  return true;
+    }return false;
 
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-  // NCpi0BDT SELECTION
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ////////////////////////// Reco selection - NCpi0 BDT
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   }else if (ch_name == "NCpi0BDT_bnb" || ch_name == "NCpi0BDT_ext" || ch_name == "NCpi0BDT_dirt"  || ch_name == "NCpi0BDT_overlay" || ch_name == "NCpi0BDT_ncpi0"
        || ch_name == "NCpi0BDT1_bnb"  || ch_name == "NCpi0BDT1_ext"  || ch_name == "NCpi0BDT1_dirt"  || ch_name == "NCpi0BDT1_overlay" || ch_name == "NCpi0BDT1_ncpi0"
        ){
@@ -1177,35 +1410,6 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)) return true;
     else return false;
-
-
-  /// gLEE-like comparisons
-  }else if (ch_name == "NCpi0BDT_FC_gLEE_bnb" || ch_name == "NCpi0BDT_FC_gLEE_ext" || ch_name == "NCpi0BDT_FC_gLEE_dirt"  || ch_name == "NCpi0BDT_FC_gLEE_overlay" || ch_name == "NCpi0BDT_FC_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_FC_gLEE_ext" || ch_name == "BG_NCpi0BDT_FC_gLEE_dirt"
-       || ch_name == "NCpi0BDT1_FC_gLEE_bnb"  || ch_name == "NCpi0BDT1_FC_gLEE_ext"  || ch_name == "NCpi0BDT1_FC_gLEE_dirt"  || ch_name == "NCpi0BDT1_FC_gLEE_overlay" || ch_name == "NCpi0BDT1_FC_gLEE_ncpi0"
-       ){
-    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (flag_0p_gLEE || flag_1p_gLEE)) return true;
-    else return false;
-  }else if (ch_name == "NCpi0BDT_PC_gLEE_bnb" || ch_name == "NCpi0BDT_PC_gLEE_ext" || ch_name == "NCpi0BDT_PC_gLEE_dirt"  || ch_name == "NCpi0BDT_PC_gLEE_overlay" || ch_name == "NCpi0BDT_PC_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_PC_gLEE_ext" || ch_name == "BG_NCpi0BDT_PC_gLEE_dirt"
-       || ch_name == "NCpi0BDT1_PC_gLEE_bnb"  || ch_name == "NCpi0BDT1_PC_gLEE_ext"  || ch_name == "NCpi0BDT1_PC_gLEE_dirt"  || ch_name == "NCpi0BDT1_PC_gLEE_overlay" || ch_name == "NCpi0BDT1_PC_gLEE_ncpi0"
-       ){
-    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (flag_0p_gLEE || flag_1p_gLEE)) return true;
-    else return false;
-  }else if (ch_name == "NCpi0BDT_0p_gLEE_bnb" || ch_name == "NCpi0BDT_0p_gLEE_ext" || ch_name == "NCpi0BDT_0p_gLEE_dirt"  || ch_name == "NCpi0BDT_0p_gLEE_overlay" || ch_name == "NCpi0BDT_0p_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_0p_gLEE_ext" || ch_name == "BG_NCpi0BDT_0p_gLEE_dirt"
-       || ch_name == "NCpi0BDT1_0p_gLEE_bnb"  || ch_name == "NCpi0BDT1_0p_gLEE_ext"  || ch_name == "NCpi0BDT1_0p_gLEE_dirt"  || ch_name == "NCpi0BDT1_0p_gLEE_overlay" || ch_name == "NCpi0BDT1_0p_gLEE_ncpi0"
-       ){
-    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p_gLEE) return true;
-    else return false;
-  }else if (ch_name == "NCpi0BDT_1p_gLEE_bnb" || ch_name == "NCpi0BDT_1p_gLEE_ext" || ch_name == "NCpi0BDT_1p_gLEE_dirt"  || ch_name == "NCpi0BDT_1p_gLEE_overlay" || ch_name == "NCpi0BDT_1p_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_1p_gLEE_ext" || ch_name == "BG_NCpi0BDT_1p_gLEE_dirt"
-       || ch_name == "NCpi0BDT1_1p_gLEE_bnb"  || ch_name == "NCpi0BDT1_1p_gLEE_ext"  || ch_name == "NCpi0BDT1_1p_gLEE_dirt"  || ch_name == "NCpi0BDT1_1p_gLEE_overlay" || ch_name == "NCpi0BDT1_1p_gLEE_ncpi0"
-       ){
-    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_1p_gLEE) return true;
-    else return false;
-
-
-
-
-
-
   }else if (ch_name == "NCpi0BDT_FC_0p_bnb" || ch_name == "NCpi0BDT_FC_0p_ext" || ch_name == "NCpi0BDT_FC_0p_dirt"  || ch_name == "NCpi0BDT_FC_0p_overlay" || ch_name == "NCpi0BDT_FC_0p_ncpi0" || ch_name == "BG_NCpi0BDT_FC_0p_ext" || ch_name == "BG_NCpi0BDT_FC_0p_dirt"
        || ch_name == "NCpi0BDT1_FC_0p_bnb"  || ch_name == "NCpi0BDT1_FC_0p_ext"  || ch_name == "NCpi0BDT1_FC_0p_dirt"  || ch_name == "NCpi0BDT1_FC_0p_overlay" || ch_name == "NCpi0BDT1_FC_0p_ncpi0"
        ){
@@ -1226,43 +1430,6 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
        ){
     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)) return true;
     else return false;
-
-  /*
-  ////////////////////////////////////////////////////////
-  // numuCC XSEC 
-  //////////////////////////////////////////////////////// 
-  }else if (ch_name == "numuCC_FC_bnb" || ch_name == "BG_numuCC_FC_ext" || ch_name == "BG_numuCC_FC_dirt"
-    ){
-    if (flag_numuCC && flag_FC) return true;
-    else return false;
-  }else if (ch_name == "numuCC_PC_bnb" || ch_name == "BG_numuCC_PC_ext" || ch_name == "BG_numuCC_PC_dirt"
-    ){
-    if (flag_numuCC && (!flag_FC)) return true;
-    else return false;
-  }else if (ch_name == "numuCC_signal_FC_overlay" || ch_name == "numuCC_signal_PC_overlay" || ch_name == "numuCC_background_FC_overlay" || ch_name == "numuCC_background_PC_overlay"
-    ){
-    if (ch_name == "numuCC_signal_FC_overlay"){           if (flag_numuCC && flag_FC    && map_cuts_flag["XsnumuCCinFV"])     return true;
-    }else if (ch_name == "numuCC_signal_PC_overlay"){     if (flag_numuCC && (!flag_FC) && map_cuts_flag["XsnumuCCinFV"])     return true;
-    }else if (ch_name == "numuCC_background_FC_overlay"){ if (flag_numuCC && flag_FC    && (!map_cuts_flag["XsnumuCCinFV"]))  return true;
-    }else if (ch_name == "numuCC_background_PC_overlay"){ if (flag_numuCC && (!flag_FC) && (!map_cuts_flag["XsnumuCCinFV"]))  return true;
-    }
-    return false;
-
-  ////////////////////////////////////////////////////////
-  // numuCC XSEC - Enu
-  //////////////////////////////////////////////////////// 
-  } else if (ch_name == "numuCC_signal_Enu_FC_overlay" || ch_name == "numuCC_signal_Enu_PC_overlay" || ch_name == "numuCC_background_Enu_FC_overlay" || ch_name == "numuCC_background_Enu_PC_overlay"
-       || ch_name == "numuCC_signal_Enu_overlay" || ch_name == "numuCC_background_Enu_overlay"
-      ){
-    if (ch_name == "numuCC_signal_Enu_FC_overlay"){           if (flag_numuCC && flag_FC    &&  map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
-    }else if (ch_name == "numuCC_signal_Enu_PC_overlay"){     if (flag_numuCC && (!flag_FC) &&  map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
-    }else if (ch_name == "numuCC_background_Enu_FC_overlay"){ if (flag_numuCC && flag_FC    &&  (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
-    }else if (ch_name == "numuCC_background_Enu_PC_overlay"){ if (flag_numuCC && (!flag_FC) &&  (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
-    }else if (ch_name == "numuCC_signal_Enu_overlay"){        if (flag_numuCC &&                map_cuts_flag["Xs_Enu_numuCCinFV"])     return true;
-    }else if (ch_name == "numuCC_background_Enu_overlay"){    if (flag_numuCC &&                (!map_cuts_flag["Xs_Enu_numuCCinFV"]))  return true;
-    }
-    return false;
-  */
   ////////////////////////////////////////////////////////
   // NCpi0BDT XSEC TOTAL - WC definition Enu 275-4000 MeV
   //////////////////////////////////////////////////////// 
@@ -1290,7 +1457,6 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "NCpi0BDT_background_Enu_4000_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
     }else if (ch_name == "NCpi0BDT_background_Enu_4000_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
     }return false;
-
   }else if (ch_name == "NCpi0BDT_signal_Enu_4000_FC_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_FC_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_FC_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_FC_Np_overlay"
     || ch_name == "NCpi0BDT_signal_Enu_4000_PC_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_PC_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_PC_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_PC_Np_overlay"){
     //NCpi0BDT_FC_0p_bnb
@@ -1314,6 +1480,106 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "NCpi0BDT_background_Enu_4000_PC_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
     }else if (ch_name == "NCpi0BDT_background_Enu_4000_PC_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV"]))  return true;
     }return false;
+  //////////////////////////////////////////////////////////////////////
+  // NCpi0BDT XSEC diff - Enu 275-4000 MeV - Ppi0 0--->1500 MeV/c
+  //////////////////////////////////////////////////////////////////////
+  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_overlay"){
+    //NCpi0BDT_FC_bnb
+    //NCpi0BDT_PC_bnb
+    //BG_NCpi0BDT_FC_ext
+    //BG_NCpi0BDT_PC_ext
+    //BG_NCpi0BDT_FC_dirt
+    //BG_NCpi0BDT_PC_dirt
+    if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
+    }return false;
+  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_Np_overlay"
+    || ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_Np_overlay"){
+    //NCpi0BDT_FC_0p_bnb
+    //BG_NCpi0BDT_FC_0p_ext
+    //BG_NCpi0BDT_FC_0p_dirt
+    //NCpi0BDT_FC_Np_bnb
+    //BG_NCpi0BDT_FC_Np_ext
+    //BG_NCpi0BDT_FC_Np_dirt
+    if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_0p_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_Np_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
+    //NCpi0BDT_PC_0p_bnb
+    //BG_NCpi0BDT_PC_0p_ext
+    //BG_NCpi0BDT_PC_0p_dirt
+    //NCpi0BDT_PC_Np_bnb
+    //BG_NCpi0BDT_PC_Np_ext
+    //BG_NCpi0BDT_PC_Np_dirt
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_0p_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_Np_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
+    }return false;
+  //////////////////////////////////////////////////////////////////////
+  // NCpi0BDT XSEC diff - Enu 275-4000 MeV - CosThetapi0 -1--->1 
+  //////////////////////////////////////////////////////////////////////
+  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_overlay"){
+    //NCpi0BDT_FC_bnb
+    //NCpi0BDT_PC_bnb
+    //BG_NCpi0BDT_FC_ext
+    //BG_NCpi0BDT_PC_ext
+    //BG_NCpi0BDT_FC_dirt
+    //BG_NCpi0BDT_PC_dirt
+    if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }return false;
+  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_Np_overlay"
+    || ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_Np_overlay"){
+    //NCpi0BDT_FC_0p_bnb
+    //BG_NCpi0BDT_FC_0p_ext
+    //BG_NCpi0BDT_FC_0p_dirt
+    //NCpi0BDT_FC_Np_bnb
+    //BG_NCpi0BDT_FC_Np_ext
+    //BG_NCpi0BDT_FC_Np_dirt
+    if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_0p_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && flag_0p     &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_Np_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    //NCpi0BDT_PC_0p_bnb
+    //BG_NCpi0BDT_PC_0p_ext
+    //BG_NCpi0BDT_PC_0p_dirt
+    //NCpi0BDT_PC_Np_bnb
+    //BG_NCpi0BDT_PC_Np_ext
+    //BG_NCpi0BDT_PC_Np_dirt
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_0p_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_Np_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }return false;
+
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  ////////////////////////// Reco selection - gLEE-like NCpi0 
+  // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+  }else if (ch_name == "NCpi0BDT_FC_gLEE_bnb" || ch_name == "NCpi0BDT_FC_gLEE_ext" || ch_name == "NCpi0BDT_FC_gLEE_dirt"  || ch_name == "NCpi0BDT_FC_gLEE_overlay" || ch_name == "NCpi0BDT_FC_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_FC_gLEE_ext" || ch_name == "BG_NCpi0BDT_FC_gLEE_dirt"
+       || ch_name == "NCpi0BDT1_FC_gLEE_bnb"  || ch_name == "NCpi0BDT1_FC_gLEE_ext"  || ch_name == "NCpi0BDT1_FC_gLEE_dirt"  || ch_name == "NCpi0BDT1_FC_gLEE_overlay" || ch_name == "NCpi0BDT1_FC_gLEE_ncpi0"
+       ){
+    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC && (flag_0p_gLEE || flag_1p_gLEE)) return true;
+    else return false;
+  }else if (ch_name == "NCpi0BDT_PC_gLEE_bnb" || ch_name == "NCpi0BDT_PC_gLEE_ext" || ch_name == "NCpi0BDT_PC_gLEE_dirt"  || ch_name == "NCpi0BDT_PC_gLEE_overlay" || ch_name == "NCpi0BDT_PC_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_PC_gLEE_ext" || ch_name == "BG_NCpi0BDT_PC_gLEE_dirt"
+       || ch_name == "NCpi0BDT1_PC_gLEE_bnb"  || ch_name == "NCpi0BDT1_PC_gLEE_ext"  || ch_name == "NCpi0BDT1_PC_gLEE_dirt"  || ch_name == "NCpi0BDT1_PC_gLEE_overlay" || ch_name == "NCpi0BDT1_PC_gLEE_ncpi0"
+       ){
+    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC) && (flag_0p_gLEE || flag_1p_gLEE)) return true;
+    else return false;
+  }else if (ch_name == "NCpi0BDT_0p_gLEE_bnb" || ch_name == "NCpi0BDT_0p_gLEE_ext" || ch_name == "NCpi0BDT_0p_gLEE_dirt"  || ch_name == "NCpi0BDT_0p_gLEE_overlay" || ch_name == "NCpi0BDT_0p_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_0p_gLEE_ext" || ch_name == "BG_NCpi0BDT_0p_gLEE_dirt"
+       || ch_name == "NCpi0BDT1_0p_gLEE_bnb"  || ch_name == "NCpi0BDT1_0p_gLEE_ext"  || ch_name == "NCpi0BDT1_0p_gLEE_dirt"  || ch_name == "NCpi0BDT1_0p_gLEE_overlay" || ch_name == "NCpi0BDT1_0p_gLEE_ncpi0"
+       ){
+    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p_gLEE) return true;
+    else return false;
+  }else if (ch_name == "NCpi0BDT_1p_gLEE_bnb" || ch_name == "NCpi0BDT_1p_gLEE_ext" || ch_name == "NCpi0BDT_1p_gLEE_dirt"  || ch_name == "NCpi0BDT_1p_gLEE_overlay" || ch_name == "NCpi0BDT_1p_gLEE_ncpi0" || ch_name == "BG_NCpi0BDT_1p_gLEE_ext" || ch_name == "BG_NCpi0BDT_1p_gLEE_dirt"
+       || ch_name == "NCpi0BDT1_1p_gLEE_bnb"  || ch_name == "NCpi0BDT1_1p_gLEE_ext"  || ch_name == "NCpi0BDT1_1p_gLEE_dirt"  || ch_name == "NCpi0BDT1_1p_gLEE_overlay" || ch_name == "NCpi0BDT1_1p_gLEE_ncpi0"
+       ){
+    if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_1p_gLEE) return true;
+    else return false;
   ////////////////////////////////////////////////////////
   // NCpi0BDT XSEC TOTAL - gLEE definition Enu 275-4000 MeV
   //////////////////////////////////////////////////////// 
@@ -1341,60 +1607,9 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "NCpi0BDT_background_Enu_4000_0p_overlay_gLEE_def"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p_gLEE  &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV_gLEE_def"]))  return true;
     }else if (ch_name == "NCpi0BDT_background_Enu_4000_1p_overlay_gLEE_def"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_1p_gLEE  &&  (!map_cuts_flag["Xs_Enu_4000_NCpi0BDTinFV_gLEE_def"]))  return true;
     }return false;
-  //////////////////////////////////////////////////////////////////////
-  // NCpi0BDT XSEC diff - Enu 275-4000 MeV - Ppi0 0-1500 MeV/c
-  //////////////////////////////////////////////////////////////////////
-  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_overlay"){
-    //NCpi0BDT_FC_bnb
-    //NCpi0BDT_PC_bnb
-    //BG_NCpi0BDT_FC_ext
-    //BG_NCpi0BDT_PC_ext
-    //BG_NCpi0BDT_FC_dirt
-    //BG_NCpi0BDT_PC_dirt
-    if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
-    }return false;
-  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_Np_overlay"){
-    //NCpi0BDT_0p_bnb
-    //NCpi0BDT_Np_bnb
-    //BG_NCpi0BDT_0p_ext
-    //BG_NCpi0BDT_Np_ext
-    //BG_NCpi0BDT_0p_dirt
-    //BG_NCpi0BDT_Np_dirt
-    if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_0p_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p     &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_Ppi0_1500_Np_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_Ppi0_1500_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_Ppi0_1500_NCpi0BDTinFV"]))  return true;
-    }return false;
-  //////////////////////////////////////////////////////////////////////
-  // NCpi0BDT XSEC diff - Enu 275-4000 MeV - CosThetapi0 -1-1 
-  //////////////////////////////////////////////////////////////////////
-  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_overlay"){
-    //NCpi0BDT_FC_bnb
-    //NCpi0BDT_PC_bnb
-    //BG_NCpi0BDT_FC_ext
-    //BG_NCpi0BDT_PC_ext
-    //BG_NCpi0BDT_FC_dirt
-    //BG_NCpi0BDT_PC_dirt
-    if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_FC_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_PC_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_FC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_FC     &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_PC_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_FC)  &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
-    }return false;
-  }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_0p_overlay" || ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_Np_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_0p_overlay" || ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_Np_overlay"){
-    //NCpi0BDT_0p_bnb
-    //NCpi0BDT_Np_bnb
-    //BG_NCpi0BDT_0p_ext
-    //BG_NCpi0BDT_Np_ext
-    //BG_NCpi0BDT_0p_dirt
-    //BG_NCpi0BDT_Np_dirt
-    if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_0p_overlay"){           if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p     &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_signal_Enu_4000_CosThetapi0_Np_overlay"){     if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)  &&  map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"])     return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_0p_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && flag_0p     &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
-    }else if (ch_name == "NCpi0BDT_background_Enu_4000_CosThetapi0_Np_overlay"){ if (flag_ncpio_bdt && flag_generic && flag_filter_showers && (!flag_0p)  &&  (!map_cuts_flag["Xs_Enu_4000_CosThetapi0_NCpi0BDTinFV"]))  return true;
-    }return false;
+
+
+
 
   }else{ std::cout << "Not sure what cut: " << ch_name << std::endl;
   }
@@ -1451,6 +1666,7 @@ bool LEEana::is_FC(EvalInfo& eval){
 }
 
 bool LEEana::is_filter_shower(KineInfo& kine){
+  // Used for NCpi0 selection
   if (kine.kine_pio_energy_1 > 0. && kine.kine_pio_energy_2 > 0.){ return true;
   }else{ return false;
   }
@@ -1493,7 +1709,7 @@ bool LEEana::is_pi0(KineInfo& kine, bool flag_data){
 bool LEEana::is_NCpio_bdt(TaggerInfo& tagger_info){
   bool flag = false;
   // if (tagger_info.nc_pio_score > 1.68 && tagger_info.numu_cc_flag >=0) flag = true;
-  if (tagger_info.nc_pio_score > 1.816 && tagger_info.numu_cc_flag >=0) flag = true;
+  if (tagger_info.nc_pio_score > 1.816 && tagger_info.numu_cc_flag >=0 ) flag = true;
   return flag;
 }
 bool LEEana::is_NCdelta_bdt(TaggerInfo& tagger_info){

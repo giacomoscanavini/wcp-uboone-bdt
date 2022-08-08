@@ -54,6 +54,7 @@ int main(int argc, char** argv)
     
     std::cout<<"Derivative matrix type: "<<C_type<<std::endl;
     std::cout<<"Signal normalization type (power exponent): "<<Norm_type<<std::endl;
+    std::cout<<"Wiener filter: "<<flag_WienerFilter<<std::endl;
 
     TFile* f = new TFile(inputfile.c_str(), "READ");
     

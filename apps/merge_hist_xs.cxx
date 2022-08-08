@@ -117,7 +117,7 @@ int main( int argc, char** argv )
       //      temp_histograms.push_back(htemp);
       map_name_histogram[std::get<0>(all_histo_infos.at(i))] = std::make_pair(htemp, pot);
       if (htemp1 !=0 && htemp2 !=0){
-	map_name_xs_hists[std::get<0>(all_histo_infos.at(i))] = std::make_tuple(htemp1, htemp2, pot);
+        map_name_xs_hists[std::get<0>(all_histo_infos.at(i))] = std::make_tuple(htemp1, htemp2, pot);
       }
     }
   }
@@ -145,32 +145,32 @@ int main( int argc, char** argv )
       // name, nbin, lowlimit, highlimit, variable, channel cut, additional cut, weight
       std::vector< std::tuple<TString,  int, float, float, TString, TString, TString, TString > > histo_infos = cov.get_histograms(input_filename,0);
       for (auto it1 = histo_infos.begin(); it1 != histo_infos.end(); it1++){
-	int obsch = cov.get_obsch_name(std::get<5>(*it1));	
-	htemp = map_name_histogram[std::get<0>(*it1)].first;
+      	int obsch = cov.get_obsch_name(std::get<5>(*it1));	
+      	htemp = map_name_histogram[std::get<0>(*it1)].first;
 
-	std::vector<TH1F*> vec_histos;
-	
-	TH1F *hdata = (TH1F*)htemp->Clone(Form("data_%d",obsch));
-	hdata->Reset();
-	TH1F *hpred = (TH1F*)htemp->Clone(Form("pred_%d",obsch));
-	hpred->Reset();
-	TH1F *hpred_err2 = (TH1F*)htemp->Clone(Form("pred_err2_%d",obsch));
-	hpred_err2->Reset();
+      	std::vector<TH1F*> vec_histos;
+      	
+      	TH1F *hdata = (TH1F*)htemp->Clone(Form("data_%d",obsch));
+      	hdata->Reset();
+      	TH1F *hpred = (TH1F*)htemp->Clone(Form("pred_%d",obsch));
+      	hpred->Reset();
+      	TH1F *hpred_err2 = (TH1F*)htemp->Clone(Form("pred_err2_%d",obsch));
+      	hpred_err2->Reset();
 
-	vec_histos.push_back(hdata);
-	vec_histos.push_back(hpred);
-	vec_histos.push_back(hpred_err2);
+      	vec_histos.push_back(hdata);
+      	vec_histos.push_back(hpred);
+      	vec_histos.push_back(hpred_err2);
 
-	// get histograms ...
-	map_obsch_histos[obsch] = vec_histos;
-	//map_obsch_bayes[obsch].resize(htemp->GetNbinsX()+1);
-	// for (Int_t i=0;i!=htemp->GetNbinsX()+1;i++){
-	//   std::vector< std::tuple<double, double, double> > temp;
-	//   map_obsch_bayes[obsch].push_back(temp);
-	// }
-	
-	
-	//std::cout << std::get<5>(*it1) << " " << obsch << " " << htemp->GetSum() << std::endl;
+      	// get histograms ...
+      	map_obsch_histos[obsch] = vec_histos;
+      	//map_obsch_bayes[obsch].resize(htemp->GetNbinsX()+1);
+      	// for (Int_t i=0;i!=htemp->GetNbinsX()+1;i++){
+      	//   std::vector< std::tuple<double, double, double> > temp;
+      	//   map_obsch_bayes[obsch].push_back(temp);
+      	// }
+      	
+      	
+      	//std::cout << std::get<5>(*it1) << " " << obsch << " " << htemp->GetSum() << std::endl;
       }
       
       //      break;
