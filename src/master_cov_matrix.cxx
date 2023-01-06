@@ -43,8 +43,71 @@ float leeweight(float Enu)
 #include "mcm_data_stat.h"
 #include "mcm_pred_stat.h"
 
-LEEana::CovMatrix::CovMatrix(TString cov_filename, TString cv_filename, TString file_filename){
+LEEana::CovMatrix::CovMatrix(TString cov_filename, TString cv_filename, TString file_filename, TString rw_filename){
   flag_osc = false;
+
+  rw_type = 0;
+  flag_reweight = false;
+
+  std::vector< std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double>  > >  rw_info_vec;
+  std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double>  >  rw_info_i;
+
+  std::ifstream infile_rw(rw_filename);
+  if(infile_rw.is_open()){
+    while(!infile_rw.eof()){
+      bool flag_reweight_i = 0;
+      TString cut_str;
+      TString var_str;
+      double min_var;
+      double max_var;
+      bool use_underflow;
+      bool use_overflow;
+      bool equal_bins=true;
+      std::vector<double> reweight;
+      std::vector<double> bins;
+      //reads the gerneral reweighig parameters
+      std::string line;
+      std::getline(infile_rw, line);
+      while(line.empty()) {std::getline(infile_rw, line);}
+      if(line == "end") break;
+      std::istringstream iss(line);
+      iss >> flag_reweight_i >> cut_str >> var_str >> min_var >> max_var >> use_underflow >> use_overflow >> equal_bins;
+      if(flag_reweight_i) flag_reweight=1;
+
+      if(!(equal_bins)){
+        double tb;
+        std::getline(infile_rw, line);
+        while(line.empty()) {std::getline(infile_rw, line);} //skips spaces
+        std::istringstream iss_rw(line);
+        while(iss_rw>>tb){bins.push_back(tb);}
+        if(bins[0]!=min_var) {
+          min_var=bins[0];
+          std::cerr<<"WARNING: bins and min_var do not match for "<<cut_str<<". Forcing min_var=bins[0]. Check reweighting configuration"<<std::endl;
+        }
+        if(bins.back()!=max_var){
+          max_var=bins.back();
+          std::cerr<<"WARNING: bins and max_var do not match for "<<cut_str<<". Forcing max_var=bins.back(). Check reweighting configuration"<<std::endl;
+        }
+      }
+
+      //now get the weights
+      double trw;
+      std::getline(infile_rw, line);
+      while(line.empty()) {std::getline(infile_rw, line);} //skips spaces
+      std::istringstream iss_rw(line);
+      while(iss_rw>>trw){reweight.push_back(trw);}
+      rw_info_i = std::make_tuple(flag_reweight_i, cut_str, var_str, min_var, max_var, use_underflow, use_overflow, equal_bins, reweight, bins);
+      rw_info_vec.push_back(rw_info_i);
+      if(!(equal_bins)){
+        if(use_underflow && use_overflow){
+          if(bins.size()+1!=reweight.size()) std::cerr<<"WARNING: bins and reweighting function for "<<cut_str<<" do not match. Check reweighting configuration"<<std::endl;
+        }else if(use_underflow || use_overflow){
+           if(bins.size()!=reweight.size()) std::cerr<<"WARNING: bins and reweighting function for "<<cut_str<<" do not match. Check reweighting configuration"<<std::endl;
+        }else if(bins.size()-1!=reweight.size()) std::cerr<<"WARNING: bins and reweighting function for "<<cut_str<<" do not match. Check reweighting configuration"<<std::endl;
+      } 
+    }
+  }
+  rw_info = std::make_tuple(flag_reweight, rw_info_vec); 
   
   std::ifstream infile(cov_filename);
   TString name, var_name;
@@ -468,6 +531,23 @@ void LEEana::CovMatrix::add_osc_config(TString osc_ch_filename, TString osc_pars
   std::cout << "=====> sin2_theta_24: " << osc_par_sin2_theta_24 << std::endl;
   std::cout << "=====> sin2_theta_34: " << osc_par_sin2_theta_34 << std::endl;
   
+}
+
+void LEEana::CovMatrix::add_rw_config( int run ){
+  if (run==18) rw_type=1;
+  if (run==19) rw_type=2;
+  if (run==0) rw_type=3;
+}
+
+void LEEana::CovMatrix::print_rw(std::tuple< bool, std::vector< std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double>  > > > rw_info ){
+  std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double> > rw_info_i;
+
+  if(std::get<0>(rw_info)){//Are you applying any reweighting?
+    for(size_t rw=0; rw<std::get<1>(rw_info).size(); rw++){
+      rw_info_i = std::get<1>(rw_info)[rw];
+      if(std::get<0>(rw_info_i)) std::cout<<"Applying reweighting to "<<std::get<1>(rw_info_i)<<" in "<<std::get<2>(rw_info_i)<<std::endl;
+    }
+  }
 }
 
 bool LEEana::CovMatrix::is_osc_channel(TString ch_name){
@@ -1243,6 +1323,8 @@ void LEEana::CovMatrix::fill_xs_histograms(std::map<TString, std::set<std::tuple
 std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_weights_xs(TString input_filename, std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::tuple<int, float, bool, int> > > > >& map_passed_events, std::map<TString, double>& map_filename_pot, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos){
   TFile *file = new TFile(input_filename);
 
+  int NUM_UNIV = 500; // Universes for reweighting uncertainties
+
   TTree *T_BDTvars = (TTree*)file->Get("wcpselection/T_BDTvars");
   TTree *T_eval = (TTree*)file->Get("wcpselection/T_eval");
   TTree *T_pot = (TTree*)file->Get("wcpselection/T_pot");
@@ -1647,6 +1729,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     T_PFeval->SetBranchStatus("truth_pdg",1);
     T_PFeval->SetBranchStatus("truth_mother",1);
     T_PFeval->SetBranchStatus("truth_startMomentum",1);
+    T_PFeval->SetBranchStatus("truth_Ntrack",1); 
   }
 
   if (pfeval.flag_NCDelta){
@@ -1706,7 +1789,11 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   weight.reinteractions_proton_Geant4 = new std::vector<float>; 
   
   TString option;
-  if (T_weight->GetBranch("expskin_FluxUnisim")){
+  if (rw_type == 1){
+    option = "reweight";
+  }else if (rw_type == 2){
+    option = "reweight_cor";
+  }else if (T_weight->GetBranch("expskin_FluxUnisim")){
     option = "expskin_FluxUnisim";
   }else if (T_weight->GetBranch("horncurrent_FluxUnisim")){
     option = "horncurrent_FluxUnisim";
@@ -1765,6 +1852,9 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::tuple<int, float, bool, int> > > event_info;
     std::get<0>(event_info) = eval.weight_cv * eval.weight_spline;
     std::get<1>(event_info) = leeweight(eval.truth_nuEnergy);
+
+    double reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info());//automatically 1 if reweighting is not applied
+    std::get<0>(event_info) *= reweight;
     
      for (auto it = histo_infos.begin(); it != histo_infos.end(); it++){
       TString histoname = std::get<0>(*it);
@@ -1893,6 +1983,36 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
 	for (size_t j=0; j!= weight.reinteractions_proton_Geant4->size(); j++){
 	  std::get<2>(event_info).at(j) = weight.reinteractions_proton_Geant4->at(j) - 1.0;
 	}
+      }else if (option == "reweight"){
+        std::get<2>(event_info).resize(NUM_UNIV);
+        std::get<3>(event_info).push_back(NUM_UNIV);
+        if(!(flag_reweight)) reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
+        for (size_t j=0;j!=NUM_UNIV;j++){
+          if(flag_reweight){
+            if (weight.weight_cv>0 && reweight!=1){
+              gRandom->SetSeed(j*reweight*77777);
+              double rand = gRandom->Gaus(reweight,abs(1-reweight));
+              std::get<2>(event_info).at(j) = (rand-reweight)/reweight;
+            }else std::get<2>(event_info).at(j) = 0;
+          }else{
+            gRandom->SetSeed(j*reweight*77777);
+            double rand = gRandom->Gaus(1,abs(1-reweight));
+            std::get<2>(event_info).at(j) = rand-1;
+          }
+        }
+      }else if (option == "reweight_cor"){
+        std::get<2>(event_info).resize(1);
+        std::get<3>(event_info).push_back(1);
+        if(flag_reweight){
+          if (weight.weight_cv>0 && reweight!=1){
+            std::get<2>(event_info).at(0) = (1-reweight)/reweight;
+          }else{
+            std::get<2>(event_info).at(0) = 0;
+          }
+        }else{
+           reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
+           std::get<2>(event_info).at(0) = reweight-1;
+        }
       }else if (option == "UBGenieFluxSmallUni"){
 	int acc_no = 0;
 	std::get<2>(event_info).resize(weight.All_UBGenie->size());
@@ -1905,6 +2025,39 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
 	  }
 	}
 	acc_no += weight.All_UBGenie->size();
+
+  if(rw_type==3){
+    std::get<2>(event_info).resize(acc_no+NUM_UNIV);
+    std::get<3>(event_info).push_back(NUM_UNIV);
+    if(!(flag_reweight)) reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
+    for (size_t j=0;j!=NUM_UNIV;j++){
+      if(flag_reweight){
+        if (weight.weight_cv>0 && reweight!=1){
+          gRandom->SetSeed(j*reweight*77777);
+          double rand = gRandom->Gaus(reweight,abs(1-reweight));
+          std::get<2>(event_info).at(acc_no+j) = (rand-reweight)/reweight;
+        }else std::get<2>(event_info).at(acc_no+j) = 0;
+      }else{
+        gRandom->SetSeed(j*reweight*77777);
+        double rand = gRandom->Gaus(1,abs(1-reweight));
+        std::get<2>(event_info).at(acc_no+j) = rand-1;
+      }
+    }
+    acc_no+=NUM_UNIV;
+    std::get<2>(event_info).resize(acc_no+1);
+    std::get<3>(event_info).push_back(1);
+    if(flag_reweight){
+      if (weight.weight_cv>0 && reweight!=1){
+        std::get<2>(event_info).at(acc_no) = (1-reweight)/reweight;
+      }else{
+        std::get<2>(event_info).at(acc_no) = 0;
+      }
+    }else{
+       reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
+       std::get<2>(event_info).at(acc_no) = reweight-1;
+    }
+    acc_no++; 
+  }
 
 	std::get<2>(event_info).resize(acc_no + weight.AxFFCCQEshape_UBGenie->size());
 	std::get<3>(event_info).push_back(weight.AxFFCCQEshape_UBGenie->size());
@@ -2098,8 +2251,16 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     sup_lengths.push_back(1000);
   }else if (option == "reinteractions_proton_Geant4"){
     sup_lengths.push_back(1000);
+  }else if (option == "reweight"){
+    sup_lengths.push_back(NUM_UNIV);
+  }else if (option == "reweight_cor"){
+    sup_lengths.push_back(1);
   }else if (option == "UBGenieFluxSmallUni"){
     sup_lengths.push_back(600); // all_ubgenie
+    if(rw_type==3){
+      sup_lengths.push_back(NUM_UNIV); //reweighting syst
+      sup_lengths.push_back(1); //cor reweighting syst
+    } 
     sup_lengths.push_back(1);   // AxFFCCQEshape_UBGenie-
     sup_lengths.push_back(1);   // DecayAngMEC_UBGenie
     sup_lengths.push_back(1); // NormCCCOH_UBGenie

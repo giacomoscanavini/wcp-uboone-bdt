@@ -24,12 +24,15 @@
 namespace LEEana{
   class CovMatrix{
   public:
-    CovMatrix(TString cov_filename = "./configurations/cov_input.txt", TString cv_filename = "./configurations/cv_input.txt", TString file_filename = "./configurations/file_ch.txt");
+    //CovMatrix(TString cov_filename = "./configurations/cov_input.txt", TString cv_filename = "./configurations/cv_input.txt", TString file_filename = "./configurations/file_ch.txt");
+    CovMatrix(TString cov_filename = "./configurations/cov_input.txt", TString cv_filename = "./configurations/cv_input.txt", TString file_filename = "./configurations/file_ch.txt", TString rw_filename = "./configurations/rw_cv_input.txt");
     ~CovMatrix();
 
     void add_xs_config(TString xs_ch_filename = "./configurations/xs_ch.txt", TString xs_real_bin_filename = "./configurations/xs_real_bin.txt");
     void add_osc_config(TString osc_ch_filename = "./configurations/osc_ch.txt", TString osc_pars_filename = "./configurations/osc_parameter.txt");
     
+    void add_rw_config(int run=1);   
+    void print_rw(std::tuple< bool, std::vector< std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double>  > > > rw_info);
     
     void print_ch_info();
     void print_filetype_info();
@@ -104,7 +107,7 @@ namespace LEEana{
     std::pair<std::vector<int>, std::vector<int> > get_events_weights(TString input_filename, std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::pair<int, float> > > > >& map_passed_events, std::map<TString, double>& map_filename_pot, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos);
 
     void fill_xf_histograms(int num, int tot_num, int acc_no, int no, int tot_no, std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::pair<int, float> > > > >& map_passed_events, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos, std::map<int, TString>& map_no_histoname,  std::map<TString, TH1F*>& map_histoname_hist);
-     void fill_xf_histograms(std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::pair<int, float> > > > >& map_passed_events, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos, std::map<int, TString>& map_no_histoname,  std::map<TString, TH1F*>& map_histoname_hist);
+    void fill_xf_histograms(std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::pair<int, float> > > > >& map_passed_events, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos, std::map<int, TString>& map_no_histoname,  std::map<TString, TH1F*>& map_histoname_hist);
 
      // prediction statistics
      void gen_pred_stat_cov_matrix(int run, std::map<int, TH1F*>& map_covch_hist, std::map<TString, TH1F*>& map_histoname_hist, TVectorD* vec_mean, TMatrixD* cov_mat);
@@ -145,6 +148,15 @@ namespace LEEana{
     bool is_osc_channel(TString ch_name);
     double get_osc_weight(EvalInfo& eval, PFevalInfo& pfeval);
     
+
+    bool get_flag_reweight(){return flag_reweight;};
+    std::tuple< bool, std::vector< std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double>  > > > get_rw_info(bool ov=false){
+      if(!(ov)) return rw_info;
+      std::get<0>(rw_info) = 1;
+      for(size_t rw=0; rw<std::get<1>(rw_info).size(); rw++){ std::get<0>( std::get<1>(rw_info)[rw]  ) = 1; }
+      return rw_info;
+    };
+
   private:
     TGraph *gl, *gh;
     int g_llimit, g_hlimit;
@@ -245,8 +257,11 @@ namespace LEEana{
     double osc_par_sin2_theta_24;
     double osc_par_sin2_theta_34;
 
-
-    
+    // reweighting related
+    bool flag_reweight = false;
+    int rw_type = 0;
+    std::tuple< bool, std::vector< std::tuple<bool, TString, TString, double, double, bool, bool, bool, std::vector<double>, std::vector<double>  > > >  rw_info;  
+ 
     // special weights ...
     bool flag_spec_weights;
     std::vector<std::vector<float> > spec_weights;

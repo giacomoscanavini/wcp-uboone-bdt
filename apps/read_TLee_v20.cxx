@@ -78,6 +78,10 @@ int main(int argc, char** argv)
   TApplication theApp("theApp",&argc,argv);
   
   TLee *Lee_test = new TLee();
+
+  Lee_test->flag_syst_flux_Xs    = config_Lee::flag_syst_flux_Xs;
+  Lee_test->flag_syst_reweight    = config_Lee::flag_syst_reweight;
+  Lee_test->flag_syst_reweight_cor    = config_Lee::flag_syst_reweight_cor;
     
   ////////// just do it one time in the whole procedure
 
@@ -203,6 +207,9 @@ int main(int argc, char** argv)
   int flag_syst_detector = config_Lee::flag_syst_detector;
   int flag_syst_additional = config_Lee::flag_syst_additional;
   int flag_syst_mc_stat = config_Lee::flag_syst_mc_stat;
+  int flag_syst_reweight = config_Lee::flag_syst_reweight;
+  int flag_syst_reweight_cor = config_Lee::flag_syst_reweight_cor;
+
   double user_Lee_strength_for_output_covariance_matrix = config_Lee::Lee_strength_for_outputfile_covariance_matrix;
   double user_scaleF_POT = scaleF_POT;
   vector<double>vc_val_GOF;
@@ -211,6 +218,8 @@ int main(int argc, char** argv)
   tree_config->Branch("flag_syst_detector", &flag_syst_detector, "flag_syst_detector/I" );
   tree_config->Branch("flag_syst_additional", &flag_syst_additional, "flag_syst_additional/I" );
   tree_config->Branch("flag_syst_mc_stat", &flag_syst_mc_stat, "flag_syst_mc_stat/I" );
+  tree_config->Branch("flag_syst_reweight", &flag_syst_reweight, "flag_syst_reweight/I" );
+  tree_config->Branch("flag_syst_reweight_cor", &flag_syst_reweight_cor, "flag_syst_reweight_cor/I" );
   tree_config->Branch("user_Lee_strength_for_output_covariance_matrix", &user_Lee_strength_for_output_covariance_matrix,
                       "user_Lee_strength_for_output_covariance_matrix/D" );
   tree_config->Branch("user_scaleF_POT", &user_scaleF_POT, "user_scaleF_POT/D" );
@@ -251,8 +260,61 @@ int main(int argc, char** argv)
   //Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
   //Lee_test->Set_Collapse();
 
-  // chi-square with 2 distributions, set to 1 in case you want it
+  // chi-square with multiple distributions, set to 1 in case you want it
   if(1){
+    int Nbins = 12;
+    int bins_h1 = Nbins; // number of bins in cov_input for obsr 1   (FC 0p)
+    int bins_h2 = Nbins; // number of bins in cov_input for obsr 2   (FC 0p)
+    int bins_h3 = Nbins; // number of bins in cov_input for obsr 3   (FC 0p)
+    int bins_h4 = Nbins; // number of bins in cov_input for obsr 4   (FC 0p)
+    int bins_h5 = Nbins; // number of bins in cov_input for obsr 5   (FC Np)
+    int bins_h6 = Nbins; // number of bins in cov_input for obsr 6   (FC Np)
+    int bins_h7 = Nbins; // number of bins in cov_input for obsr 7   (FC Np)
+    int bins_h8 = Nbins; // number of bins in cov_input for obsr 8   (FC Np)
+    int bins_h9 = Nbins; // number of bins in cov_input for obsr 9    (PC 0p)
+    int bins_h10 = Nbins; // number of bins in cov_input for obsr 10  (PC 0p)
+    int bins_h11 = Nbins; // number of bins in cov_input for obsr 11  (PC 0p)
+    int bins_h12 = Nbins; // number of bins in cov_input for obsr 12  (PC 0p)
+    int bins_h13 = Nbins; // number of bins in cov_input for obsr 13   (PC Np)
+    int bins_h14 = Nbins; // number of bins in cov_input for obsr 14   (PC Np)
+    int bins_h15 = Nbins; // number of bins in cov_input for obsr 15   (PC Np)
+    int bins_h16 = Nbins; // number of bins in cov_input for obsr 16   (PC Np)
+
+    // With 1 right-side overflow bin
+    if(1){
+      // FC0p, constrained with PC0p
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(1);     
+      vc_target_chs.push_back(2);
+      vc_target_chs.push_back(3); 
+      vc_target_chs.push_back(4);  
+
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(9);  
+      vc_support_chs.push_back(10);
+      vc_support_chs.push_back(11);
+      vc_support_chs.push_back(12);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3323); // No constraint used
+    }
+    if(1){
+      // FCNp, constrained with PCNp
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(5);     
+      vc_target_chs.push_back(6);
+      vc_target_chs.push_back(7);
+      vc_target_chs.push_back(8);     
+
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(13);  
+      vc_support_chs.push_back(14);
+      vc_support_chs.push_back(15);
+      vc_support_chs.push_back(16);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3345); // No constraint used
+    }
+  }
+
+  // chi-square with 2 distributions, set to 1 in case you want it
+  if(0){
     int Nbins = 25;
     int bins_h1 = Nbins; // number of bins in cov_input for obsr 1
     int bins_h2 = Nbins; // number of bins in cov_input for obsr 2
@@ -268,13 +330,13 @@ int main(int argc, char** argv)
     if(1){
       // FC, PC next to each other
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
-      vc_target_chs.push_back(2);
-      vc_target_chs.push_back(3);
+      vc_target_chs.push_back(2);     
+      vc_target_chs.push_back(3);     
 
-      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      //vc_support_chs.push_back(1);
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      //vc_support_chs.push_back(1);  
       //vc_support_chs.push_back(2);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1123);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1123); // No constraint used
     }
     if(1){
       // FC
@@ -1121,6 +1183,8 @@ int main(int argc, char** argv)
   cout<<" ---> flag_syst_detector   "<<Lee_test->flag_syst_detector<<endl;
   cout<<" ---> flag_syst_additional "<<Lee_test->flag_syst_additional<<endl;
   cout<<" ---> flag_syst_mc_stat    "<<Lee_test->flag_syst_mc_stat<<endl;  
+  cout<<" ---> flag_syst_reweight       "<<Lee_test->flag_syst_reweight<<endl;
+  cout<<" ---> flag_syst_reweight_cor   "<<Lee_test->flag_syst_reweight_cor<<endl; 
   
   cout<<endl<<endl;
   cout<<" ---> Finish all the program"<<endl;

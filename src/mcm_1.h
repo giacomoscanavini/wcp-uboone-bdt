@@ -557,6 +557,7 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
     T_PFeval_cv->SetBranchStatus("truth_mother",1);
     T_PFeval_cv->SetBranchStatus("truth_pdg",1);
     T_PFeval_cv->SetBranchStatus("truth_startMomentum",1);
+    T_PFeval_cv->SetBranchStatus("truth_Ntrack",1);
   }
 
   if (pfeval_cv.flag_NCDelta){
@@ -704,6 +705,7 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
     T_PFeval_det->SetBranchStatus("truth_mother",1);
     T_PFeval_det->SetBranchStatus("truth_pdg",1);
     T_PFeval_det->SetBranchStatus("truth_startMomentum",1);
+    T_PFeval_det->SetBranchStatus("truth_Ntrack",1);
   }
 
   if (pfeval_det.flag_NCDelta){
@@ -779,6 +781,8 @@ void LEEana::CovMatrix::fill_det_histograms(std::map<TString, TH1D*> map_filenam
       
     }
     std::get<2>(vec_events.at(i)) *= osc_weight;
+    double reweight = get_weight("add_weight", eval_cv, pfeval_cv, kine_cv, tagger_cv, get_rw_info());//automatically 1 if reweighting is not applied
+    std::get<2>(vec_events.at(i)) *= reweight;    
     
     
     //std::cout << std::get<0>(vec_events.at(i)) << " " << std::get<1>(vec_events.at(i)) << " " << std::get<2>(vec_events.at(i)) << " " << std::get<3>(vec_events.at(i))  << " " << std::get<4>(vec_events.at(i) ).size() << std::endl;

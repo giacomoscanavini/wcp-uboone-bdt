@@ -1,3 +1,5 @@
+#include "TRandom.h"
+#include "TRandom3.h"
 
 void LEEana::CovMatrix::gen_xf_cov_matrix(int run, std::map<int, TH1F*>& map_covch_hist, std::map<TString, TH1F*>& map_histoname_hist, TVectorD* vec_mean,  TMatrixD* cov_xf_mat){
   // prepare the maps ... name --> no,  covch, lee
@@ -310,6 +312,8 @@ void LEEana::CovMatrix::fill_xf_histograms(std::map<TString, std::set<std::tuple
 
 std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_weights(TString input_filename, std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::pair<int, float> > > > >& map_passed_events, std::map<TString, double>& map_filename_pot, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos){
   TFile *file = new TFile(input_filename);
+
+  int NUM_UNIV = 500; // Universes for reweighting uncertainties
 
   TTree *T_BDTvars = (TTree*)file->Get("wcpselection/T_BDTvars");
   TTree *T_eval = (TTree*)file->Get("wcpselection/T_eval");
@@ -715,6 +719,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     T_PFeval->SetBranchStatus("truth_mother",1);
     T_PFeval->SetBranchStatus("truth_pdg",1);
     T_PFeval->SetBranchStatus("truth_startMomentum",1);
+    T_PFeval->SetBranchStatus("truth_Ntrack",1);
   }
 
   if (pfeval.flag_NCDelta){
@@ -778,7 +783,11 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   weight.reinteractions_proton_Geant4 = new std::vector<float>; 
   
   TString option;
-  if (T_weight->GetBranch("expskin_FluxUnisim")){
+  if (rw_type == 1){
+    option = "reweight";
+  }else if (rw_type == 2){
+    option = "reweight_cor";
+  }else if (T_weight->GetBranch("expskin_FluxUnisim")){
     option = "expskin_FluxUnisim";
   }else if (T_weight->GetBranch("horncurrent_FluxUnisim")){
     option = "horncurrent_FluxUnisim";
@@ -868,6 +877,9 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     }
     // apply oscillation ...
     std::get<0>(event_info) *= osc_weight;
+    //apply reweight
+    double reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info());//automatically 1 if reweighting is not applied
+    std::get<0>(event_info) *= reweight; 
     
     if (std::get<4>(event_info).size()>0){
       if (option == "expskin_FluxUnisim"){
@@ -1030,7 +1042,6 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
 	std::get<2>(event_info).resize(weight.reinteractions_proton_Geant4->size());
 	std::get<3>(event_info).push_back(weight.reinteractions_proton_Geant4->size());
 
-
 	if (flag_spec_weights){
 	  std::vector<float> temp_vec = get_spec_weight(eval, pfeval);
 	  //std::cout << temp_vec.at(0) << std::endl;
@@ -1042,6 +1053,38 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
 	    std::get<2>(event_info).at(j) = weight.reinteractions_proton_Geant4->at(j) - 1.0;
 	  }
 	}
+      
+      }else if (option == "reweight"){
+        std::get<2>(event_info).resize(NUM_UNIV);
+        std::get<3>(event_info).push_back(NUM_UNIV);
+        if(!(flag_reweight)) reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
+        for (size_t j=0;j!=NUM_UNIV;j++){
+          if(flag_reweight){
+            if (weight.weight_cv>0 && reweight!=1){
+              gRandom->SetSeed(j*reweight*77777);
+              double rand = gRandom->Gaus(reweight,abs(1-reweight));
+              std::get<2>(event_info).at(j) = (rand-reweight)/reweight;
+            }else std::get<2>(event_info).at(j) = 0;
+          }else{
+            gRandom->SetSeed(j*reweight*77777);
+            double rand = gRandom->Gaus(1,abs(1-reweight));
+            std::get<2>(event_info).at(j) = rand-1;
+          }
+        }
+      }else if (option == "reweight_cor"){
+        std::get<2>(event_info).resize(1);
+        std::get<3>(event_info).push_back(1);
+        if(flag_reweight){
+          if (weight.weight_cv>0 && reweight!=1){
+            std::get<2>(event_info).at(0) = (1-reweight)/reweight;
+          }else{
+            std::get<2>(event_info).at(0) = 0;
+          }
+        }else{
+           reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
+           std::get<2>(event_info).at(0) = reweight-1;
+        }
+
       }else if (option == "UBGenieFluxSmallUni"){
 	int acc_no = 0;
 	std::get<2>(event_info).resize(weight.All_UBGenie->size());
@@ -1257,6 +1300,10 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     sup_lengths.push_back(1000);
   }else if (option == "reinteractions_proton_Geant4"){
     sup_lengths.push_back(1000);
+  }else if (option == "reweight"){
+    sup_lengths.push_back(NUM_UNIV);
+  }else if (option == "reweight_cor"){
+    sup_lengths.push_back(1);
   }else if (option == "UBGenieFluxSmallUni"){
     sup_lengths.push_back(600); // all_ubgenie
     sup_lengths.push_back(1);   // AxFFCCQEshape_UBGenie-

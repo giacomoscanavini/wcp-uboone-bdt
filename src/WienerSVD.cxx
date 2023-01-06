@@ -3,6 +3,8 @@
 // Version 2.0
 
 #include "WCPLEEANA/WienerSVD.h"
+#include "WienerSVD_3D.C" // 2D cross section extraction
+
 #include "TMatrixD.h"
 #include "TDecompSVD.h"
 #include <iostream>
@@ -10,6 +12,17 @@
 
 using namespace std;
 
+bool is_on_edge(std::vector<int> edges, int element) {
+    int size = edges.size();
+    for (int i=0;i<size;i++) { if (edges[i] == element) { return true; } }
+    return false;
+}
+
+int get_slice (std::vector<int> edges, int index) {
+    int nbins = edges.size()-1;
+    for (int i=0;i<nbins;i++) { if (index >= edges[i] && index < edges[i+1]) { return i; } }
+    return -1;
+}
 
 TMatrixD Matrix_C(Int_t n, Int_t type)
 {
@@ -18,74 +31,124 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
     //Type II: Second derivative matrix
     Double_t epsilon = 1e-6; // needed for 2nd derivative matrix inversion
     Double_t epsilon2 = 1e-2; // needed for 3rd derivative matrix inversion
+
+    std::cout << "type = " << type << std::endl;
+    if      (type==232){ std::cout << "type = " << type << std::endl; }
+
+    std::vector<int> dim_edges { 0, n };
+    //2nd derivative
+    if      (type==232) { return C_3D(2,2);} // (derivative, dimension)
+    else if (type==233) { return C_3D(2,3);} // bugged doens't handle dim = 1 
+    //3rd derivative
+    else if (type==332) { return C_3D(3,2);}
+    else if (type==333) { return C_3D(3,3);} // bugged doens't handle dim = 1
+    //else if (type==233) { return C2_3D(3);} // Second derivative for 3D
+    else if (type==22 || type==32) { dim_edges = { 0, 5, 10, 15, 20 }; }  //2D edges between 1D dimension slices 
+
+    else if (type==23 || type==33) { dim_edges = { 0, 5, 10, 15, 20 }; }  //3D edges between 1D dimension slices
+
+    std::cout << "n, type, dim_edges.count = " << n << ",   " << type << ",   " << dim_edges.size() << std::endl;
+
     TMatrixD C(n, n);
-    for(Int_t i=0; i<n; i++)
-    {
-        for(Int_t j=0; j<n; j++)
-        {
+    for(Int_t i=0; i<n; i++){
+        for(Int_t j=0; j<n; j++){
             C(i, j) = 0;
-            if(type == 0)
-            {
+            if(type == 0){
                 if(i == j) C(i, j) = 1;
             }
 
-            else if(type == 1)
-            {
+            else if(type == 1){
                 if( j-i == 1 ) C(i, j) = 1;
-                if(i==j) 
-                {
+                if(i==j){
                     C(i, j) = -1;
                 }
             }
 
-            else if(type == 2)
-            {
+            //else if(type == 2){
+            //    if(TMath::Abs(i-j) == 1) C(i, j) = 1;
+            //    if(i==j){
+            //        C(i, j) = -2+epsilon;
+            //        if(i==0 || i==n-1){
+            //            C(i, j) = -1+epsilon;
+            //        }
+            //    }
+            //}
+
+            // Upgrade to type 2 breaking the matrix with multiple channels (type==20)
+            else if(type == 2 || type==20){
                 if(TMath::Abs(i-j) == 1) C(i, j) = 1;
-                if(i==j) 
-                {
+                if(i==j){
                     C(i, j) = -2+epsilon;
-                    if(i==0 || i==n-1)
-                    {
+                    if(i==0 || i==n-1){
                         C(i, j) = -1+epsilon;
                     }
                 }
+                if(type==20 && i==n/2){
+                    if(j==i) C(i,j)=-1;
+                    if(j==i-1) C(i,j)=0;
+                }
+                if(type==20 && i==n/2-1){
+                    if(j==i) C(i,j)=-1;
+                    if(j==i+1) C(i,j)=0;
+                }
             }
 
-            else // third derivative matrix
+            else if(type==23)
             {
-                if(i-j == 2) 
-                { 
+                bool on_edge_offdiag = ( is_on_edge(dim_edges,i) && j==(i-1)) || ( is_on_edge(dim_edges,j) && i==(j-1));
+                //if (TMath::Abs(i-j) == 1 && on_edge_offdiag) { std::cout << "on_edge_offdiag.  i,j = " << i << ",  " << j << std::endl; }
+                if(TMath::Abs(i-j) == 1 && !on_edge_offdiag) C(i, j) = 1;
+                if(i==j) 
+                {
+                    bool on_edge = is_on_edge(dim_edges,i) || is_on_edge(dim_edges,i+1);
+                    //if (on_edge) { std::cout << "on_edge.          i, j = " << i << ",  " << j << std::endl; }
+                    if (on_edge) { C(i, j) = -1+epsilon; }
+                    else         { C(i, j) = -2+epsilon; }
+                }
+            }
+
+            else if(type==32 || type==33) // third derivative matrix
+            {
+                if (get_slice(dim_edges,i) != get_slice(dim_edges,j)) { C(i,j) = 0; continue; }
+
+                bool ihigh = i>j;
+                if      (std::abs(i-j) == 2) { C(i, j) = !ihigh - ihigh; }
+                else if (std::abs(i-j) == 1) {
+                    C(i, j) = 2*(ihigh - !ihigh);
+                    if((is_on_edge(dim_edges,i-1) && ihigh) || (is_on_edge(dim_edges,j+1) && !ihigh)) { C(i, j) = 0; }
+                }
+                else if(i==j) {
+                    C(i, j) = 0 + epsilon2;
+                    if(is_on_edge(dim_edges,i)   || is_on_edge(dim_edges,i-1)) { C(i, j) = C(i, j) + 1; }
+                    if(is_on_edge(dim_edges,i+1) || is_on_edge(dim_edges,i+2)) { C(i, j) = C(i, j) - 1; }
+                }
+            }
+
+            else{
+                if(i-j == 2){ 
                     C(i, j) = -1;
                 }
-                if(i-j == 1) 
-                {
+                if(i-j == 1){
                     C(i, j) = 2;
-                    if(i==1)
-                    {
+                    if(i==1){
                         C(i, j) = 0; 
                     }
                 }
-                if(i-j == -1) 
-                {
+                if(i-j == -1){
                     C(i, j) = -2;
-                    if(i==n-2)
-                    {
+                    if(i==n-2){
                         C(i, j) = 0;
                     }
                 }
-                if(i-j == -2) 
-                {
+                if(i-j == -2){
                     C(i, j) = 1;
                 }
-                if(i==j) 
-                {
+                if(i==j){
                     C(i, j) = 0 + epsilon2;
-                    if(i==0 || i==1)
-                    {
+                    if(i==0 || i==1){
                         C(i, j) = 1 + epsilon2;
                     }
-                    if(i==n-1 || i==n-2)
-                    {
+                    if(i==n-1 || i==n-2){
                         C(i, j) = -1 + epsilon2;
                     }
                 }

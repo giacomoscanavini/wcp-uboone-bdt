@@ -1084,7 +1084,7 @@ int main( int argc, char** argv )
                 }
                 if(line == "NCpi0inFVother") {
                     std::cout<<"NCpi0inFVother"<<" "<<histname<<std::endl;
-                    hNCpi0inFVother->Add(htemp);
+                    //hNCpi0inFVother->Add(htemp);
                     break;
                 }
                 //if(line == "NCpi0inFVnoncoh") {
@@ -1282,12 +1282,12 @@ int main( int argc, char** argv )
           hNCpi0inFVmec->SetLineColor(kTeal-2);
           hNCpi0inFVmec->SetLineWidth(1);
 
-          hstack[obschannel-1]->Add(hNCpi0inFVother); 
-          legend[obschannel-1]->AddEntry(hNCpi0inFVother, Form("NC#pi^{0} other,  %.1f", hNCpi0inFVother->Integral()), "F"); 
-          hNCpi0inFVother->SetFillStyle(1001);
-          hNCpi0inFVother->SetFillColorAlpha(kMagenta+2, 0.5);
-          hNCpi0inFVother->SetLineColor(kMagenta+2);
-          hNCpi0inFVother->SetLineWidth(1);
+          //hstack[obschannel-1]->Add(hNCpi0inFVother); 
+          //legend[obschannel-1]->AddEntry(hNCpi0inFVother, Form("NC#pi^{0} other,  %.1f", hNCpi0inFVother->Integral()), "F"); 
+          //hNCpi0inFVother->SetFillStyle(1001);
+          //hNCpi0inFVother->SetFillColorAlpha(kMagenta+2, 0.5);
+          //hNCpi0inFVother->SetLineColor(kMagenta+2);
+          //hNCpi0inFVother->SetLineWidth(1);
 
           //hstack[obschannel-1]->Add(hNCpi0inFVnoncoh); 
           //legend[obschannel-1]->AddEntry(hNCpi0inFVnoncoh, Form("NC#pi^{0} non-COH,  %.1f", hNCpi0inFVnoncoh->Integral()), "F"); 
@@ -1606,7 +1606,7 @@ int main( int argc, char** argv )
         gratio_mc[obschannel-1]->GetXaxis()->SetRangeUser(hmc->GetXaxis()->GetXmin(),hmc->GetXaxis()->GetXmax());
         gratio_mc[obschannel-1]->GetYaxis()->SetNdivisions(210);
         //if(obschannel==5 || obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetRangeUser(0,1200);
-        gratio_mc[obschannel-1]->GetYaxis()->SetTitle("Data/Pred");
+        gratio_mc[obschannel-1]->GetYaxis()->SetTitle("Data/Prediction");
         gratio_mc[obschannel-1]->GetYaxis()->SetTitleOffset(0.5);
         if(flag_err==3){
           gratio_mc2[obschannel-1]->Draw("2 same");
@@ -1619,14 +1619,22 @@ int main( int argc, char** argv )
 
         // PLOT X-AXIS LABELS
 
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Proton Multiplicity"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Transferred Visible Energy [MeV]"); }
+        // CC / CCpi0 plots 
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Transferred Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Momentum [MeV/c]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon cos #theta"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Neutrino Energy [MeV]"); }
+        if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Total Energy [MeV]"); }
-        if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non #mu-#pi^{0} Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non #mu-#pi^{0} Energy [MeV]"); }
 
+
+
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Proton Multiplicity"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Total Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} mass [MeV/c^{2}]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Mass [MeV/c^{2}]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta_{CM}"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Azimuthal Angle #phi [rad]"); }
@@ -1637,12 +1645,13 @@ int main( int argc, char** argv )
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Visible Energy [MeV]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Energy [MeV]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Conversion Distance [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Polar Angle #theta [degree]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Polar Angle #theta [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Azimuthal Angle #phi [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conversion Distance [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Polar Angle #theta [degree]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Polar Angle #theta [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Azimuthal Angle #phi [rad]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Angle between photons [cosine]"); }
 
 
 
@@ -1798,7 +1807,7 @@ int main( int argc, char** argv )
         if(flag_err==2) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat uncertainty (Bayesian)", "F");
         if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Total Uncertainty", "F");
         //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat+xsec+flux uncertainty", "F");
-        if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Cross Sec.", "F");
+        if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Cross Sec. + Reweight", "F");
         //legend2[obschannel-1]->AddEntry(gratio_data[obschannel-1],"Data with stat. uncertainty", "lp");
         //legend2[obschannel-1]->AddEntry(gratio_data2[obschannel-1],"Data with stat. uncertainty (normalized)", "lp");
         legend2[obschannel-1]->SetTextSize(0.08);
