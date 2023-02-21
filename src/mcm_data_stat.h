@@ -1,3 +1,4 @@
+
 void LEEana::CovMatrix::gen_data_stat_cov_matrix(int run, std::map<int, TH1F*>& map_obsch_hist, std::map<TString, TH1F*>& map_histoname_hist, TVectorD* vec_mean, TMatrixD* cov_mat_bootstrapping){
   
   std::map<TString, std::tuple<int, int, int, TString>> map_histoname_infos ; 
@@ -81,18 +82,18 @@ void LEEana::CovMatrix::gen_data_stat_cov_matrix(int run, std::map<int, TH1F*>& 
       hobs->Reset();
       
       for (auto it1 = map_no_histoname.begin(); it1 != map_no_histoname.end(); it1++){
-	TString histoname = it1->second;
-	int tmp_obsch = std::get<1>(map_histoname_infos[histoname]);
-	TH1F *htmp = map_histoname_hist[histoname];
+  TString histoname = it1->second;
+  int tmp_obsch = std::get<1>(map_histoname_infos[histoname]);
+  TH1F *htmp = map_histoname_hist[histoname];
 
-	if (tmp_obsch == obsch) hobs->Add(htmp);
-	//	std::cout << obsch << " " << tmp_obsch << " " << htmp << std::endl;
+  if (tmp_obsch == obsch) hobs->Add(htmp);
+  //  std::cout << obsch << " " << tmp_obsch << " " << htmp << std::endl;
       }
       int start_bin = map_obsch_startbin[obsch];
       //std::cout << start_bin << std::endl;
       for (int i=0;i!=hobs->GetNbinsX()+1;i++){
-	x[start_bin+i] = hobs->GetBinContent(i+1) ;
-	//std::cout << x[start_bin+i] << std::endl;
+  x[start_bin+i] = hobs->GetBinContent(i+1) ;
+  //std::cout << x[start_bin+i] << std::endl;
       }
     }
     prin.AddRow(x);
@@ -125,7 +126,7 @@ void LEEana::CovMatrix::gen_data_stat_cov_matrix(int run, std::map<int, TH1F*>& 
       TH1F *htmp = map_histoname_hist[histoname];
       
       if (tmp_obsch == obsch) hobs->Add(htmp);
-      //	std::cout << obsch << " " << tmp_obsch << " " << htmp << std::endl;
+      //  std::cout << obsch << " " << tmp_obsch << " " << htmp << std::endl;
     }
   }
   
@@ -146,16 +147,16 @@ void LEEana::CovMatrix::fill_data_stat_histograms(std::map<TString, std::vector<
     for (size_t i=0;i!=it->second.size(); i++){
 
       for (auto it1 = std::get<2>(it->second.at(i)).begin(); it1 != std::get<2>(it->second.at(i)).end(); it1++){
-	int no = std::get<0>(*it1);
-	double val_cv = std::get<1>(*it1);
-	bool flag_cv = std::get<2>(*it1);
+  int no = std::get<0>(*it1);
+  double val_cv = std::get<1>(*it1);
+  bool flag_cv = std::get<2>(*it1);
 
-	TString histoname = map_no_histoname[no];
-	TH1F *htemp = map_histoname_hist[histoname];
+  TString histoname = map_no_histoname[no];
+  TH1F *htemp = map_histoname_hist[histoname];
 
-	if (flag_cv){
-	  htemp->Fill(val_cv);
-	}
+  if (flag_cv){
+    htemp->Fill(val_cv);
+  }
       }
     }
   }
@@ -180,17 +181,17 @@ void LEEana::CovMatrix::fill_data_stat_histograms(std::map<TString, TH1D*> map_f
       int global_index = hweight->FindBin(hweight->GetRandom())-1;
 
        for (auto it1 = std::get<2>(it->second.at(global_index)).begin(); it1 != std::get<2>(it->second.at(global_index)).end(); it1++){
-	 int no = std::get<0>(*it1);
-	 double val_cv = std::get<1>(*it1);
-	 bool flag_cv = std::get<2>(*it1);
+   int no = std::get<0>(*it1);
+   double val_cv = std::get<1>(*it1);
+   bool flag_cv = std::get<2>(*it1);
 
-	 TString histoname = map_no_histoname[no];
-	 TH1F *htemp = map_histoname_hist[histoname];
-	 //int flag_lee = std::get<2>(map_histoname_infos[histoname]);
+   TString histoname = map_no_histoname[no];
+   TH1F *htemp = map_histoname_hist[histoname];
+   //int flag_lee = std::get<2>(map_histoname_infos[histoname]);
 
-	  if (flag_cv){
-	    htemp->Fill(val_cv,1);
-	  }
+    if (flag_cv){
+      htemp->Fill(val_cv,1);
+    }
        }
       
     }
@@ -577,15 +578,15 @@ void LEEana::CovMatrix::get_data_events_info(TString input_filename, std::map<TS
   T_KINEvars->SetBranchStatus("kine_pio_phi_2",1);
   T_KINEvars->SetBranchStatus("kine_pio_dis_2",1);
   T_KINEvars->SetBranchStatus("kine_pio_angle",1);
-  if (T_KINEvars->GetBranch("vlne_numu_full_primaryE")) {
-    T_KINEvars->SetBranchStatus("vlne_numu_full_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_full_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_partial_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_partial_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_full_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_full_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_partial_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_partial_totalE",1);
+  if (T_KINEvars->GetBranch("vlne_v4_numu_full_primaryE")) {
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_full_primaryE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_full_totalE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_partial_primaryE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_partial_totalE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_full_primaryE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_full_totalE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_partial_primaryE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_partial_totalE",1);
   }
 
   T_PFeval->SetBranchStatus("*",0);

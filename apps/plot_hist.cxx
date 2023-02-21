@@ -1619,157 +1619,36 @@ int main( int argc, char** argv )
 
         // PLOT X-AXIS LABELS
 
-        // CC / CCpi0 plots 
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Transferred Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Momentum [MeV/c]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon cos #theta"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Neutrino Energy [MeV]"); }
-        if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Total Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non #mu-#pi^{0} Energy [MeV]"); }
-
-
-
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Proton Multiplicity"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Total Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Mass [MeV/c^{2}]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta_{CM}"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Azimuthal Angle #phi [rad]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT Score"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Mass [MeV/c^{2}]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#nu Vertex X [cm]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#nu Vertex Y [cm]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#nu Vertex Z [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Visible Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Azimuthal Angle #phi [rad]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos #theta_{CM}"); }
+
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Energy [MeV]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Conversion Distance [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Polar Angle #theta [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Azimuthal Angle #phi [rad]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Polar Angle #theta [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conversion Distance [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Polar Angle #theta [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Azimuthal Angle #phi [rad]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Polar Angle #theta [rad]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
+
+        if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT Score"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Transferred Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Proton Multiplicity"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Angle between photons [cosine]"); }
 
-
-
-
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Momentum [MeV/c]"); }
-        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos#theta"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non-#pi^{0} Energy [MeV]"); }
-        //if(obschannel == 4){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non-#pi^{0} Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Vertex X [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Vertex Y [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Vertex Z [cm]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} cos#theta"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower #theta [deg]"); }
-        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower #theta [deg]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Energy [MeV]"); }
-        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Conv. Distance [cm]"); }
-        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conv. Distance [cm]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} momentum [MeV/c]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} mass [MeV/c^{2}]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT score"); }
-        //if(obschannel == 2){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Visible Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Corrected Visible Energy [MeV]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("E_{#gamma} [MeV]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Shower Energy [MeV]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Shower Gap [cm]"); }
-        //if(obschannel == 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("E_{#gamma} [MeV]"); 
-        //else if(obschannel == 2){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed P_{#pi^{0}} [MeV/c]"); }
-        //else if(obschannel == 3){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed #pi^{0} mass [MeV/c^{2}]"); }
-        //else if(obschannel == 4){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
-        //else if(obschannel >= 5) {  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco #pi^{0} energy [MeV]"); }
-        //if(obschannel <= 2){        gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed E_{#gamma} [MeV]"); }
-        //else if(obschannel == 3){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
-        //else if(obschannel == 4){   gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reconstructed cos#theta"); }
-        //else gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]");
-        /* if(obschannel <=26) */ 
-        /*     gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* else */ 
-        //    gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon kinetic energy [MeV]");
-        ///hack
-        /* if(obschannel<=2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco electron shower energy [MeV]"); */ 
-        /* else if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("nue BDT score"); */ 
-        /* if(obschannel==1) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Median dQ/dx (1-5 cm) [43k e-/cm]"); */ 
-        /* if(obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Shower angle to beam (Z-axis) [degree]"); */ 
-        /* if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Shower angle to vertical-up (Y-axis) [degree]"); */ 
-        /* if(obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Shower vertex in X-axis [cm]"); */
-         /* if(obschannel==1) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]"); */
-         /* if(obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]"); */
-         /* if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Y-axis [cm]"); */
-         /* if(obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Y-axis [cm]"); */
-         /* if(obschannel==5) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Z-axis [cm]"); */
-         /* if(obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Z-axis [cm]"); */
-         /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-         /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-         /* if(obschannel==9) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Number of gaps in reco shower"); */
-        /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Number of gaps in reco shower"); */
-        /* if(obschannel==1) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon kinetic energy [MeV]"); */
-        /* if(obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon kinetic energy [MeV]"); */
-        /* if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon cos#theta (relative to Z/beam) [degree]"); */
-        /* if(obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon cos#theta (relative to Z/beam) [degree]"); */
-        /* if(obschannel==5) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon #phi (X-Y plane) [degree]"); */
-        /* if(obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon #phi (X-Y plane) [degree]"); */
-        /*  if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]"); */
-        /*  if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in X-axis [cm]"); */
-        /*  if(obschannel==9) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Y-axis [cm]"); */
-        /*  if(obschannel==10) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Y-axis [cm]"); */
-        /*  if(obschannel==11) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Z-axis [cm]"); */
-        /*  if(obschannel==12) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino vtx in Z-axis [cm]"); */
-        /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon kinetic energy [MeV]"); */
-        /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon kinetic energy [MeV]"); */
-        /* if(obschannel==9) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon cos#theta (relative to Z/beam) [degree]"); */
-        /* if(obschannel==10) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon cos#theta (relative to Z/beam) [degree]"); */
-        /* if(obschannel==11) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon #phi (X-Y plane) [degree]"); */
-        /* if(obschannel==12) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco muon #phi (X-Y plane) [degree]"); */
-        /* if(obschannel==13) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Median dEdx (1-5 cm) [MeV/cm]"); */
-        /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco hadronic energy [MeV]"); */
-        /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco hadronic energy [MeV]"); */
-        /* if(obschannel==9) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==10) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==11) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==12) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==1) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco Q^{2} (4 momentum transfer) [GeV^{2}]"); */
-        /* if(obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco Q^{2} (4 momentum transfer) [GeV^{2}]"); */
-        /* if(obschannel==5) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco x_{bj} (Bjorken variable)"); */
-        /* if(obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco x_{bj} (Bjorken variable)"); */
-        /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco neutrino energy [MeV]"); */
-        /* if(obschannel==9) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco Q^{2} (4 momentum transfer) [GeV^{2}]"); */
-        /* if(obschannel==10) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco Q^{2} (4 momentum transfer) [GeV^{2}]"); */
-        /* if(obschannel==11) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco x_{bj} (Bjorken variable)"); */
-        /* if(obschannel==12) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco x_{bj} (Bjorken variable)"); */
-        /* if(obschannel==13) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco hadronic energy [MeV]"); */
-        /* if(obschannel==14) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco hadronic energy [MeV]"); */
-        /* if(obschannel==15) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco hadronic energy [MeV]"); */
-        /* if(obschannel==16) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco hadronic energy [MeV]"); */
-        /* if(obschannel==1 || obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Number of reco tracks"); */
-        /* if(obschannel==3 || obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Number of reco showers"); */
-        /* if(obschannel==5 || obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Reco Ehadron [MeV]"); */
-        /* if(obschannel==1) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("br3_8_max_dQ_dx [43k e-/cm]"); */
-        /* if(obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("tro_1_score"); */
-        /* if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("tro_4_score"); */
-        /* if(obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("sig_2_score"); */
-        /* if(obschannel==5) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("stem_dir_angle3 [degree]"); */
-        /* if(obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("br3_3_score"); */
-        /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("pio_2_score"); */
-        /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("spt_angle_vertical [degree]"); */
-        /* if(obschannel==9) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("br1_2_max_length_ratio"); */
-        /* if(obschannel==1) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Emuon [MeV]"); */
-        /* if(obschannel==2) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Emuon [MeV]"); */
-        /* if(obschannel==3) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon cos#theta"); */
-        /* if(obschannel==4) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon cos#theta"); */
-        /* if(obschannel==5) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Ehadron [MeV]"); */
-        /* if(obschannel==6) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Ehadron [MeV]"); */
-        /* if(obschannel==7) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Neutrino energy [MeV]"); */
-        /* if(obschannel==8) gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Neutrino energy [MeV]"); */
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Momentum [MeV/c]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon cos #theta"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Total Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Non #mu-#pi^{0} Energy [MeV]"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("#pi^{0} Total Energy [MeV]"); }
+        
         
         //hack end
         gratio_mc[obschannel-1]->GetXaxis()->SetTitleSize(0.1);
@@ -1807,7 +1686,8 @@ int main( int argc, char** argv )
         if(flag_err==2) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat uncertainty (Bayesian)", "F");
         if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Total Uncertainty", "F");
         //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat+xsec+flux uncertainty", "F");
-        if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Cross Sec. + Reweight", "F");
+        if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Genie + GEANT4", "F");
+        //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Genie + GEANT4 + Reweight", "F");
         //legend2[obschannel-1]->AddEntry(gratio_data[obschannel-1],"Data with stat. uncertainty", "lp");
         //legend2[obschannel-1]->AddEntry(gratio_data2[obschannel-1],"Data with stat. uncertainty (normalized)", "lp");
         legend2[obschannel-1]->SetTextSize(0.08);

@@ -556,9 +556,9 @@ double TLee::GetChi2(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_temp, TMatr
 
     if( int_meas>=1 && int_meas<=10) {
       if( val_pred<array_pred_protect[int_meas] ) {
-	double numerator = pow(val_pred-val_meas, 2);
+  double numerator = pow(val_pred-val_meas, 2);
         double denominator = 2*( val_pred - val_meas + val_meas*log(val_meas/val_pred) );
-	matrix_stat_cov(idx, idx) = numerator/denominator;
+  matrix_stat_cov(idx, idx) = numerator/denominator;
       }
     }
     
@@ -592,9 +592,9 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
 
     if( int_meas>=1 && int_meas<=10) {
       if( val_pred<array_pred_protect[int_meas] ) {
-	double numerator = pow(val_pred-val_meas, 2);
+  double numerator = pow(val_pred-val_meas, 2);
         double denominator = 2*( val_pred - val_meas + val_meas*log(val_meas/val_pred) );
-	matrix_stat_cov(idx, idx) = numerator/denominator;
+  matrix_stat_cov(idx, idx) = numerator/denominator;
       }
     }
     
@@ -864,11 +864,11 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
   TLegend *lg_lambda_sigma = new TLegend(0.35+shift_x_lambda_sigma, 0.75, 0.7+shift_x_lambda_sigma, 0.85+0.02);
   // lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{Total num: %d}", kBlue, rows), "");
   // lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{|#sigma_{i}\'| #in (1, 2]: %1.0f, expect. %3.2f}",
-  // 						kBlue, lambda_sigma_12, rows*0.2718), "");
+  //            kBlue, lambda_sigma_12, rows*0.2718), "");
   // lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{|#sigma_{i}\'| #in (2, 3]: %1.0f, expect. %3.2f}",
-  // 						kBlue, lambda_sigma_23, rows*0.0428), "");
+  //            kBlue, lambda_sigma_23, rows*0.0428), "");
   // lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{|#sigma_{i}\'| > 3: %1.0f, expect. %3.2f}",
-  // 						kBlue, lambda_sigma_3p, rows*0.0027), "");
+  //            kBlue, lambda_sigma_3p, rows*0.0027), "");
 
   
   double pvalue_default = TMath::Prob( chi2, rows );
@@ -892,7 +892,7 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
       
       sum_AA = 0;
       for(int idx=0; idx<user_vec_size; idx++) {
-	sum_AA += pow( vec_above3sigma.at(idx), 2 );	
+  sum_AA += pow( vec_above3sigma.at(idx), 2 );  
       }
       double pvalue_local_AA = TMath::Prob( sum_AA, user_vec_size );
       
@@ -905,7 +905,7 @@ void TLee::Plotting_singlecase(TMatrixD matrix_pred_temp, TMatrixD matrix_meas_t
   lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{%3.1f#sigma:        overall #chi^{2}/dof: %3.1f/%d}", kBlue, sigma_default, chi2, rows), "");
   if( lambda_sigma_3p>=1 ) {
     lg_lambda_sigma->AddEntry("", TString::Format("#color[%d]{%3.1f#sigma (LEE corr.): #chi^{2}/dof: %3.1f/%d (|#epsilon_{i}\'|>3)}",
-						  kRed, sigma_global, sum_AA, (int)(map_above3sigma.size())), "");
+              kRed, sigma_global, sum_AA, (int)(map_above3sigma.size())), "");
   }
   else {
     lg_lambda_sigma->AddEntry("", "", "");
@@ -1308,9 +1308,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     int int_data = (int)(val_data+0.1);
     if( int_data>=1 && int_data<=10) {
       if( val_pred<array_pred_protect[int_data] ) {
-	double numerator = pow(val_pred-val_data, 2);
+  double numerator = pow(val_pred-val_data, 2);
         double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
-	matrix_goodness_cov_total_noConstraint(i,i) = numerator/denominator;
+  matrix_goodness_cov_total_noConstraint(i,i) = numerator/denominator;
       }
     }
 
@@ -1530,9 +1530,9 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     int int_meas = (int)(val_meas+0.1);    
     if( int_meas>=1 && int_meas<=10) {
       if( val_pred<array_pred_protect[int_meas] ) {
-	double numerator = pow(val_pred-val_meas, 2);
+  double numerator = pow(val_pred-val_meas, 2);
         double denominator = 2*( val_pred - val_meas + val_meas*log(val_meas/val_pred) );
-	user_stat = numerator/denominator;
+  user_stat = numerator/denominator;
       }
     }    
     matrix_XX(ibin-1, ibin-1) += user_stat;
@@ -1607,7 +1607,7 @@ int TLee::Exe_Goodness_of_fit(int num_Y, int num_X, TMatrixD matrix_pred, TMatri
     int int_data = (int)(val_data+0.1);
     if( int_data>=1 && int_data<=10) {
       if( val_pred<array_pred_protect[int_data] ) {
-	      double numerator = pow(val_pred-val_data, 2);
+        double numerator = pow(val_pred-val_data, 2);
         double denominator = 2*( val_pred - val_data + val_data*log(val_data/val_pred) );
         matrix_goodness_cov_total_wiConstraint(i,i) = numerator/denominator;
       }
@@ -2285,10 +2285,10 @@ void TLee::Set_Collapse()
     
     for(int idx=0; idx<rows; idx++) {
       for(int jdx=0; jdx<rows; jdx++) {
-	double cv_i = map_input_spectrum_oldworld_bin[idx];
-	double cv_j = map_input_spectrum_oldworld_bin[jdx];
-	double fcov_ij = matrix_sub_flux_geant4_Xs_oldworld[index](idx, jdx);
-	matrix_sub_flux_geant4_Xs_oldworld[index](idx, jdx) = cv_i*cv_j*fcov_ij;	
+  double cv_i = map_input_spectrum_oldworld_bin[idx];
+  double cv_j = map_input_spectrum_oldworld_bin[jdx];
+  double fcov_ij = matrix_sub_flux_geant4_Xs_oldworld[index](idx, jdx);
+  matrix_sub_flux_geant4_Xs_oldworld[index](idx, jdx) = cv_i*cv_j*fcov_ij;  
       }// jdx
     }// idx
 
@@ -2452,9 +2452,10 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[1] = "bnb";
   map_input_spectrum_ch_str[2] = "bnb1";
   map_input_spectrum_ch_str[3] = "bnb2";
-  map_input_spectrum_ch_str[4] = "bnb3";
-  map_input_spectrum_ch_str[5] = "bnb4";
-  map_input_spectrum_ch_str[6] = "bnb5";
+  map_input_spectrum_ch_str[4] = "ext";
+  map_input_spectrum_ch_str[5] = "ext1";
+  map_input_spectrum_ch_str[6] = "ext2";
+  /*
   map_input_spectrum_ch_str[7] = "bnb6";
   map_input_spectrum_ch_str[8] = "bnb7";
   map_input_spectrum_ch_str[9] = "bnb8";
@@ -2481,8 +2482,8 @@ void TLee::Set_Spectra_MatrixCov()
   map_input_spectrum_ch_str[29] = "ext12";
   map_input_spectrum_ch_str[30] = "ext13";
   map_input_spectrum_ch_str[31] = "ext14";
-  map_input_spectrum_ch_str[32] = "ext15";
-
+  map_input_spectrum_ch_str[32] = "ext15";  
+  */
   /// flag for LEE channels corresponding to the cov_input.txt
   //map_Lee_ch[8] = 1;
   //map_Lee_ch[9] = 1;
@@ -2560,14 +2561,14 @@ void TLee::Set_Spectra_MatrixCov()
       double content = h1_spectrum->GetBinContent(ibin);
 
       // if( ich==1 || ich==8 ) {
-      // 	if( ibin==1 ) content *= 1.388;
-      // 	if( ibin==2 ) content *= 1.318;
-      // 	if( ibin==3 ) content *= 1.294;
-      // 	if( ibin==4 ) content *= 1.232;
-      // 	if( ibin==5 ) content *= 1.250;
-      // 	if( ibin==6 ) content *= 1.179;
-      // 	if( ibin==7 ) content *= 1.196;
-      // 	if( ibin==8 ) content *= 1.104;
+      //  if( ibin==1 ) content *= 1.388;
+      //  if( ibin==2 ) content *= 1.318;
+      //  if( ibin==3 ) content *= 1.294;
+      //  if( ibin==4 ) content *= 1.232;
+      //  if( ibin==5 ) content *= 1.250;
+      //  if( ibin==6 ) content *= 1.179;
+      //  if( ibin==7 ) content *= 1.196;
+      //  if( ibin==8 ) content *= 1.104;
       // }    
 
       //if( (ich==1 || ich==8) && ibin<=8 ) content *= h1_spectra_wi2no_101->GetBinContent(ibin);
@@ -2585,10 +2586,10 @@ void TLee::Set_Spectra_MatrixCov()
   for(auto it_ch=map_input_spectrum_ch_bin.begin(); it_ch!=map_input_spectrum_ch_bin.end(); it_ch++) {
     int ich = it_ch->first;
       for(int ibin=0; ibin<(int)map_input_spectrum_ch_bin[ich].size(); ibin++) {
-	bins_oldworld++;
-	int index_oldworld = bins_oldworld - 1;	
-	map_input_spectrum_oldworld_bin[ index_oldworld ] = map_input_spectrum_ch_bin[ich][ibin];
-	if( map_Lee_ch.find(ich)!=map_Lee_ch.end() ) map_Lee_oldworld[index_oldworld] = 1;
+  bins_oldworld++;
+  int index_oldworld = bins_oldworld - 1; 
+  map_input_spectrum_oldworld_bin[ index_oldworld ] = map_input_spectrum_ch_bin[ich][ibin];
+  if( map_Lee_ch.find(ich)!=map_Lee_ch.end() ) map_Lee_oldworld[index_oldworld] = 1;
     }// ibin
   }// ich
 
@@ -2718,28 +2719,28 @@ void TLee::Set_Spectra_MatrixCov()
     for(int idx=0; idx<user_rows; idx++) {
       for(int jdx=0; jdx<user_rows; jdx++) {
 
-	////
+  ////
         int flag_idx = 0;
-	if( idx>=1-1 || idx<=26*2-1 ) flag_idx = 1;
-	if( idx>=26*4+11*3 ) flag_idx = 1;
-	  
-	////
-	int flag_jdx = 0;
-	if( jdx>=1-1 || jdx<=26*2-1 ) flag_jdx = 1;
-	if( jdx>=26*4+11*3 ) flag_jdx = 1;
+  if( idx>=1-1 || idx<=26*2-1 ) flag_idx = 1;
+  if( idx>=26*4+11*3 ) flag_idx = 1;
+    
+  ////
+  int flag_jdx = 0;
+  if( jdx>=1-1 || jdx<=26*2-1 ) flag_jdx = 1;
+  if( jdx>=26*4+11*3 ) flag_jdx = 1;
 
-	////
-	double val = matrix_detector_frac(idx, jdx);
+  ////
+  double val = matrix_detector_frac(idx, jdx);
 
-	if( flag_idx+flag_jdx==1 ) {
-	  val = val/user_nue_reduced;
-	}
-	if( flag_idx+flag_jdx==2 ) {
-	  val = val/user_nue_reduced/user_nue_reduced;
-	}
+  if( flag_idx+flag_jdx==1 ) {
+    val = val/user_nue_reduced;
+  }
+  if( flag_idx+flag_jdx==2 ) {
+    val = val/user_nue_reduced/user_nue_reduced;
+  }
 
-	matrix_detector_frac(idx, jdx) = val;
-	
+  matrix_detector_frac(idx, jdx) = val;
+  
       }// for(int jdx=0; jdx<user_rows; jdx++)
     }//for(int idx=0; idx<user_rows; idx++)     
   }
@@ -2799,9 +2800,9 @@ void TLee::Set_Spectra_MatrixCov()
       matrix_input_cov_reweight_cor(ibin, jbin) = val_cov * val_i * val_j;
       
       for(auto it=matrix_input_cov_detector_sub.begin(); it!=matrix_input_cov_detector_sub.end(); it++) {
-	int idx = it->first;
-	val_cov = matrix_detector_sub_frac[idx](ibin, jbin);
-	matrix_input_cov_detector_sub[idx](ibin, jbin) = val_cov * val_i * val_j;
+  int idx = it->first;
+  val_cov = matrix_detector_sub_frac[idx](ibin, jbin);
+  matrix_input_cov_detector_sub[idx](ibin, jbin) = val_cov * val_i * val_j;
       }
   
     }
@@ -2850,10 +2851,10 @@ void TLee::Set_Spectra_MatrixCov()
       int gbin = 0; int lbin = 0; double val_pred = 0; double mc_stat = 0; double nn_stat = 0;
       if(idx==1) { InputFile_aa>>Lee>>run; }
       else {
-	InputFile_aa>>gbin>>lbin>>val_pred>>mc_stat>>nn_stat;
-	line++;
-	map_mc_stat_file_bin_Lee[ifile][line-1] = Lee;
-	map_mc_stat_file_bin_mcStat[ifile][line-1] = mc_stat;
+  InputFile_aa>>gbin>>lbin>>val_pred>>mc_stat>>nn_stat;
+  line++;
+  map_mc_stat_file_bin_Lee[ifile][line-1] = Lee;
+  map_mc_stat_file_bin_mcStat[ifile][line-1] = mc_stat;
       }
     }
   }

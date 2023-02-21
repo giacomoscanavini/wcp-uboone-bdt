@@ -8,12 +8,12 @@ namespace config_Lee
   TString mc_directory = "/home/gs627/LEEana/mc_stat/";
 
 
-  int channels_observation = 16;// data channels (=hdata_obsch_# in spectra_file above)
+  int channels_observation = 3;// data channels (=hdata_obsch_# in spectra_file above)
                                // which is equal to the channels after collapse
 
   int syst_cov_flux_Xs_begin = 1;// files in flux_Xs_directory above
-  //int syst_cov_flux_Xs_end   = 17;
-  int syst_cov_flux_Xs_end   = 19;//cov_18.root is uncorrelated reweighting and cov_19.root is correlated
+  int syst_cov_flux_Xs_end   = 17;
+  //int syst_cov_flux_Xs_end   = 19;//cov_18.root is uncorrelated reweighting and cov_19.root is correlated
  
   int syst_cov_mc_stat_begin = 0;// files in mc_directory above
   int syst_cov_mc_stat_end   = 1;
@@ -36,8 +36,8 @@ namespace config_Lee
   bool flag_syst_detector         = 1;  // ==0 No DET SYS (turn off)
   bool flag_syst_additional       = 1;
   bool flag_syst_mc_stat          = 1;
-  bool flag_syst_reweight         = 1;  // Must turn to 1 for reweighting to be applied
-  bool flag_syst_reweight_cor     = 1;  // Must turn to 1 for reweighting to be applied
+  bool flag_syst_reweight         = 0;  // Must turn to 1 for reweighting to be applied
+  bool flag_syst_reweight_cor     = 0;  // Must turn to 1 for reweighting to be applied
 
   double Lee_strength_for_outputfile_covariance_matrix = 0;
   

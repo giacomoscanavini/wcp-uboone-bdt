@@ -33,7 +33,6 @@ int main( int argc, char** argv )
   std::cout << "Xs mode: " << std::endl;
 
   cov.print_rw(cov.get_rw_info());
-
   
   TTree *T_BDTvars = (TTree*)file->Get("wcpselection/T_BDTvars");
   TTree *T_eval = (TTree*)file->Get("wcpselection/T_eval");
@@ -212,7 +211,6 @@ int main( int argc, char** argv )
     T_eval->SetBranchStatus("weight_change",1);
     // MC enable truth information ...
     T_eval->SetBranchStatus("truth_isCC",1);
-    T_eval->SetBranchStatus("truth_isFC",1);
     T_eval->SetBranchStatus("truth_nuPdg",1);
     T_eval->SetBranchStatus("truth_vtxInside",1);
     T_eval->SetBranchStatus("truth_nuEnergy",1);
@@ -243,15 +241,15 @@ int main( int argc, char** argv )
   T_KINEvars->SetBranchStatus("kine_pio_phi_2",1);
   T_KINEvars->SetBranchStatus("kine_pio_dis_2",1);
   T_KINEvars->SetBranchStatus("kine_pio_angle",1);
-  if (T_KINEvars->GetBranch("vlne_numu_full_primaryE")) {
-    T_KINEvars->SetBranchStatus("vlne_numu_full_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_full_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_partial_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_partial_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_full_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_full_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_partial_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_partial_totalE",1);
+  if (T_KINEvars->GetBranch("vlne_v4_numu_full_primaryE")) {
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_full_primaryE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_full_totalE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_partial_primaryE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_partial_totalE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_full_primaryE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_full_totalE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_partial_primaryE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_partial_totalE",1);
   }
 
 
@@ -270,14 +268,11 @@ int main( int argc, char** argv )
       T_PFeval->SetBranchStatus("muonvtx_diff",1);
       T_PFeval->SetBranchStatus("truth_nuIntType",1);
       T_PFeval->SetBranchStatus("truth_muonMomentum",1);
-      T_PFeval->SetBranchStatus("truth_pio_energy_1",1);
-      T_PFeval->SetBranchStatus("truth_pio_energy_2",1);
-      T_PFeval->SetBranchStatus("truth_pio_angle",1); 
-      if (T_PFeval->GetBranch("truth_mother")){    
-        T_PFeval->SetBranchStatus("truth_mother",1);
-        T_PFeval->SetBranchStatus("truth_pdg",1);
-        T_PFeval->SetBranchStatus("truth_startMomentum",1); 
+      if(T_PFeval->GetBranch("truth_mother")){//prevents throwing an error for the non _PF files
         T_PFeval->SetBranchStatus("truth_Ntrack",1);
+        T_PFeval->SetBranchStatus("truth_pdg",1); 
+        T_PFeval->SetBranchStatus("truth_mother",1); 
+        T_PFeval->SetBranchStatus("truth_startMomentum",1);
       }
   }
   if (pfeval.flag_NCDelta){
@@ -327,11 +322,10 @@ int main( int argc, char** argv )
       bool flag_pass = get_cut_pass(ch_name, add_cut, flag_data, eval, pfeval, tagger, kine);
       int signal_bin = -1;
       if (cov.is_xs_chname(ch_name))
-	signal_bin = get_xs_signal_no(cov.get_cut_file(), cov.get_map_cut_xs_bin(), eval, pfeval, tagger, kine);
+  signal_bin = get_xs_signal_no(cov.get_cut_file(), cov.get_map_cut_xs_bin(), eval, pfeval, tagger, kine);
 
       if (!((signal_bin != -1) || flag_pass)) continue;
       // get weight ...
-      //double weight_val = get_weight(weight, eval);
       double weight_val = get_weight(weight, eval, pfeval, kine, tagger, cov.get_rw_info(), flag_data);
 
       //  if (ch_name == "numuCC_signal_Enu_FC_overlay" && weight == "cv_spline") std::cout << "Xin: " << " " << flag_pass << " " << signal_bin << " " << weight_val << " " <<eval.run << " " << eval.subrun << " " << eval.event << std::endl;
@@ -344,15 +338,15 @@ int main( int argc, char** argv )
       TH2F *h3 = std::get<2>(tmp_hists);
       int num = std::get<3>(tmp_hists);
       if (num==1){
-       	if (flag_pass) h1->Fill(val,  weight_val);
+        if (flag_pass) h1->Fill(val,  weight_val);
       }else{
-       	if (signal_bin != -1){
-       	  if (flag_pass) h1->Fill(val, weight_val);
-       	  h2->Fill(signal_bin, weight_val);
-       	  if (flag_pass) h3->Fill(val, signal_bin, weight_val);
-       	}else{
-       	  std::cout << "[convt-hist-xs] Something wrong: cut/channel mismatch !" << std::endl;
-       	}
+        if (signal_bin != -1){
+          if (flag_pass) h1->Fill(val, weight_val);
+          h2->Fill(signal_bin, weight_val);
+          if (flag_pass) h3->Fill(val, signal_bin, weight_val);
+        }else{
+          std::cout << "[convt-hist-xs] Something wrong: cut/channel mismatch !" << std::endl;
+        }
       } // else
  
 

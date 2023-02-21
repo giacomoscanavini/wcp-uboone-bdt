@@ -33,8 +33,6 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
     Double_t epsilon2 = 1e-2; // needed for 3rd derivative matrix inversion
 
     std::cout << "type = " << type << std::endl;
-    if      (type==232){ std::cout << "type = " << type << std::endl; }
-
     std::vector<int> dim_edges { 0, n };
     //2nd derivative
     if      (type==232) { return C_3D(2,2);} // (derivative, dimension)
@@ -84,11 +82,11 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
                     }
                 }
                 if(type==20 && i==n/2){
-                    if(j==i) C(i,j)=-1;
+                    if(j==i) C(i,j)=-1+epsilon;
                     if(j==i-1) C(i,j)=0;
                 }
                 if(type==20 && i==n/2-1){
-                    if(j==i) C(i,j)=-1;
+                    if(j==i) C(i,j)=-1+epsilon;
                     if(j==i+1) C(i,j)=0;
                 }
             }
@@ -154,6 +152,10 @@ TMatrixD Matrix_C(Int_t n, Int_t type)
                 }
             }
         }
+        for(Int_t j=0; j<n; j++){
+            std::cout << C(i,j) << ", ";
+        }
+        std::cout << "" << std::endl;
     }
 
     return C;

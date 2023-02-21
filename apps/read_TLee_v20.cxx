@@ -261,42 +261,71 @@ int main(int argc, char** argv)
   //Lee_test->Set_Collapse();
 
   // chi-square with multiple distributions, set to 1 in case you want it
-  if(1){
-    int Nbins = 12;
-    int bins_h1 = Nbins; // number of bins in cov_input for obsr 1   (FC 0p)
-    int bins_h2 = Nbins; // number of bins in cov_input for obsr 2   (FC 0p)
-    int bins_h3 = Nbins; // number of bins in cov_input for obsr 3   (FC 0p)
-    int bins_h4 = Nbins; // number of bins in cov_input for obsr 4   (FC 0p)
-    int bins_h5 = Nbins; // number of bins in cov_input for obsr 5   (FC Np)
-    int bins_h6 = Nbins; // number of bins in cov_input for obsr 6   (FC Np)
-    int bins_h7 = Nbins; // number of bins in cov_input for obsr 7   (FC Np)
-    int bins_h8 = Nbins; // number of bins in cov_input for obsr 8   (FC Np)
-    int bins_h9 = Nbins; // number of bins in cov_input for obsr 9    (PC 0p)
-    int bins_h10 = Nbins; // number of bins in cov_input for obsr 10  (PC 0p)
-    int bins_h11 = Nbins; // number of bins in cov_input for obsr 11  (PC 0p)
-    int bins_h12 = Nbins; // number of bins in cov_input for obsr 12  (PC 0p)
-    int bins_h13 = Nbins; // number of bins in cov_input for obsr 13   (PC Np)
-    int bins_h14 = Nbins; // number of bins in cov_input for obsr 14   (PC Np)
-    int bins_h15 = Nbins; // number of bins in cov_input for obsr 15   (PC Np)
-    int bins_h16 = Nbins; // number of bins in cov_input for obsr 16   (PC Np)
-
+  if(0){
     // With 1 right-side overflow bin
     if(1){
-      // FC0p, constrained with PC0p
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(1);     
-      vc_target_chs.push_back(2);
-      vc_target_chs.push_back(3); 
-      vc_target_chs.push_back(4);  
+      vc_target_chs.push_back(5);
+      vc_target_chs.push_back(9); 
+      vc_target_chs.push_back(13);  
 
       vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      vc_support_chs.push_back(9);  
-      vc_support_chs.push_back(10);
-      vc_support_chs.push_back(11);
-      vc_support_chs.push_back(12);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3323); // No constraint used
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 15913); // No constraint used
     }
     if(1){
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(2);     
+      vc_target_chs.push_back(6);
+      vc_target_chs.push_back(10); 
+      vc_target_chs.push_back(14);  
+
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 261014); // No constraint used
+    }
+    if(1){
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(3);     
+      vc_target_chs.push_back(7);
+      vc_target_chs.push_back(11); 
+      vc_target_chs.push_back(15);  
+
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 371115); // No constraint used
+    }
+    if(1){
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(4);     
+      vc_target_chs.push_back(8);
+      vc_target_chs.push_back(12); 
+      vc_target_chs.push_back(16);  
+
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 481216); // No constraint used
+    }
+    if(1){
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(1);  
+      vc_target_chs.push_back(2);     
+      vc_target_chs.push_back(3);     
+      vc_target_chs.push_back(4);     
+      vc_target_chs.push_back(5);
+      vc_target_chs.push_back(6);
+      vc_target_chs.push_back(7);
+      vc_target_chs.push_back(8);
+      vc_target_chs.push_back(9);
+      vc_target_chs.push_back(10); 
+      vc_target_chs.push_back(11); 
+      vc_target_chs.push_back(12); 
+      vc_target_chs.push_back(13);  
+      vc_target_chs.push_back(14);  
+      vc_target_chs.push_back(15);  
+      vc_target_chs.push_back(16);   
+
+      vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 123456789); // No constraint used
+    }
+    if(0){
       // FCNp, constrained with PCNp
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(5);     
@@ -315,7 +344,7 @@ int main(int argc, char** argv)
 
   // chi-square with 2 distributions, set to 1 in case you want it
   if(0){
-    int Nbins = 25;
+    int Nbins = 24;
     int bins_h1 = Nbins; // number of bins in cov_input for obsr 1
     int bins_h2 = Nbins; // number of bins in cov_input for obsr 2
     int bins_h3 = Nbins; // number of bins in cov_input for obsr 3
@@ -334,18 +363,7 @@ int main(int argc, char** argv)
       vc_target_chs.push_back(3);     
 
       vector<int>vc_support_chs;      // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      //vc_support_chs.push_back(1);  
-      //vc_support_chs.push_back(2);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1123); // No constraint used
-    }
-    if(1){
-      // FC
-      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
-      vc_target_chs.push_back(2);
-      // PC
-      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      vc_support_chs.push_back(3);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3323);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 23); // No constraint used
     }
     if(1){
       // 0p, Np next to each other
@@ -354,60 +372,77 @@ int main(int argc, char** argv)
       vc_target_chs.push_back(5);
 
       vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      //vc_support_chs.push_back(1);
-      //vc_support_chs.push_back(2);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1145);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 45);
     }
     if(1){
-      // 0p
+      // FC 0p, FC Np, PC 0p, PC Np next to each other
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(6);
+      vc_target_chs.push_back(7);
+      vc_target_chs.push_back(8);
+      vc_target_chs.push_back(9);
+
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 6789);
+    }
+    if(1){
+      // PC constrained with measured FC
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(3);
+      // FC
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 302);
+    }
+    if(1){
+      // 0p constrained with measured Np
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(4);
       // Np
       vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
       vc_support_chs.push_back(5);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3345);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 405);
     }
     if(1){
-      // FC 0p, FC Np next to each other
-      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
-      vc_target_chs.push_back(6);
-      vc_target_chs.push_back(7);
-
-      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      //vc_support_chs.push_back(1);
-      //vc_support_chs.push_back(2);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1167);
-    }
-    if(1){
-      // FC 0p
+      // FC 0p constrained with measured FC Np
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(6);
       // FC Np
       vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
       vc_support_chs.push_back(7);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3367);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 607);
     }
     if(1){
-      // PC 0p, PC Np next to each other
+      // PC 0p constrained with measured FC 0p
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(8);
+      // FC 0p
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(6);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 806);
+    }
+    if(0){
+      // PC Np constrained with measured FC Np
+      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
+      vc_target_chs.push_back(9);
+      // FC Np
+      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
+      vc_support_chs.push_back(7);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 907);
+    }
+    if(0){
+      // PC0p PCNp constrained with measured FC0p FCNp
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(8);
       vc_target_chs.push_back(9);
-
+      // FC0p FCNp
       vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      //vc_support_chs.push_back(1);
-      //vc_support_chs.push_back(2);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1189);
+      vc_support_chs.push_back(6);
+      vc_support_chs.push_back(7);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 89067);
     }
-    if(1){
-      // PC 0p
-      vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
-      vc_target_chs.push_back(8);
-      // PC Np
-      vector<int>vc_support_chs;     // Distributions to use for the constraint, if none simple combined Chi2 is shown for targets
-      vc_support_chs.push_back(9);
-      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 3389);
-    }
-
+    
+    /*
     int all_bins = bins_h1+1;
     // Without any overflow bin
     if(1){
@@ -492,6 +527,7 @@ int main(int argc, char** argv)
 
       Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5589);
     }
+    */
   }
 
 

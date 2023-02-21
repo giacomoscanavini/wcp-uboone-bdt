@@ -20,9 +20,8 @@
 #include <algorithm>
 
 namespace LEEana{
-  // this is for the real data, for fake data this should be 1 ...
-  double em_charge_scale = 0.95;
-  //double em_charge_scale = 1.0;
+  double em_charge_scale = 0.95;    // When BNB DATA SETs are used
+  //double em_charge_scale = 1.0;   // When FAKE DATA SETs are used
 
   // correct reco neutrino energy and reco shower energy
   double get_reco_Enu_corr(KineInfo& kine, bool flag_data);
@@ -279,7 +278,31 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   }else if (var_name == "cc_transferred_energy"){
     if (pfeval.reco_muonMomentum[3]>0) return get_reco_Enu_corr(kine, flag_data) - pfeval.reco_muonMomentum[3]*1000.;
     else return -1000;
-  }else if (var_name == "p_multi"){ 
+  }else if (var_name == "p_multi_truth" || var_name == "p_KEmax_truth" || var_name == "p_KEmin_truth"){ 
+    int Nproton = 0;
+    double p_KE_min = 0;
+    double p_KE_max = 0;
+    for(int jth=0; jth<1000; jth++){
+      int mother = pfeval.truth_mother[jth];
+      int pdgcode = pfeval.truth_pdg[jth];
+      if(mother == 0 && abs(pdgcode)==2212){
+        double px = pfeval.truth_startMomentum[jth][0]*1000.; // MeV
+        double py = pfeval.truth_startMomentum[jth][1]*1000.; // MeV
+        double pz = pfeval.truth_startMomentum[jth][2]*1000.; // MeV
+        double p_KE = sqrt(px*px + py*py + pz*pz + 938.27*938.27) - 938.27; 
+        //double p_KE = pfeval.truth_startMomentum[jth][3]*1000. - 938.27; // MeV
+
+        if (p_KE_min > p_KE) p_KE_min = p_KE;
+        if (p_KE_max < p_KE) p_KE_max = p_KE;
+        if (p_KE > 35.) Nproton++;
+      }
+      if(mother > 0) break;
+    }
+    if (var_name == "p_multi_truth") return Nproton;
+    if (var_name == "p_KEmax_truth") return p_KE_max;
+    if (var_name == "p_KEmin_truth") return p_KE_min;
+  
+  }else if (var_name == "p_multi_reco"){ 
     int Nproton = 0;
     for(size_t i=0; i<kine.kine_energy_particle->size(); i++){
       int pdgcode = kine.kine_particle_type->at(i);
@@ -634,6 +657,34 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
     double truth_pi0_momentum = -1000.;
     double truth_pi0_costheta = -1000.;
     double truth_pi0_energy = -1000.;
+    int N_th_proton_35 = 0;
+    int N_th_proton_50 = 0;
+    int N_th_pi0 = 0;
+
+    for(int jth=0; jth<1000; jth++){
+      int mother = pfeval.truth_mother[jth];
+      int pdgcode = pfeval.truth_pdg[jth];
+      if(mother == 0 && abs(pdgcode)==111){
+        N_th_pi0++;
+        double px = pfeval.truth_startMomentum[jth][0]*1000.; // MeV
+        double py = pfeval.truth_startMomentum[jth][1]*1000.; // MeV
+        double pz = pfeval.truth_startMomentum[jth][2]*1000.; // MeV
+        truth_pi0_momentum = sqrt(px*px + py*py + pz*pz);
+        truth_pi0_costheta = pz / truth_pi0_momentum;
+      }
+      if(mother == 0 && abs(pdgcode)==2212){
+        double px = pfeval.truth_startMomentum[jth][0]*1000.; // MeV
+        double py = pfeval.truth_startMomentum[jth][1]*1000.; // MeV
+        double pz = pfeval.truth_startMomentum[jth][2]*1000.; // MeV
+        double p_KE = sqrt(px*px + py*py + pz*pz + 938.27*938.27) - 938.27; 
+        //double p_KE = pfeval.truth_startMomentum[jth][3]*1000. - 938.27; // MeV
+        if(p_KE > 35.) N_th_proton_35++;
+        if(p_KE > 50.) N_th_proton_50++;
+      }
+      if(mother > 0) break;
+    }
+    /*
+    // This is the old way
     if(pfeval.truth_pio_energy_1 > 0. && pfeval.truth_pio_energy_2 > 0.){
       // Calculate momentum
       double pi0_mass = 135;
@@ -658,8 +709,7 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }
     }
 
-    int N_th_proton_35 = 0;
-    int N_th_proton_50 = 0;
+
     for(int jth=0; jth<1000; jth++){
       int mother = pfeval.truth_mother[jth];
       int pdgcode = pfeval.truth_pdg[jth];
@@ -670,6 +720,7 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }
       else if(mother > 0) break;
     }
+    */
     //std::cout << "(" << cut_name << ", " << number << ") Num truth protons (>35 MeV): " << N_th_proton << std::endl;
 
     double KE_muon = pfeval.truth_muonMomentum[3]*1000.-105.66; // MeV
@@ -1157,6 +1208,20 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
+    else if (cut_file == 3321) {
+      if        (cut_name == "NCpi0BDT.inside.Ppi0.le.130.gt.0"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=130 && truth_pi0_momentum>0) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.180.gt.130"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=180 && truth_pi0_momentum>130) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.220.gt.180"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=220 && truth_pi0_momentum>180) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.260.gt.220"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=260 && truth_pi0_momentum>220) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.300.gt.260"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=300 && truth_pi0_momentum>260) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.340.gt.300"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=340 && truth_pi0_momentum>300) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.380.gt.340"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=380 && truth_pi0_momentum>340) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.420.gt.380"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=420 && truth_pi0_momentum>380) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.500.gt.420"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=500 && truth_pi0_momentum>420) return number;  
+      }else if  (cut_name == "NCpi0BDT.inside.Ppi0.le.1200.gt.500"){  if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_momentum<=1200 && truth_pi0_momentum>500) return number;  
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
     else if (cut_file == 333) {
       if        (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.130.gt.0"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=130 && truth_pi0_momentum>0) return number;
       }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.180.gt.130"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 &&truth_pi0_momentum<=180 && truth_pi0_momentum>130) return number;  
@@ -1240,6 +1305,38 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   double truth_pi0_momentum = -1000.;
   double truth_pi0_costheta = -1000.;
   double truth_pi0_energy = -1000.;
+  int N_th_proton_35 = 0;
+  int N_th_proton_50 = 0;
+  int N_th_pi0 = 0;
+
+  for(int jth=0; jth<1000; jth++){
+    int mother = pfeval.truth_mother[jth];
+    int pdgcode = pfeval.truth_pdg[jth];
+    if(mother == 0 && abs(pdgcode)==111){
+      N_th_pi0++;
+      double px = pfeval.truth_startMomentum[jth][0]*1000.; // MeV
+      double py = pfeval.truth_startMomentum[jth][1]*1000.; // MeV
+      double pz = pfeval.truth_startMomentum[jth][2]*1000.; // MeV
+      truth_pi0_momentum = sqrt(px*px + py*py + pz*pz);
+      truth_pi0_costheta = pz / truth_pi0_momentum;
+    }
+    if(mother == 0 && abs(pdgcode)==2212){
+      double px = pfeval.truth_startMomentum[jth][0]*1000.; // MeV
+      double py = pfeval.truth_startMomentum[jth][1]*1000.; // MeV
+      double pz = pfeval.truth_startMomentum[jth][2]*1000.; // MeV
+      double p_KE = sqrt(px*px + py*py + pz*pz + 938.27*938.27) - 938.27; 
+      //double p_KE = pfeval.truth_startMomentum[jth][3]*1000. - 938.27; // MeV
+      if(p_KE > 35.) N_th_proton_35++;
+      if(p_KE > 50.) N_th_proton_50++;
+    }
+    if(mother > 0) break;
+  }
+
+  /*
+  // This is the old way
+  double truth_pi0_momentum = -1000.;
+  double truth_pi0_costheta = -1000.;
+  double truth_pi0_energy = -1000.;
   if(pfeval.truth_pio_energy_1 > 0. && pfeval.truth_pio_energy_2 > 0.){
     // Calculate momentum
     double pi0_mass = 135;
@@ -1263,7 +1360,6 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
       else if(mother > 0) break;
     }
   }
-
   int N_th_proton_35 = 0;
   int N_th_proton_50 = 0;
   for(int jth=0; jth<1000; jth++){
@@ -1276,6 +1372,7 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }
     else if(mother > 0) break;
   }
+  */
 
   double KE_muon = pfeval.truth_muonMomentum[3]*1000.-105.66; // MeV
   double Pmuon   = TMath::Sqrt(pow(KE_muon,2) + 2*KE_muon*105.66); // MeV
@@ -1351,43 +1448,43 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   if(eval.match_completeness_energy<=0.1*eval.truth_energyInside) map_cuts_flag["badmatch"] = true;
   else map_cuts_flag["badmatch"] = false;
   
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && abs(eval.truth_nuPdg)==12 && eval.truth_isCC==1 && eval.truth_vtxInside==1) map_cuts_flag["nueCCinFV"] = true;
-  else map_cuts_flag["nueCCinFV"] = false;
-
   if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==0) map_cuts_flag["outFV"] = true;
   else map_cuts_flag["outFV"] = false;
-      
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && abs(eval.truth_nuPdg)==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio!=1) map_cuts_flag["numuCCinFV"] = true;
+
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==1 && abs(eval.truth_nuPdg)==12) map_cuts_flag["nueCCinFV"] = true;
+  else map_cuts_flag["nueCCinFV"] = false;
+    
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==1 && abs(eval.truth_nuPdg)==14 && pfeval.truth_NprimPio!=1) map_cuts_flag["numuCCinFV"] = true;
   else map_cuts_flag["numuCCinFV"] = false;
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio!=1) map_cuts_flag["NCinFV"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==1 && abs(eval.truth_nuPdg)==14 && pfeval.truth_NprimPio==1) map_cuts_flag["CCpi0inFV"] = true;
+  else map_cuts_flag["CCpi0inFV"] = false;
+
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio!=1) map_cuts_flag["NCinFV"] = true;
   else map_cuts_flag["NCinFV"] = false;
 
-  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && abs(eval.truth_nuPdg)==14 && eval.truth_isCC==1 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1) map_cuts_flag["CCpi0inFV"] = true;
-  else map_cuts_flag["CCpi0inFV"] = false;
-      
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1) map_cuts_flag["NCpi0inFV"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1) map_cuts_flag["NCpi0inFV"] = true;
   else map_cuts_flag["NCpi0inFV"] = false;
 
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==5) map_cuts_flag["NCpi0inFVcoh"] = true;
-  else map_cuts_flag["NCpi0inFVcoh"] = false;
-
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==1) map_cuts_flag["NCpi0inFVqe"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==1) map_cuts_flag["NCpi0inFVqe"] = true;
   else map_cuts_flag["NCpi0inFVqe"] = false;
 
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==4) map_cuts_flag["NCpi0inFVres"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==4) map_cuts_flag["NCpi0inFVres"] = true;
   else map_cuts_flag["NCpi0inFVres"] = false;
 
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==3) map_cuts_flag["NCpi0inFVdis"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==3) map_cuts_flag["NCpi0inFVdis"] = true;
   else map_cuts_flag["NCpi0inFVdis"] = false;
 
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==10) map_cuts_flag["NCpi0inFVmec"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==5) map_cuts_flag["NCpi0inFVcoh"] = true;
+  else map_cuts_flag["NCpi0inFVcoh"] = false;
+
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType==10) map_cuts_flag["NCpi0inFVmec"] = true;
   else map_cuts_flag["NCpi0inFVmec"] = false;
 
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && (pfeval.truth_nuScatType!=5 && pfeval.truth_nuScatType!=1 && pfeval.truth_nuScatType!=4 && pfeval.truth_nuScatType!=3 && pfeval.truth_nuScatType!=10)) map_cuts_flag["NCpi0inFVother"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && (pfeval.truth_nuScatType!=5 && pfeval.truth_nuScatType!=1 && pfeval.truth_nuScatType!=4 && pfeval.truth_nuScatType!=3 && pfeval.truth_nuScatType!=10)) map_cuts_flag["NCpi0inFVother"] = true;
   else map_cuts_flag["NCpi0inFVother"] = false;
 
-  if (eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_isCC==0 && eval.truth_vtxInside==1 && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType!=5) map_cuts_flag["NCpi0inFVnoncoh"] = true;
+  if(eval.match_completeness_energy>0.1*eval.truth_energyInside && eval.truth_vtxInside==1 && eval.truth_isCC==0                              && pfeval.truth_NprimPio==1 && pfeval.truth_nuScatType!=5) map_cuts_flag["NCpi0inFVnoncoh"] = true;
   else map_cuts_flag["NCpi0inFVnoncoh"] = false;
 
   //if(pfeval.truth_nuScatType==10 && eval.truth_isCC==1 && eval.match_completeness_energy>0.1*eval.truth_energyInside) map_cuts_flag["CCMEC"] = true;
@@ -2315,6 +2412,10 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "NCpi0BDT_background_Etransf_PC_Np_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Etransf_NCpi0BDTinFV"]))  return true;
     }else return false;
 
+  }else if (ch_name == "NC_truth" || ch_name == "NCpi0_truth"){
+    if (ch_name == "NC_truth"){              if (pfeval.truth_isCC==0)     return true;
+    }else if (ch_name == "NCpi0_truth"){     if (pfeval.truth_isCC==0 && pfeval.truth_NprimPio==1)     return true;
+    }else return false;
 
 
   }else{ std::cout << "Not sure what cut: " << ch_name << std::endl;

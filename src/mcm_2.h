@@ -1,3 +1,4 @@
+
 #include "TRandom.h"
 #include "TRandom3.h"
 
@@ -88,66 +89,66 @@ void LEEana::CovMatrix::gen_xf_cov_matrix(int run, std::map<int, TH1F*>& map_cov
       //      if (i>=10) continue;
       
       for (int k = 0; k!= rows;k++){
-	x[k] = 0;
+  x[k] = 0;
       }
       fill_xf_histograms(j, max_lengths.size(), acc_no, i, nsize,  map_passed_events, map_histoname_infos, map_no_histoname, map_histoname_hist);
 
       // merge histograms according to POTs ...
       for (auto it = map_pred_covch_histos.begin(); it!=map_pred_covch_histos.end();it++){
-	//std::cout << it->first << std::endl;
-	int covch = it->first;
-	TH1F *hpred = map_covch_hist[covch];
-	hpred->Reset();
-	
-	for (auto it1 = it->second.begin(); it1 != it->second.end(); it1++){
-	  TH1F *htemp = (TH1F*)hpred->Clone("htemp");
-	  htemp->Reset();
-	  std::map<int, double> temp_map_mc_acc_pot;
-	  
-	  for (auto it2 = it1->begin(); it2 != it1->end(); it2++){
-	    TString histoname = (*it2).first;
-	    TString input_filename = map_histogram_inputfile[histoname];
-	    auto it3 = map_inputfile_info.find(input_filename);
-	    int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
-	    int norm_period = std::get<6>(it3->second);
-	    double mc_pot = map_filename_pot[input_filename];
-	    //std::cout << mc_pot << std::endl;
-	    if (temp_map_mc_acc_pot.find(norm_period) == temp_map_mc_acc_pot.end()){
-	      temp_map_mc_acc_pot[norm_period] = mc_pot;
-	    }else{
-	      temp_map_mc_acc_pot[norm_period] += mc_pot;
-	    }
-	  }
-	  
-	  for (auto it2 = it1->begin(); it2 != it1->end(); it2++){
-	    TString histoname = (*it2).first;
-	    TString input_filename = map_histogram_inputfile[histoname];
-	    auto it3 = map_inputfile_info.find(input_filename);
-	    int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
-	    int norm_period = std::get<6>(it3->second);
-	    data_pot = std::get<5>(map_inputfile_info[input_filename]);
-	    double ratio = data_pot/temp_map_mc_acc_pot[norm_period];
-	    
-	    TH1F *hmc = map_histoname_hist[histoname];
-	    htemp->Add(hmc, ratio);
-	    //	std::cout << covch << " " << histoname << " " << ratio << std::endl;
-	  }
-	  
-	  hpred->Add(htemp);
-	  delete htemp;
-	}
+  //std::cout << it->first << std::endl;
+  int covch = it->first;
+  TH1F *hpred = map_covch_hist[covch];
+  hpred->Reset();
+  
+  for (auto it1 = it->second.begin(); it1 != it->second.end(); it1++){
+    TH1F *htemp = (TH1F*)hpred->Clone("htemp");
+    htemp->Reset();
+    std::map<int, double> temp_map_mc_acc_pot;
+    
+    for (auto it2 = it1->begin(); it2 != it1->end(); it2++){
+      TString histoname = (*it2).first;
+      TString input_filename = map_histogram_inputfile[histoname];
+      auto it3 = map_inputfile_info.find(input_filename);
+      int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
+      int norm_period = std::get<6>(it3->second);
+      double mc_pot = map_filename_pot[input_filename];
+      //std::cout << mc_pot << std::endl;
+      if (temp_map_mc_acc_pot.find(norm_period) == temp_map_mc_acc_pot.end()){
+        temp_map_mc_acc_pot[norm_period] = mc_pot;
+      }else{
+        temp_map_mc_acc_pot[norm_period] += mc_pot;
+      }
+    }
+    
+    for (auto it2 = it1->begin(); it2 != it1->end(); it2++){
+      TString histoname = (*it2).first;
+      TString input_filename = map_histogram_inputfile[histoname];
+      auto it3 = map_inputfile_info.find(input_filename);
+      int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
+      int norm_period = std::get<6>(it3->second);
+      data_pot = std::get<5>(map_inputfile_info[input_filename]);
+      double ratio = data_pot/temp_map_mc_acc_pot[norm_period];
+      
+      TH1F *hmc = map_histoname_hist[histoname];
+      htemp->Add(hmc, ratio);
+      //  std::cout << covch << " " << histoname << " " << ratio << std::endl;
+    }
+    
+    hpred->Add(htemp);
+    delete htemp;
+  }
 
-	int start_bin = map_covch_startbin[covch];
-	for (int k=0;k!=hpred->GetNbinsX()+1;k++){
-	  x[start_bin+k] = hpred->GetBinContent(k+1) ;
-	  //	  std::cout << i << " " << x[start_bin+i] << std::endl;
-	}
+  int start_bin = map_covch_startbin[covch];
+  for (int k=0;k!=hpred->GetNbinsX()+1;k++){
+    x[start_bin+k] = hpred->GetBinContent(k+1) ;
+    //    std::cout << i << " " << x[start_bin+i] << std::endl;
+  }
       }
       // add covariance matrix ...
       for (size_t n = 0;n!=rows; n++){
-	for (size_t m =0; m!=rows;m++){
-	  temp_mat(n,m) += x[n] * x[m];
-	}
+  for (size_t m =0; m!=rows;m++){
+    temp_mat(n,m) += x[n] * x[m];
+  }
       }  
     } // i
 
@@ -186,36 +187,36 @@ void LEEana::CovMatrix::gen_xf_cov_matrix(int run, std::map<int, TH1F*>& map_cov
       std::map<int, double> temp_map_mc_acc_pot;
       
       for (auto it2 = it1->begin(); it2 != it1->end(); it2++){
-	TString histoname = (*it2).first;
-	TString input_filename = map_histogram_inputfile[histoname];
-	auto it3 = map_inputfile_info.find(input_filename);
-	int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
-	int norm_period = std::get<6>(it3->second);
-	double mc_pot = map_filename_pot[input_filename];
-	//std::cout << mc_pot << std::endl;
-	if (temp_map_mc_acc_pot.find(norm_period) == temp_map_mc_acc_pot.end()){
-	  temp_map_mc_acc_pot[norm_period] = mc_pot;
-	}else{
-	  temp_map_mc_acc_pot[norm_period] += mc_pot;
-	}
-	//std::cout << histoname << " " << input_filename << " " << mc_pot << " " << period << std::endl;
+  TString histoname = (*it2).first;
+  TString input_filename = map_histogram_inputfile[histoname];
+  auto it3 = map_inputfile_info.find(input_filename);
+  int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
+  int norm_period = std::get<6>(it3->second);
+  double mc_pot = map_filename_pot[input_filename];
+  //std::cout << mc_pot << std::endl;
+  if (temp_map_mc_acc_pot.find(norm_period) == temp_map_mc_acc_pot.end()){
+    temp_map_mc_acc_pot[norm_period] = mc_pot;
+  }else{
+    temp_map_mc_acc_pot[norm_period] += mc_pot;
+  }
+  //std::cout << histoname << " " << input_filename << " " << mc_pot << " " << period << std::endl;
       }
 
       //      std::cout << "haha " << std::endl;
       
       for (auto it2 = it1->begin(); it2 != it1->end(); it2++){
-	TString histoname = (*it2).first;
-	TString input_filename = map_histogram_inputfile[histoname];
-	auto it3 = map_inputfile_info.find(input_filename);
-	int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
-	int norm_period = std::get<6>(it3->second);
-	data_pot = std::get<5>(map_inputfile_info[input_filename]);
-	double ratio = data_pot/temp_map_mc_acc_pot[norm_period];
-	
-	TH1F *hmc = map_histoname_hist[histoname];
-	htemp->Add(hmc, ratio);
-	
-	//	std::cout << covch << " " << histoname << " " << ratio << " " << data_pot << std::endl;
+  TString histoname = (*it2).first;
+  TString input_filename = map_histogram_inputfile[histoname];
+  auto it3 = map_inputfile_info.find(input_filename);
+  int period = std::get<1>(it3->second);  if (period != run) continue; // skip ...
+  int norm_period = std::get<6>(it3->second);
+  data_pot = std::get<5>(map_inputfile_info[input_filename]);
+  double ratio = data_pot/temp_map_mc_acc_pot[norm_period];
+  
+  TH1F *hmc = map_histoname_hist[histoname];
+  htemp->Add(hmc, ratio);
+  
+  //  std::cout << covch << " " << histoname << " " << ratio << " " << data_pot << std::endl;
       }
       
       hpred->Add(htemp);
@@ -225,7 +226,7 @@ void LEEana::CovMatrix::gen_xf_cov_matrix(int run, std::map<int, TH1F*>& map_cov
     int start_bin = map_covch_startbin[covch];
     for (int k=0;k!=hpred->GetNbinsX()+1;k++){
       (*vec_mean)(start_bin+k) = hpred->GetBinContent(k+1) ;
-      //	  std::cout << i << " " << x[start_bin+i] << std::endl;
+      //    std::cout << i << " " << x[start_bin+i] << std::endl;
     }
   }
   
@@ -252,24 +253,24 @@ void LEEana::CovMatrix::fill_xf_histograms(int num, int tot_num, int acc_no, int
       if (std::get<3>(*it1).at(num) != tot_no) std::cout << "Mismatch No of Universe! " << std::endl;
       float rel_weight_diff = std::get<2>(*it1).at(acc_no+no);
       for (auto it2 = std::get<4>(*it1).begin(); it2 != std::get<4>(*it1).end(); it2++){
-	int no = (*it2).first;
-	float val = (*it2).second;
+  int no = (*it2).first;
+  float val = (*it2).second;
 
-	TString histoname = map_no_histoname[no];
-	TH1F *htemp = map_histoname_hist[histoname];
-	int flag_lee = std::get<2>(map_histoname_infos[histoname]);
+  TString histoname = map_no_histoname[no];
+  TH1F *htemp = map_histoname_hist[histoname];
+  int flag_lee = std::get<2>(map_histoname_infos[histoname]);
 
-	if (std::isnan(rel_weight_diff) || std::isinf(rel_weight_diff)) continue;
-	// seems to have extremely small cv weight
-	if (fabs(rel_weight_diff)>100) continue;
-	
+  if (std::isnan(rel_weight_diff) || std::isinf(rel_weight_diff)) continue;
+  // seems to have extremely small cv weight
+  if (fabs(rel_weight_diff)>100) continue;
+  
 
-	if (flag_lee){
-	  htemp->Fill(val, rel_weight_diff * weight * weight_lee);
-	}else{
-	  htemp->Fill(val, rel_weight_diff * weight);
-	}
-	
+  if (flag_lee){
+    htemp->Fill(val, rel_weight_diff * weight * weight_lee);
+  }else{
+    htemp->Fill(val, rel_weight_diff * weight);
+  }
+  
       }
     }
   }
@@ -289,19 +290,19 @@ void LEEana::CovMatrix::fill_xf_histograms(std::map<TString, std::set<std::tuple
       float weight = std::get<0>(*it1);
       float weight_lee = std::get<1>(*it1);
       for (auto it2 = std::get<4>(*it1).begin(); it2 != std::get<4>(*it1).end(); it2++){
-	int no = (*it2).first;
-	float val = (*it2).second;
+  int no = (*it2).first;
+  float val = (*it2).second;
 
-	TString histoname = map_no_histoname[no];
-	TH1F *htemp = map_histoname_hist[histoname];
-	int flag_lee = std::get<2>(map_histoname_infos[histoname]);
-	
-	if (flag_lee){
-	  htemp->Fill(val, weight * weight_lee);
-	}else{
-	  htemp->Fill(val,  weight);
-	}
-	
+  TString histoname = map_no_histoname[no];
+  TH1F *htemp = map_histoname_hist[histoname];
+  int flag_lee = std::get<2>(map_histoname_infos[histoname]);
+  
+  if (flag_lee){
+    htemp->Fill(val, weight * weight_lee);
+  }else{
+    htemp->Fill(val,  weight);
+  }
+  
       }
     }
   }
@@ -312,8 +313,6 @@ void LEEana::CovMatrix::fill_xf_histograms(std::map<TString, std::set<std::tuple
 
 std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_weights(TString input_filename, std::map<TString, std::set<std::tuple<float, float, std::vector<float>, std::vector<int>, std::set<std::pair<int, float> > > > >& map_passed_events, std::map<TString, double>& map_filename_pot, std::map<TString, std::tuple<int, int, int, TString>>& map_histoname_infos){
   TFile *file = new TFile(input_filename);
-
-  int NUM_UNIV = 500; // Universes for reweighting uncertainties
 
   TTree *T_BDTvars = (TTree*)file->Get("wcpselection/T_BDTvars");
   TTree *T_eval = (TTree*)file->Get("wcpselection/T_eval");
@@ -331,7 +330,8 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   kine.kine_energy_info = new std::vector<int>;
   kine.kine_particle_type = new std::vector<int>;
   kine.kine_energy_included = new std::vector<int>;
-
+  
+  
   tagger.pio_2_v_dis2 = new std::vector<float>;
   tagger.pio_2_v_angle2 = new std::vector<float>;
   tagger.pio_2_v_acc_length = new std::vector<float>;
@@ -661,7 +661,6 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   T_eval->SetBranchStatus("weight_change",1);
   // MC enable truth information ...
   T_eval->SetBranchStatus("truth_isCC",1);
-  T_eval->SetBranchStatus("truth_isFC",1);
   T_eval->SetBranchStatus("truth_nuPdg",1);
   T_eval->SetBranchStatus("truth_vtxInside",1);
   T_eval->SetBranchStatus("truth_nuEnergy",1);
@@ -691,15 +690,15 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   T_KINEvars->SetBranchStatus("kine_pio_phi_2",1);
   T_KINEvars->SetBranchStatus("kine_pio_dis_2",1);
   T_KINEvars->SetBranchStatus("kine_pio_angle",1);
-  if (T_KINEvars->GetBranch("vlne_numu_full_primaryE")) {
-    T_KINEvars->SetBranchStatus("vlne_numu_full_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_full_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_partial_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_numu_partial_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_full_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_full_totalE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_partial_primaryE",1);
-    T_KINEvars->SetBranchStatus("vlne_nue_partial_totalE",1);
+  if (T_KINEvars->GetBranch("vlne_v4_numu_full_primaryE")) {
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_full_primaryE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_full_totalE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_partial_primaryE",1);
+    T_KINEvars->SetBranchStatus("vlne_v4_numu_partial_totalE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_full_primaryE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_full_totalE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_partial_primaryE",1);
+    // T_KINEvars->SetBranchStatus("vlne_nue_partial_totalE",1);
   }
 
   T_PFeval->SetBranchStatus("*",0);
@@ -715,17 +714,9 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   T_PFeval->SetBranchStatus("showervtx_diff",1);
   T_PFeval->SetBranchStatus("muonvtx_diff",1);
   T_PFeval->SetBranchStatus("truth_muonMomentum",1);
-  if (T_PFeval->GetBranch("truth_mother")){
-    T_PFeval->SetBranchStatus("truth_mother",1);
-    T_PFeval->SetBranchStatus("truth_pdg",1);
-    T_PFeval->SetBranchStatus("truth_startMomentum",1);
-    T_PFeval->SetBranchStatus("truth_Ntrack",1);
-  }
-
   if (pfeval.flag_NCDelta){
     T_PFeval->SetBranchStatus("truth_NCDelta",1);
     T_PFeval->SetBranchStatus("truth_NprimPio",1);
-    T_PFeval->SetBranchStatus("truth_nuScatType",1);
   }
   if (pfeval.flag_recoprotonMomentum){
     T_PFeval->SetBranchStatus("reco_protonMomentum",1);
@@ -734,7 +725,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     T_PFeval->SetBranchStatus("reco_showerMomentum",1);
     T_PFeval->SetBranchStatus("reco_Nproton",1);
     T_PFeval->SetBranchStatus("truth_showerMomentum",1);
-    
+    T_PFeval->SetBranchStatus("truth_nuScatType",1);
     // oscillation formula ...
     T_PFeval->SetBranchStatus("truth_nu_momentum",1);
     T_PFeval->SetBranchStatus("neutrino_type",1);
@@ -742,6 +733,12 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     T_PFeval->SetBranchStatus("mcflux_dk2gen",1);
     T_PFeval->SetBranchStatus("mcflux_gen2vtx",1);
     T_PFeval->SetBranchStatus("mcflux_ndecay",1);
+  }
+  if (T_PFeval->GetBranch("truth_startMomentum")){
+    T_PFeval->SetBranchStatus("truth_Ntrack",1);
+    T_PFeval->SetBranchStatus("truth_pdg",1); 
+    T_PFeval->SetBranchStatus("truth_mother",1); 
+    T_PFeval->SetBranchStatus("truth_startMomentum",1); 
   }
 
   WeightInfo weight;
@@ -868,11 +865,11 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
       bool flag_pass = get_cut_pass(ch_name, add_cut, false, eval, pfeval, tagger, kine);
 
       if (flag_pass) {
-	std::get<4>(event_info).insert(std::make_pair(no, val));
-	if (flag_osc && is_osc_channel(ch_name) && (!flag_updated)){
-	  osc_weight = get_osc_weight(eval, pfeval);
-	  flag_updated = true;
-	}
+  std::get<4>(event_info).insert(std::make_pair(no, val));
+  if (flag_osc && is_osc_channel(ch_name) && (!flag_updated)){
+    osc_weight = get_osc_weight(eval, pfeval);
+    flag_updated = true;
+  }
       }
     }
     // apply oscillation ...
@@ -880,185 +877,187 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
     //apply reweight
     double reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info());//automatically 1 if reweighting is not applied
     std::get<0>(event_info) *= reweight; 
-    
+
+ 
     if (std::get<4>(event_info).size()>0){
       if (option == "expskin_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.expskin_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.expskin_FluxUnisim->size());
-	for (size_t j=0;j!=weight.expskin_FluxUnisim->size();j++){
-	  std::get<2>(event_info).at(j) = weight.expskin_FluxUnisim->at(j) - 1.0; // relative ...
-	}
-	//std::cout << weight.expskin_FluxUnisim->size() << std::endl;
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.expskin_FluxUnisim->size();
-	else{
-	  if (weight.expskin_FluxUnisim->size() > it10->second) it10->second =  weight.expskin_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.expskin_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.expskin_FluxUnisim->size());
+  for (size_t j=0;j!=weight.expskin_FluxUnisim->size();j++){
+    std::get<2>(event_info).at(j) = weight.expskin_FluxUnisim->at(j) - 1.0; // relative ...
+  }
+  //std::cout << weight.expskin_FluxUnisim->size() << std::endl;
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.expskin_FluxUnisim->size();
+  else{
+    if (weight.expskin_FluxUnisim->size() > it10->second) it10->second =  weight.expskin_FluxUnisim->size();
+  }
       }else if (option == "horncurrent_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.horncurrent_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.horncurrent_FluxUnisim->size());
-	for (size_t j=0;j!= weight.horncurrent_FluxUnisim->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.horncurrent_FluxUnisim->at(j) - 1.0; // relative ...
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.horncurrent_FluxUnisim->size();
-	else{
-	  if (weight.horncurrent_FluxUnisim->size() > it10->second) it10->second =  weight.horncurrent_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.horncurrent_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.horncurrent_FluxUnisim->size());
+  for (size_t j=0;j!= weight.horncurrent_FluxUnisim->size(); j++){
+    std::get<2>(event_info).at(j) = weight.horncurrent_FluxUnisim->at(j) - 1.0; // relative ...
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.horncurrent_FluxUnisim->size();
+  else{
+    if (weight.horncurrent_FluxUnisim->size() > it10->second) it10->second =  weight.horncurrent_FluxUnisim->size();
+  }
       }else if (option == "kminus_PrimaryHadronNormalization"){
-	std::get<2>(event_info).resize(weight.kminus_PrimaryHadronNormalization->size());
-	std::get<3>(event_info).push_back(weight.kminus_PrimaryHadronNormalization->size());
-	for (size_t j=0;j!= weight.kminus_PrimaryHadronNormalization->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.kminus_PrimaryHadronNormalization->at(j) - 1.0; 
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.kminus_PrimaryHadronNormalization->size();
-	else{
-	  if (weight.kminus_PrimaryHadronNormalization->size() > it10->second) it10->second =  weight.kminus_PrimaryHadronNormalization->size();
-	}
+  std::get<2>(event_info).resize(weight.kminus_PrimaryHadronNormalization->size());
+  std::get<3>(event_info).push_back(weight.kminus_PrimaryHadronNormalization->size());
+  for (size_t j=0;j!= weight.kminus_PrimaryHadronNormalization->size(); j++){
+    std::get<2>(event_info).at(j) = weight.kminus_PrimaryHadronNormalization->at(j) - 1.0; 
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.kminus_PrimaryHadronNormalization->size();
+  else{
+    if (weight.kminus_PrimaryHadronNormalization->size() > it10->second) it10->second =  weight.kminus_PrimaryHadronNormalization->size();
+  }
       }else if (option == "kplus_PrimaryHadronFeynmanScaling"){
-	std::get<2>(event_info).resize(weight.kplus_PrimaryHadronFeynmanScaling->size());
-	std::get<3>(event_info).push_back(weight.kplus_PrimaryHadronFeynmanScaling->size());
-	for (size_t j=0;j!=weight.kplus_PrimaryHadronFeynmanScaling->size();j++){
-	  std::get<2>(event_info).at(j) = weight.kplus_PrimaryHadronFeynmanScaling->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.kplus_PrimaryHadronFeynmanScaling->size();
-	else{
-	  if (weight.kplus_PrimaryHadronFeynmanScaling->size() > it10->second) it10->second =  weight.kplus_PrimaryHadronFeynmanScaling->size();
-	}
+  std::get<2>(event_info).resize(weight.kplus_PrimaryHadronFeynmanScaling->size());
+  std::get<3>(event_info).push_back(weight.kplus_PrimaryHadronFeynmanScaling->size());
+  for (size_t j=0;j!=weight.kplus_PrimaryHadronFeynmanScaling->size();j++){
+    std::get<2>(event_info).at(j) = weight.kplus_PrimaryHadronFeynmanScaling->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.kplus_PrimaryHadronFeynmanScaling->size();
+  else{
+    if (weight.kplus_PrimaryHadronFeynmanScaling->size() > it10->second) it10->second =  weight.kplus_PrimaryHadronFeynmanScaling->size();
+  }
       }else if (option == "kzero_PrimaryHadronSanfordWang"){
-	std::get<2>(event_info).resize(weight.kzero_PrimaryHadronSanfordWang->size());
-	std::get<3>(event_info).push_back(weight.kzero_PrimaryHadronSanfordWang->size());
-	for (size_t j=0;j!=weight.kzero_PrimaryHadronSanfordWang->size();j++){
-	  std::get<2>(event_info).at(j) = weight.kzero_PrimaryHadronSanfordWang->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.kzero_PrimaryHadronSanfordWang->size();
-	else{
-	  if (weight.kzero_PrimaryHadronSanfordWang->size() > it10->second) it10->second =  weight.kzero_PrimaryHadronSanfordWang->size();
-	}
+  std::get<2>(event_info).resize(weight.kzero_PrimaryHadronSanfordWang->size());
+  std::get<3>(event_info).push_back(weight.kzero_PrimaryHadronSanfordWang->size());
+  for (size_t j=0;j!=weight.kzero_PrimaryHadronSanfordWang->size();j++){
+    std::get<2>(event_info).at(j) = weight.kzero_PrimaryHadronSanfordWang->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.kzero_PrimaryHadronSanfordWang->size();
+  else{
+    if (weight.kzero_PrimaryHadronSanfordWang->size() > it10->second) it10->second =  weight.kzero_PrimaryHadronSanfordWang->size();
+  }
       }else if (option == "nucleoninexsec_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.nucleoninexsec_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.nucleoninexsec_FluxUnisim->size());
-	for (size_t j=0;j!=weight.nucleoninexsec_FluxUnisim->size();j++){
-	  std::get<2>(event_info).at(j) = weight.nucleoninexsec_FluxUnisim->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.nucleoninexsec_FluxUnisim->size();
-	else{
-	  if (weight.nucleoninexsec_FluxUnisim->size() > it10->second) it10->second =  weight.nucleoninexsec_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.nucleoninexsec_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.nucleoninexsec_FluxUnisim->size());
+  for (size_t j=0;j!=weight.nucleoninexsec_FluxUnisim->size();j++){
+    std::get<2>(event_info).at(j) = weight.nucleoninexsec_FluxUnisim->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.nucleoninexsec_FluxUnisim->size();
+  else{
+    if (weight.nucleoninexsec_FluxUnisim->size() > it10->second) it10->second =  weight.nucleoninexsec_FluxUnisim->size();
+  }
       }else if (option == "nucleonqexsec_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.nucleonqexsec_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.nucleonqexsec_FluxUnisim->size());
-	for (size_t j=0; j!= weight.nucleonqexsec_FluxUnisim->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.nucleonqexsec_FluxUnisim->at(j) - 1.0;
-	}
-		auto it10 = map_knob_length.find(option);
-		if (it10 == map_knob_length.end()) map_knob_length[option] = weight.nucleonqexsec_FluxUnisim->size();
-	else{
-	  if (weight.nucleonqexsec_FluxUnisim->size() > it10->second) it10->second =  weight.nucleonqexsec_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.nucleonqexsec_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.nucleonqexsec_FluxUnisim->size());
+  for (size_t j=0; j!= weight.nucleonqexsec_FluxUnisim->size(); j++){
+    std::get<2>(event_info).at(j) = weight.nucleonqexsec_FluxUnisim->at(j) - 1.0;
+  }
+    auto it10 = map_knob_length.find(option);
+    if (it10 == map_knob_length.end()) map_knob_length[option] = weight.nucleonqexsec_FluxUnisim->size();
+  else{
+    if (weight.nucleonqexsec_FluxUnisim->size() > it10->second) it10->second =  weight.nucleonqexsec_FluxUnisim->size();
+  }
       }else if (option == "nucleontotxsec_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.nucleontotxsec_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.nucleontotxsec_FluxUnisim->size());
-	for (size_t j=0; j!= weight.nucleontotxsec_FluxUnisim->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.nucleontotxsec_FluxUnisim->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.nucleontotxsec_FluxUnisim->size();
-	else{
-	  if (weight.nucleontotxsec_FluxUnisim->size() > it10->second) it10->second =  weight.nucleontotxsec_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.nucleontotxsec_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.nucleontotxsec_FluxUnisim->size());
+  for (size_t j=0; j!= weight.nucleontotxsec_FluxUnisim->size(); j++){
+    std::get<2>(event_info).at(j) = weight.nucleontotxsec_FluxUnisim->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.nucleontotxsec_FluxUnisim->size();
+  else{
+    if (weight.nucleontotxsec_FluxUnisim->size() > it10->second) it10->second =  weight.nucleontotxsec_FluxUnisim->size();
+  }
       }else if (option == "piminus_PrimaryHadronSWCentralSplineVariation"){
-	std::get<2>(event_info).resize(weight.piminus_PrimaryHadronSWCentralSplineVariation->size());
-	std::get<3>(event_info).push_back(weight.piminus_PrimaryHadronSWCentralSplineVariation->size());
-	for (size_t j=0; j!= weight.piminus_PrimaryHadronSWCentralSplineVariation->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.piminus_PrimaryHadronSWCentralSplineVariation->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.piminus_PrimaryHadronSWCentralSplineVariation->size();
-	else{
-	  if (weight.piminus_PrimaryHadronSWCentralSplineVariation->size() > it10->second) it10->second =  weight.piminus_PrimaryHadronSWCentralSplineVariation->size();
-	}
+  std::get<2>(event_info).resize(weight.piminus_PrimaryHadronSWCentralSplineVariation->size());
+  std::get<3>(event_info).push_back(weight.piminus_PrimaryHadronSWCentralSplineVariation->size());
+  for (size_t j=0; j!= weight.piminus_PrimaryHadronSWCentralSplineVariation->size(); j++){
+    std::get<2>(event_info).at(j) = weight.piminus_PrimaryHadronSWCentralSplineVariation->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.piminus_PrimaryHadronSWCentralSplineVariation->size();
+  else{
+    if (weight.piminus_PrimaryHadronSWCentralSplineVariation->size() > it10->second) it10->second =  weight.piminus_PrimaryHadronSWCentralSplineVariation->size();
+  }
       }else if (option == "pioninexsec_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.pioninexsec_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.pioninexsec_FluxUnisim->size());
-	for (size_t j=0;j!=weight.pioninexsec_FluxUnisim->size();j++){
-	  std::get<2>(event_info).at(j) = weight.pioninexsec_FluxUnisim->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.pioninexsec_FluxUnisim->size();
-	else{
-	  if (weight.pioninexsec_FluxUnisim->size() > it10->second) it10->second =  weight.pioninexsec_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.pioninexsec_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.pioninexsec_FluxUnisim->size());
+  for (size_t j=0;j!=weight.pioninexsec_FluxUnisim->size();j++){
+    std::get<2>(event_info).at(j) = weight.pioninexsec_FluxUnisim->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.pioninexsec_FluxUnisim->size();
+  else{
+    if (weight.pioninexsec_FluxUnisim->size() > it10->second) it10->second =  weight.pioninexsec_FluxUnisim->size();
+  }
       }else if (option == "pionqexsec_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.pionqexsec_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.pionqexsec_FluxUnisim->size());
-	for (size_t j=0;j!=weight.pionqexsec_FluxUnisim->size();j++){
-	  std::get<2>(event_info).at(j) = weight.pionqexsec_FluxUnisim->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.pionqexsec_FluxUnisim->size();
-	else{
-	  if (weight.pionqexsec_FluxUnisim->size() > it10->second) it10->second =  weight.pionqexsec_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.pionqexsec_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.pionqexsec_FluxUnisim->size());
+  for (size_t j=0;j!=weight.pionqexsec_FluxUnisim->size();j++){
+    std::get<2>(event_info).at(j) = weight.pionqexsec_FluxUnisim->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.pionqexsec_FluxUnisim->size();
+  else{
+    if (weight.pionqexsec_FluxUnisim->size() > it10->second) it10->second =  weight.pionqexsec_FluxUnisim->size();
+  }
       }else if (option == "piontotxsec_FluxUnisim"){
-	std::get<2>(event_info).resize(weight.piontotxsec_FluxUnisim->size());
-	std::get<3>(event_info).push_back(weight.piontotxsec_FluxUnisim->size());
-	for (size_t j=0;j!=weight.piontotxsec_FluxUnisim->size();j++){
-	  std::get<2>(event_info).at(j) = weight.piontotxsec_FluxUnisim->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.piontotxsec_FluxUnisim->size();
-	else{
-	  if (weight.piontotxsec_FluxUnisim->size() > it10->second) it10->second =  weight.piontotxsec_FluxUnisim->size();
-	}
+  std::get<2>(event_info).resize(weight.piontotxsec_FluxUnisim->size());
+  std::get<3>(event_info).push_back(weight.piontotxsec_FluxUnisim->size());
+  for (size_t j=0;j!=weight.piontotxsec_FluxUnisim->size();j++){
+    std::get<2>(event_info).at(j) = weight.piontotxsec_FluxUnisim->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.piontotxsec_FluxUnisim->size();
+  else{
+    if (weight.piontotxsec_FluxUnisim->size() > it10->second) it10->second =  weight.piontotxsec_FluxUnisim->size();
+  }
       }else if (option == "piplus_PrimaryHadronSWCentralSplineVariation"){
-	std::get<2>(event_info).resize(weight.piplus_PrimaryHadronSWCentralSplineVariation->size());
-	std::get<3>(event_info).push_back(weight.piplus_PrimaryHadronSWCentralSplineVariation->size());
-	for (size_t j=0; j!= weight.piplus_PrimaryHadronSWCentralSplineVariation->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.piplus_PrimaryHadronSWCentralSplineVariation->at(j) - 1.0;
-	}
-	auto it10 = map_knob_length.find(option);
-	if (it10 == map_knob_length.end()) map_knob_length[option] = weight.piplus_PrimaryHadronSWCentralSplineVariation->size();
-	else{
-	  if (weight.piplus_PrimaryHadronSWCentralSplineVariation->size() > it10->second) it10->second =  weight.piplus_PrimaryHadronSWCentralSplineVariation->size();
-	}
+  std::get<2>(event_info).resize(weight.piplus_PrimaryHadronSWCentralSplineVariation->size());
+  std::get<3>(event_info).push_back(weight.piplus_PrimaryHadronSWCentralSplineVariation->size());
+  for (size_t j=0; j!= weight.piplus_PrimaryHadronSWCentralSplineVariation->size(); j++){
+    std::get<2>(event_info).at(j) = weight.piplus_PrimaryHadronSWCentralSplineVariation->at(j) - 1.0;
+  }
+  auto it10 = map_knob_length.find(option);
+  if (it10 == map_knob_length.end()) map_knob_length[option] = weight.piplus_PrimaryHadronSWCentralSplineVariation->size();
+  else{
+    if (weight.piplus_PrimaryHadronSWCentralSplineVariation->size() > it10->second) it10->second =  weight.piplus_PrimaryHadronSWCentralSplineVariation->size();
+  }
       }else if (option == "reinteractions_piminus_Geant4"){
-	std::get<2>(event_info).resize(weight.reinteractions_piminus_Geant4->size());
-	std::get<3>(event_info).push_back(weight.reinteractions_piminus_Geant4->size());
-	for (size_t j=0; j!= weight.reinteractions_piminus_Geant4->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.reinteractions_piminus_Geant4->at(j) - 1.0;
-	}
+  std::get<2>(event_info).resize(weight.reinteractions_piminus_Geant4->size());
+  std::get<3>(event_info).push_back(weight.reinteractions_piminus_Geant4->size());
+  for (size_t j=0; j!= weight.reinteractions_piminus_Geant4->size(); j++){
+    std::get<2>(event_info).at(j) = weight.reinteractions_piminus_Geant4->at(j) - 1.0;
+  }
       }else if (option == "reinteractions_piplus_Geant4"){
-	std::get<2>(event_info).resize(weight.reinteractions_piplus_Geant4->size());
-	std::get<3>(event_info).push_back(weight.reinteractions_piplus_Geant4->size());
-	for (size_t j=0; j!= weight.reinteractions_piplus_Geant4->size(); j++){
-	  std::get<2>(event_info).at(j) = weight.reinteractions_piplus_Geant4->at(j) - 1.0;
-	}
+  std::get<2>(event_info).resize(weight.reinteractions_piplus_Geant4->size());
+  std::get<3>(event_info).push_back(weight.reinteractions_piplus_Geant4->size());
+  for (size_t j=0; j!= weight.reinteractions_piplus_Geant4->size(); j++){
+    std::get<2>(event_info).at(j) = weight.reinteractions_piplus_Geant4->at(j) - 1.0;
+  }
       }else if (option == "reinteractions_proton_Geant4"){
-	std::get<2>(event_info).resize(weight.reinteractions_proton_Geant4->size());
-	std::get<3>(event_info).push_back(weight.reinteractions_proton_Geant4->size());
+  std::get<2>(event_info).resize(weight.reinteractions_proton_Geant4->size());
+  std::get<3>(event_info).push_back(weight.reinteractions_proton_Geant4->size());
 
-	if (flag_spec_weights){
-	  std::vector<float> temp_vec = get_spec_weight(eval, pfeval);
-	  //std::cout << temp_vec.at(0) << std::endl;
-	  for (size_t j=0; j!= weight.reinteractions_proton_Geant4->size(); j++){
-	    std::get<2>(event_info).at(j) = weight.reinteractions_proton_Geant4->at(j) - 1.0 + temp_vec.at(j);
-	  }
-	}else{
-	  for (size_t j=0; j!= weight.reinteractions_proton_Geant4->size(); j++){
-	    std::get<2>(event_info).at(j) = weight.reinteractions_proton_Geant4->at(j) - 1.0;
-	  }
-	}
-      
+
+  if (flag_spec_weights){
+    std::vector<float> temp_vec = get_spec_weight(eval, pfeval);
+    //std::cout << temp_vec.at(0) << std::endl;
+    for (size_t j=0; j!= weight.reinteractions_proton_Geant4->size(); j++){
+      std::get<2>(event_info).at(j) = weight.reinteractions_proton_Geant4->at(j) - 1.0 + temp_vec.at(j);
+    }
+  }else{
+    for (size_t j=0; j!= weight.reinteractions_proton_Geant4->size(); j++){
+      std::get<2>(event_info).at(j) = weight.reinteractions_proton_Geant4->at(j) - 1.0;
+    }
+        }
+  
       }else if (option == "reweight"){
-        std::get<2>(event_info).resize(NUM_UNIV);
-        std::get<3>(event_info).push_back(NUM_UNIV);
+        std::get<2>(event_info).resize(1000);
+        std::get<3>(event_info).push_back(1000);
         if(!(flag_reweight)) reweight = get_weight("add_weight", eval, pfeval, kine, tagger, get_rw_info(true));
-        for (size_t j=0;j!=NUM_UNIV;j++){
+        for (size_t j=0;j!=1000;j++){
           if(flag_reweight){
             if (weight.weight_cv>0 && reweight!=1){
               gRandom->SetSeed(j*reweight*77777);
@@ -1086,165 +1085,165 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
         }
 
       }else if (option == "UBGenieFluxSmallUni"){
-	int acc_no = 0;
-	std::get<2>(event_info).resize(weight.All_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.All_UBGenie->size());
-	for (size_t j=0;j!=weight.All_UBGenie->size();j++){
-	  if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.All_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.All_UBGenie->size();
+  int acc_no = 0;
+  std::get<2>(event_info).resize(weight.All_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.All_UBGenie->size());
+  for (size_t j=0;j!=weight.All_UBGenie->size();j++){
+    if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.All_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.All_UBGenie->size();
 
-	std::get<2>(event_info).resize(acc_no + weight.AxFFCCQEshape_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.AxFFCCQEshape_UBGenie->size());
-	for (size_t j=0; j!= weight.AxFFCCQEshape_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.AxFFCCQEshape_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.AxFFCCQEshape_UBGenie->size();
+  std::get<2>(event_info).resize(acc_no + weight.AxFFCCQEshape_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.AxFFCCQEshape_UBGenie->size());
+  for (size_t j=0; j!= weight.AxFFCCQEshape_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.AxFFCCQEshape_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.AxFFCCQEshape_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.DecayAngMEC_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.DecayAngMEC_UBGenie->size());
-	for (size_t j=0; j!= weight.DecayAngMEC_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.DecayAngMEC_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.DecayAngMEC_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.DecayAngMEC_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.DecayAngMEC_UBGenie->size());
+  for (size_t j=0; j!= weight.DecayAngMEC_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.DecayAngMEC_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.DecayAngMEC_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.NormCCCOH_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.NormCCCOH_UBGenie->size());
-	for (size_t j=0; j!= weight.NormCCCOH_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.NormCCCOH_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.NormCCCOH_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.NormCCCOH_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.NormCCCOH_UBGenie->size());
+  for (size_t j=0; j!= weight.NormCCCOH_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.NormCCCOH_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.NormCCCOH_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.NormNCCOH_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.NormNCCOH_UBGenie->size());
-	for (size_t j=0; j!= weight.NormNCCOH_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.NormNCCOH_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.NormNCCOH_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.NormNCCOH_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.NormNCCOH_UBGenie->size());
+  for (size_t j=0; j!= weight.NormNCCOH_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.NormNCCOH_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.NormNCCOH_UBGenie->size();
 
-	if (!weight.flag_sep_28){
-	  std::get<2>(event_info).resize(acc_no + weight.RPA_CCQE_Reduced_UBGenie->size());
-	  std::get<3>(event_info).push_back(weight.RPA_CCQE_Reduced_UBGenie->size());
-	  for (size_t j=0; j!= weight.RPA_CCQE_Reduced_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	      std::get<2>(event_info).at(acc_no+j) = (weight.RPA_CCQE_Reduced_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	    }else{
-	      std::get<2>(event_info).at(acc_no+j) = 0;
-	    }
-	  }
-	  acc_no += weight.RPA_CCQE_Reduced_UBGenie->size();
-	}
-	
-	std::get<2>(event_info).resize(acc_no + weight.RPA_CCQE_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.RPA_CCQE_UBGenie->size());
-	for (size_t j=0; j!= weight.RPA_CCQE_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.RPA_CCQE_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.RPA_CCQE_UBGenie->size();
+  if (!weight.flag_sep_28){
+    std::get<2>(event_info).resize(acc_no + weight.RPA_CCQE_Reduced_UBGenie->size());
+    std::get<3>(event_info).push_back(weight.RPA_CCQE_Reduced_UBGenie->size());
+    for (size_t j=0; j!= weight.RPA_CCQE_Reduced_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+        std::get<2>(event_info).at(acc_no+j) = (weight.RPA_CCQE_Reduced_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+      }else{
+        std::get<2>(event_info).at(acc_no+j) = 0;
+      }
+    }
+    acc_no += weight.RPA_CCQE_Reduced_UBGenie->size();
+  }
+  
+  std::get<2>(event_info).resize(acc_no + weight.RPA_CCQE_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.RPA_CCQE_UBGenie->size());
+  for (size_t j=0; j!= weight.RPA_CCQE_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.RPA_CCQE_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.RPA_CCQE_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.ThetaDelta2NRad_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.ThetaDelta2NRad_UBGenie->size());
-	for (size_t j=0; j!= weight.ThetaDelta2NRad_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.ThetaDelta2NRad_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.ThetaDelta2NRad_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.ThetaDelta2NRad_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.ThetaDelta2NRad_UBGenie->size());
+  for (size_t j=0; j!= weight.ThetaDelta2NRad_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.ThetaDelta2NRad_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.ThetaDelta2NRad_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.Theta_Delta2Npi_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.Theta_Delta2Npi_UBGenie->size());
-	for (size_t j=0; j!= weight.Theta_Delta2Npi_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.Theta_Delta2Npi_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.Theta_Delta2Npi_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.Theta_Delta2Npi_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.Theta_Delta2Npi_UBGenie->size());
+  for (size_t j=0; j!= weight.Theta_Delta2Npi_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.Theta_Delta2Npi_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.Theta_Delta2Npi_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.VecFFCCQEshape_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.VecFFCCQEshape_UBGenie->size());
-	for (size_t j=0; j!= weight.VecFFCCQEshape_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.VecFFCCQEshape_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.VecFFCCQEshape_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.VecFFCCQEshape_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.VecFFCCQEshape_UBGenie->size());
+  for (size_t j=0; j!= weight.VecFFCCQEshape_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.VecFFCCQEshape_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.VecFFCCQEshape_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.XSecShape_CCMEC_UBGenie->size());
-	std::get<3>(event_info).push_back(weight.XSecShape_CCMEC_UBGenie->size());
-	for (size_t j=0; j!= weight.XSecShape_CCMEC_UBGenie->size(); j++){
-	    if (weight.weight_cv>0){
-	    std::get<2>(event_info).at(acc_no+j) = (weight.XSecShape_CCMEC_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.XSecShape_CCMEC_UBGenie->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.XSecShape_CCMEC_UBGenie->size());
+  std::get<3>(event_info).push_back(weight.XSecShape_CCMEC_UBGenie->size());
+  for (size_t j=0; j!= weight.XSecShape_CCMEC_UBGenie->size(); j++){
+      if (weight.weight_cv>0){
+      std::get<2>(event_info).at(acc_no+j) = (weight.XSecShape_CCMEC_UBGenie->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.XSecShape_CCMEC_UBGenie->size();
 
-	
-	std::get<2>(event_info).resize(acc_no + weight.xsr_scc_Fa3_SCC->size());
-	std::get<3>(event_info).push_back(weight.xsr_scc_Fa3_SCC->size());
-	for (size_t j=0; j!= weight.xsr_scc_Fa3_SCC->size(); j++){
-	    if (weight.weight_cv>0){
-	      std::get<2>(event_info).at(acc_no+j) = weight.xsr_scc_Fa3_SCC->at(j)-1;//(weight.xsr_scc_Fa3_SCC->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.xsr_scc_Fa3_SCC->size();
+  
+  std::get<2>(event_info).resize(acc_no + weight.xsr_scc_Fa3_SCC->size());
+  std::get<3>(event_info).push_back(weight.xsr_scc_Fa3_SCC->size());
+  for (size_t j=0; j!= weight.xsr_scc_Fa3_SCC->size(); j++){
+      if (weight.weight_cv>0){
+        std::get<2>(event_info).at(acc_no+j) = weight.xsr_scc_Fa3_SCC->at(j)-1;//(weight.xsr_scc_Fa3_SCC->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.xsr_scc_Fa3_SCC->size();
 
-	std::get<2>(event_info).resize(acc_no + weight.xsr_scc_Fv3_SCC->size());
-	std::get<3>(event_info).push_back(weight.xsr_scc_Fv3_SCC->size());
-	for (size_t j=0; j!= weight.xsr_scc_Fv3_SCC->size(); j++){
-	    if (weight.weight_cv>0){
-	      std::get<2>(event_info).at(acc_no+j) = weight.xsr_scc_Fv3_SCC->at(j)-1;//(weight.xsr_scc_Fv3_SCC->at(j) - weight.weight_cv)/weight.weight_cv;
-	  }else{
-	    std::get<2>(event_info).at(acc_no+j) = 0;
-	  }
-	}
-	acc_no += weight.xsr_scc_Fv3_SCC->size();
-	
+  std::get<2>(event_info).resize(acc_no + weight.xsr_scc_Fv3_SCC->size());
+  std::get<3>(event_info).push_back(weight.xsr_scc_Fv3_SCC->size());
+  for (size_t j=0; j!= weight.xsr_scc_Fv3_SCC->size(); j++){
+      if (weight.weight_cv>0){
+        std::get<2>(event_info).at(acc_no+j) = weight.xsr_scc_Fv3_SCC->at(j)-1;//(weight.xsr_scc_Fv3_SCC->at(j) - weight.weight_cv)/weight.weight_cv;
+    }else{
+      std::get<2>(event_info).at(acc_no+j) = 0;
+    }
+  }
+  acc_no += weight.xsr_scc_Fv3_SCC->size();
+  
       }
 
       if (max_lengths.size() < std::get<3>(event_info).size()) max_lengths.resize(std::get<3>(event_info).size());
       for(size_t j = 0; j!= std::get<3>(event_info).size(); j++){
-	if (max_lengths.at(j) < std::get<3>(event_info).at(j)) max_lengths.at(j) = std::get<3>(event_info).at(j);
+  if (max_lengths.at(j) < std::get<3>(event_info).at(j)) max_lengths.at(j) = std::get<3>(event_info).at(j);
       // if (max_length < std::get<3>(event_info).size()) max_length = std::get<3>(event_info).size();
       }
       
@@ -1301,7 +1300,7 @@ std::pair<std::vector<int>, std::vector<int> > LEEana::CovMatrix::get_events_wei
   }else if (option == "reinteractions_proton_Geant4"){
     sup_lengths.push_back(1000);
   }else if (option == "reweight"){
-    sup_lengths.push_back(NUM_UNIV);
+    sup_lengths.push_back(1000);
   }else if (option == "reweight_cor"){
     sup_lengths.push_back(1);
   }else if (option == "UBGenieFluxSmallUni"){
