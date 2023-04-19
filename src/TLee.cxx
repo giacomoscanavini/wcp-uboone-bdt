@@ -2448,17 +2448,41 @@ void TLee::Set_Spectra_MatrixCov()
   TString roostr = "";
 
   ////////////////////////////////////// pred
-  
+  /*
   map_input_spectrum_ch_str[1] = "bnb";
   map_input_spectrum_ch_str[2] = "bnb1";
   map_input_spectrum_ch_str[3] = "bnb2";
-  map_input_spectrum_ch_str[4] = "ext";
-  map_input_spectrum_ch_str[5] = "ext1";
-  map_input_spectrum_ch_str[6] = "ext2";
-  /*
+  map_input_spectrum_ch_str[4] = "bnb3";
+  map_input_spectrum_ch_str[5] = "bnb4";
+  map_input_spectrum_ch_str[6] = "bnb5";
+  
+  map_input_spectrum_ch_str[7] = "ext";
+  map_input_spectrum_ch_str[8] = "ext1";
+  map_input_spectrum_ch_str[9] = "ext2";
+  map_input_spectrum_ch_str[10] = "ext3";
+  map_input_spectrum_ch_str[11] = "ext4";
+  map_input_spectrum_ch_str[12] = "ext5";
+  */
+  map_input_spectrum_ch_str[1] = "bnb";
+  map_input_spectrum_ch_str[2] = "bnb1";
+  map_input_spectrum_ch_str[3] = "bnb2";
+  map_input_spectrum_ch_str[4] = "bnb3";
+  map_input_spectrum_ch_str[5] = "bnb4";
+  map_input_spectrum_ch_str[6] = "bnb5";
   map_input_spectrum_ch_str[7] = "bnb6";
   map_input_spectrum_ch_str[8] = "bnb7";
   map_input_spectrum_ch_str[9] = "bnb8";
+  
+  map_input_spectrum_ch_str[10] = "ext";
+  map_input_spectrum_ch_str[11] = "ext1";
+  map_input_spectrum_ch_str[12] = "ext2";
+  map_input_spectrum_ch_str[13] = "ext3";
+  map_input_spectrum_ch_str[14] = "ext4";
+  map_input_spectrum_ch_str[15] = "ext5";
+  map_input_spectrum_ch_str[16] = "ext6";
+  map_input_spectrum_ch_str[17] = "ext7";
+  map_input_spectrum_ch_str[18] = "ext8";
+  /*
   map_input_spectrum_ch_str[10] = "bnb9";
   map_input_spectrum_ch_str[11] = "bnb10";
   map_input_spectrum_ch_str[12] = "bnb11";
@@ -2658,13 +2682,13 @@ void TLee::Set_Spectra_MatrixCov()
     matrix_flux_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);    
     
     if( idx<=16 ) {// flux
-      matrix_flux_frac += (*map_matrix_flux_Xs_frac[idx]);
+      matrix_flux_frac += (*map_matrix_flux_Xs_frac[idx]);      // No FLUX or XS SYS (turn off)
     }else if( idx==17 ){// interaction
-      matrix_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);
+      matrix_Xs_frac += (*map_matrix_flux_Xs_frac[idx]);          // No FLUX or XS SYS (turn off)
     }else if( idx==18 ) {//reweight
-      matrix_reweight_frac += (*map_matrix_flux_Xs_frac[idx]);
+      matrix_reweight_frac += (*map_matrix_flux_Xs_frac[idx]);      // No FLUX or XS SYS (turn off)
     }else if( idx==19 ) {//reweight cor
-      matrix_reweight_cor_frac += (*map_matrix_flux_Xs_frac[idx]);
+      matrix_reweight_cor_frac += (*map_matrix_flux_Xs_frac[idx]);      // No FLUX or XS SYS (turn off)
     }    
   }
   cout<<endl;  

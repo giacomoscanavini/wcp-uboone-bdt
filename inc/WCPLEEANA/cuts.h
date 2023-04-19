@@ -304,9 +304,21 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
   
   }else if (var_name == "p_multi_reco"){ 
     int Nproton = 0;
-    for(size_t i=0; i<kine.kine_energy_particle->size(); i++){
-      int pdgcode = kine.kine_particle_type->at(i);
-      if(abs(pdgcode)==2212 && kine.kine_energy_particle->at(i)>35) Nproton++;
+    //for(size_t i=0; i<kine.kine_energy_particle->size(); i++){
+    //  int pdgcode = kine.kine_particle_type->at(i);
+    //if(abs(pdgcode)==2212 && kine.kine_energy_particle->at(i)>35) Nproton++;
+    //}
+    for(int jth=0; jth<1000; jth++){
+      int mother = pfeval.reco_mother[jth];
+      int pdgcode = pfeval.reco_pdg[jth];
+      if(mother == 0 && abs(pdgcode)==2212){
+        double px = pfeval.reco_startMomentum[jth][0]*1000.; // MeV
+        double py = pfeval.reco_startMomentum[jth][1]*1000.; // MeV
+        double pz = pfeval.reco_startMomentum[jth][2]*1000.; // MeV
+        double p_KE = sqrt(px*px + py*py + pz*pz + 938.27*938.27) - 938.27; 
+        if (p_KE > 35.) Nproton++;
+      }
+      if(mother > 0) break;
     }
     return Nproton;
 
@@ -388,7 +400,7 @@ double LEEana::get_kine_var(KineInfo& kine, EvalInfo& eval, PFevalInfo& pfeval, 
       return sqrt(2.*energy_1 * energy_2 *(1-cos(kine.kine_pio_angle*RAD)));
     }
   }else if (var_name == "gamma_gamma_angle"){
-    return cos(kine.kine_pio_angle*RAD);
+    return kine.kine_pio_angle*RAD;
 
   // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   // Leading and Sub-leading showers Variables 
@@ -1130,6 +1142,19 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
       }
     }
+    else if (cut_file == 3233) {
+      if        (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0500.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=-0.500 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0200.gt.0500"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=-0.200 && truth_pi0_costheta>-0.500) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0100.gt.0200"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=0.100 && truth_pi0_costheta>-0.200) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0400.gt.0100"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=0.400 && truth_pi0_costheta>0.100) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0650.gt.0400"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=0.650 && truth_pi0_costheta>0.400) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0750.gt.0650"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=0.750 && truth_pi0_costheta>0.650) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0850.gt.0750"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=0.850 && truth_pi0_costheta>0.750) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.0950.gt.0850"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=0.950 && truth_pi0_costheta>0.850) return number;
+      }else if  (cut_name == "NCpi0BDT.inside.CosThetapi0.le.1000.gt.0950"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.950) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
     else if (cut_file == 324) {
       if        (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0600.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.600 && truth_pi0_costheta>-1.000) return number;
       }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0220.gt.0600"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.220 && truth_pi0_costheta>-0.600) return number;
@@ -1142,6 +1167,56 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0960.gt.0910"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.960 && truth_pi0_costheta>0.910) return number;
       }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.1000.gt.0960"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.960) return number;
       }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0600.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.600 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0220.gt.0600"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.220 && truth_pi0_costheta>-0.600) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0120.gt.0220"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.120 && truth_pi0_costheta>-0.220) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0400.gt.0120"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.400 && truth_pi0_costheta>0.120) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0600.gt.0400"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.600 && truth_pi0_costheta>0.400) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0740.gt.0600"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.740 && truth_pi0_costheta>0.600) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0850.gt.0740"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.850 && truth_pi0_costheta>0.740) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0910.gt.0850"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.910 && truth_pi0_costheta>0.850) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0960.gt.0910"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.960 && truth_pi0_costheta>0.910) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.1000.gt.0960"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.960) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
+    else if (cut_file == 3241) {
+      if        (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0500.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.500 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0200.gt.0500"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.200 && truth_pi0_costheta>-0.500) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0100.gt.0200"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.100 && truth_pi0_costheta>-0.200) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0400.gt.0100"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.400 && truth_pi0_costheta>0.100) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0650.gt.0400"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.650 && truth_pi0_costheta>0.400) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0750.gt.0650"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.750 && truth_pi0_costheta>0.650) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0850.gt.0750"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.850 && truth_pi0_costheta>0.750) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0950.gt.0850"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.950 && truth_pi0_costheta>0.850) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.1000.gt.0950"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.950) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0500.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.500 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0200.gt.0500"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.200 && truth_pi0_costheta>-0.500) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0100.gt.0200"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.100 && truth_pi0_costheta>-0.200) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0400.gt.0100"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.400 && truth_pi0_costheta>0.100) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0650.gt.0400"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.650 && truth_pi0_costheta>0.400) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0750.gt.0650"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.750 && truth_pi0_costheta>0.650) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0850.gt.0750"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.850 && truth_pi0_costheta>0.750) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0950.gt.0850"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.950 && truth_pi0_costheta>0.850) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.1000.gt.0950"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.950) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
+    else if (cut_file == 325) {
+      if        (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0600.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.600 && truth_pi0_costheta>-1.000) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0220.gt.0600"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=-0.220 && truth_pi0_costheta>-0.600) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0120.gt.0220"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.120 && truth_pi0_costheta>-0.220) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0400.gt.0120"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.400 && truth_pi0_costheta>0.120) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0600.gt.0400"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.600 && truth_pi0_costheta>0.400) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0740.gt.0600"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.740 && truth_pi0_costheta>0.600) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0850.gt.0740"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.850 && truth_pi0_costheta>0.740) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0910.gt.0850"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.910 && truth_pi0_costheta>0.850) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.0960.gt.0910"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=0.960 && truth_pi0_costheta>0.910) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.CosThetapi0.le.1000.gt.0960"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_costheta<=1.000 && truth_pi0_costheta>0.960) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
+    else if (cut_file == 326) {
+      if        (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0600.gt.1000"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.600 && truth_pi0_costheta>-1.000) return number;
       }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0220.gt.0600"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=-0.220 && truth_pi0_costheta>-0.600) return number;
       }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0120.gt.0220"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.120 && truth_pi0_costheta>-0.220) return number;
       }else if  (cut_name == "NCpi0BDT.Np.inside.CosThetapi0.le.0400.gt.0120"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_costheta<=0.400 && truth_pi0_costheta>0.120) return number;
@@ -1232,6 +1307,30 @@ int LEEana::get_xs_signal_no(int cut_file, std::map<TString, int>& map_cut_xs_bi
       }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.500.gt.420"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=500 && truth_pi0_momentum>420) return number;  
       }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.1200.gt.500"){  if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=1200 && truth_pi0_momentum>500) return number;
       }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.130.gt.0"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=130 && truth_pi0_momentum>0) return number;
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.180.gt.130"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=180 && truth_pi0_momentum>130) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.240.gt.180"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=240 && truth_pi0_momentum>180) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.300.gt.240"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=300 && truth_pi0_momentum>240) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.360.gt.300"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=360 && truth_pi0_momentum>300) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.420.gt.360"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=420 && truth_pi0_momentum>360) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.500.gt.420"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=500 && truth_pi0_momentum>420) return number;  
+      }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.1200.gt.500"){  if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=1200 && truth_pi0_momentum>500) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
+    else if (cut_file == 334) {
+      if        (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.130.gt.0"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=130 && truth_pi0_momentum>0) return number;
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.180.gt.130"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 &&truth_pi0_momentum<=180 && truth_pi0_momentum>130) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.240.gt.180"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=240 && truth_pi0_momentum>180) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.300.gt.240"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=300 && truth_pi0_momentum>240) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.360.gt.300"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=360 && truth_pi0_momentum>300) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.420.gt.360"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=420 && truth_pi0_momentum>360) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.500.gt.420"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=500 && truth_pi0_momentum>420) return number;  
+      }else if  (cut_name == "NCpi0BDT.0p.inside.Ppi0.le.1200.gt.500"){  if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35==0 && truth_pi0_momentum<=1200 && truth_pi0_momentum>500) return number;
+      }else{ std::cout << "get_xs_signal_no: no cut found!" << std::endl;
+      }
+    }
+    else if (cut_file == 335) {
+      if        (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.130.gt.0"){     if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=130 && truth_pi0_momentum>0) return number;
       }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.180.gt.130"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=180 && truth_pi0_momentum>130) return number;  
       }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.240.gt.180"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=240 && truth_pi0_momentum>180) return number;  
       }else if  (cut_name == "NCpi0BDT.Np.inside.Ppi0.le.300.gt.240"){   if (Xs_Enu_NCpi0BDTinFV && eval.truth_nuEnergy<=4000 && eval.truth_nuEnergy>275 && N_th_proton_35>0 && truth_pi0_momentum<=300 && truth_pi0_momentum>240) return number;  
@@ -1557,8 +1656,20 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   if(Xs_Enu_NCpi0BDTinFV && truth_pi0_momentum>0 && truth_pi0_momentum<=1200) map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"] = false; 
 
+  if(Xs_Enu_NCpi0BDTinFV && truth_pi0_momentum>0 && truth_pi0_momentum<=1200 && N_th_proton_35==0) map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"] = false; 
+
+  if(Xs_Enu_NCpi0BDTinFV && truth_pi0_momentum>0 && truth_pi0_momentum<=1200 && N_th_proton_35>0) map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"] = false; 
+  
   if(Xs_Enu_NCpi0BDTinFV && truth_pi0_costheta>-1 && truth_pi0_costheta<=1) map_cuts_flag["Xs_CosThetapi0_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_CosThetapi0_NCpi0BDTinFV"] = false; 
+
+  if(Xs_Enu_NCpi0BDTinFV && truth_pi0_costheta>-1 && truth_pi0_costheta<=1 && N_th_proton_35==0) map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"] = false; 
+
+  if(Xs_Enu_NCpi0BDTinFV && truth_pi0_costheta>-1 && truth_pi0_costheta<=1 && N_th_proton_35>0) map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"] = true;
+  else map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"] = false; 
 
   if(Xs_Enu_NCpi0BDTinFV && Etransf>30 && Etransf<=2500) map_cuts_flag["Xs_Etransf_NCpi0BDTinFV"] = true;
   else map_cuts_flag["Xs_Etransf_NCpi0BDTinFV"] = false;
@@ -1691,65 +1802,38 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
   ////////////////////////// Reco selection - numuCC (as for eLEE analysis)
   // ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
   }else if (ch_name == "numuCC_bnb" || ch_name == "numuCC_ext" || ch_name == "numuCC_dirt"  || ch_name == "numuCC_overlay" || ch_name == "numuCC_ncpi0" || ch_name == "BG_numuCC_ext" || ch_name == "BG_numuCC_dirt" 
-    || ch_name == "numuCC1_bnb" || ch_name == "numuCC1_ext" || ch_name == "numuCC1_dirt"  || ch_name == "numuCC1_overlay" || ch_name == "numuCC1_ncpi0"
-    || ch_name == "numuCC2_bnb" || ch_name == "numuCC2_ext" || ch_name == "numuCC2_dirt"  || ch_name == "numuCC2_overlay" || ch_name == "numuCC2_ncpi0"
-    || ch_name == "numuCC3_bnb" || ch_name == "numuCC3_ext" || ch_name == "numuCC3_dirt"  || ch_name == "numuCC3_overlay" || ch_name == "numuCC3_ncpi0"
     ){
     if (flag_numuCC_tight) return true;
     else return false;
   }else if (ch_name == "numuCC_FC_bnb" || ch_name == "numuCC_FC_ext" || ch_name == "numuCC_FC_dirt"  || ch_name == "numuCC_FC_overlay" || ch_name == "numuCC_FC_ncpi0" || ch_name == "BG_numuCC_FC_ext" || ch_name == "BG_numuCC_FC_dirt"
-    || ch_name == "numuCC1_FC_bnb" || ch_name == "numuCC1_FC_ext" || ch_name == "numuCC1_FC_dirt"  || ch_name == "numuCC1_FC_overlay" || ch_name == "numuCC1_FC_ncpi0"
-    || ch_name == "numuCC2_FC_bnb" || ch_name == "numuCC2_FC_ext" || ch_name == "numuCC2_FC_dirt"  || ch_name == "numuCC2_FC_overlay" || ch_name == "numuCC2_FC_ncpi0"
-    || ch_name == "numuCC3_FC_bnb" || ch_name == "numuCC3_FC_ext" || ch_name == "numuCC3_FC_dirt"  || ch_name == "numuCC3_FC_overlay" || ch_name == "numuCC3_FC_ncpi0"
     ){
     if (flag_numuCC_tight && flag_FC) return true;
     else return false;
   }else if (ch_name == "numuCC_PC_bnb" || ch_name == "numuCC_PC_ext" || ch_name == "numuCC_PC_dirt"  || ch_name == "numuCC_PC_overlay" || ch_name == "numuCC_PC_ncpi0" || ch_name == "BG_numuCC_PC_ext" || ch_name == "BG_numuCC_PC_dirt"
-    || ch_name == "numuCC1_PC_bnb" || ch_name == "numuCC1_PC_ext" || ch_name == "numuCC1_PC_dirt"  || ch_name == "numuCC1_PC_overlay" || ch_name == "numuCC1_PC_ncpi0"
-    || ch_name == "numuCC2_PC_bnb" || ch_name == "numuCC2_PC_ext" || ch_name == "numuCC2_PC_dirt"  || ch_name == "numuCC2_PC_overlay" || ch_name == "numuCC2_PC_ncpi0"
-    || ch_name == "numuCC3_PC_bnb" || ch_name == "numuCC3_PC_ext" || ch_name == "numuCC3_PC_dirt"  || ch_name == "numuCC3_PC_overlay" || ch_name == "numuCC3_PC_ncpi0"
     ){
     if (flag_numuCC_tight && (!flag_FC)) return true;
     else return false;
   }else if (ch_name == "numuCC_0p_bnb" || ch_name == "numuCC_0p_ext" || ch_name == "numuCC_0p_dirt"  || ch_name == "numuCC_0p_overlay" || ch_name == "numuCC_0p_ncpi0" || ch_name == "BG_numuCC_0p_ext" || ch_name == "BG_numuCC_0p_dirt"
-    || ch_name == "numuCC1_0p_bnb" || ch_name == "numuCC1_0p_ext" || ch_name == "numuCC1_0p_dirt"  || ch_name == "numuCC1_0p_overlay" || ch_name == "numuCC1_0p_ncpi0"
-    || ch_name == "numuCC2_0p_bnb" || ch_name == "numuCC2_0p_ext" || ch_name == "numuCC2_0p_dirt"  || ch_name == "numuCC2_0p_overlay" || ch_name == "numuCC2_0p_ncpi0"
-    || ch_name == "numuCC3_0p_bnb" || ch_name == "numuCC3_0p_ext" || ch_name == "numuCC3_0p_dirt"  || ch_name == "numuCC3_0p_overlay" || ch_name == "numuCC3_0p_ncpi0"
     ){
     if (flag_numuCC_tight && flag_0p) return true;
     else return false;
   }else if (ch_name == "numuCC_Np_bnb" || ch_name == "numuCC_Np_ext" || ch_name == "numuCC_Np_dirt"  || ch_name == "numuCC_Np_overlay" || ch_name == "numuCC_Np_ncpi0" || ch_name == "BG_numuCC_Np_ext" || ch_name == "BG_numuCC_Np_dirt"
-    || ch_name == "numuCC1_Np_bnb" || ch_name == "numuCC1_Np_ext" || ch_name == "numuCC1_Np_dirt"  || ch_name == "numuCC1_Np_overlay" || ch_name == "numuCC1_Np_ncpi0"
-    || ch_name == "numuCC2_Np_bnb" || ch_name == "numuCC2_Np_ext" || ch_name == "numuCC2_Np_dirt"  || ch_name == "numuCC2_Np_overlay" || ch_name == "numuCC2_Np_ncpi0"
-    || ch_name == "numuCC3_Np_bnb" || ch_name == "numuCC3_Np_ext" || ch_name == "numuCC3_Np_dirt"  || ch_name == "numuCC3_Np_overlay" || ch_name == "numuCC3_Np_ncpi0"
     ){
     if (flag_numuCC_tight && (!flag_0p)) return true;
     else return false;
   }else if (ch_name == "numuCC_FC_0p_bnb" || ch_name == "numuCC_FC_0p_ext" || ch_name == "numuCC_FC_0p_dirt"  || ch_name == "numuCC_FC_0p_overlay" || ch_name == "numuCC_FC_0p_ncpi0" || ch_name == "BG_numuCC_FC_0p_ext" || ch_name == "BG_numuCC_FC_0p_dirt"
-    || ch_name == "numuCC1_FC_0p_bnb" || ch_name == "numuCC1_FC_0p_ext" || ch_name == "numuCC1_FC_0p_dirt"  || ch_name == "numuCC1_FC_0p_overlay" || ch_name == "numuCC1_FC_0p_ncpi0"
-    || ch_name == "numuCC2_FC_0p_bnb" || ch_name == "numuCC2_FC_0p_ext" || ch_name == "numuCC2_FC_0p_dirt"  || ch_name == "numuCC2_FC_0p_overlay" || ch_name == "numuCC2_FC_0p_ncpi0"
-    || ch_name == "numuCC3_FC_0p_bnb" || ch_name == "numuCC3_FC_0p_ext" || ch_name == "numuCC3_FC_0p_dirt"  || ch_name == "numuCC3_FC_0p_overlay" || ch_name == "numuCC3_FC_0p_ncpi0"
     ){
     if (flag_numuCC_tight && flag_FC && flag_0p) return true;
     else return false;
   }else if (ch_name == "numuCC_FC_Np_bnb" || ch_name == "numuCC_FC_Np_ext" || ch_name == "numuCC_FC_Np_dirt"  || ch_name == "numuCC_FC_Np_overlay" || ch_name == "numuCC_FC_Np_ncpi0" || ch_name == "BG_numuCC_FC_Np_ext" || ch_name == "BG_numuCC_FC_Np_dirt"
-    || ch_name == "numuCC1_FC_Np_bnb" || ch_name == "numuCC1_FC_Np_ext" || ch_name == "numuCC1_FC_Np_dirt"  || ch_name == "numuCC1_FC_Np_overlay" || ch_name == "numuCC1_FC_Np_ncpi0"
-    || ch_name == "numuCC2_FC_Np_bnb" || ch_name == "numuCC2_FC_Np_ext" || ch_name == "numuCC2_FC_Np_dirt"  || ch_name == "numuCC2_FC_Np_overlay" || ch_name == "numuCC2_FC_Np_ncpi0"
-    || ch_name == "numuCC3_FC_Np_bnb" || ch_name == "numuCC3_FC_Np_ext" || ch_name == "numuCC3_FC_Np_dirt"  || ch_name == "numuCC3_FC_Np_overlay" || ch_name == "numuCC3_FC_Np_ncpi0"
     ){
     if (flag_numuCC_tight && flag_FC && (!flag_0p)) return true;
     else return false;
   }else if (ch_name == "numuCC_PC_0p_bnb" || ch_name == "numuCC_PC_0p_ext" || ch_name == "numuCC_PC_0p_dirt"  || ch_name == "numuCC_PC_0p_overlay" || ch_name == "numuCC_PC_0p_ncpi0" || ch_name == "BG_numuCC_PC_0p_ext" || ch_name == "BG_numuCC_PC_0p_dirt"
-    || ch_name == "numuCC1_PC_0p_bnb" || ch_name == "numuCC1_PC_0p_ext" || ch_name == "numuCC1_PC_0p_dirt"  || ch_name == "numuCC1_PC_0p_overlay" || ch_name == "numuCC1_PC_0p_ncpi0"
-    || ch_name == "numuCC2_PC_0p_bnb" || ch_name == "numuCC2_PC_0p_ext" || ch_name == "numuCC2_PC_0p_dirt"  || ch_name == "numuCC2_PC_0p_overlay" || ch_name == "numuCC2_PC_0p_ncpi0"
-    || ch_name == "numuCC3_PC_0p_bnb" || ch_name == "numuCC3_PC_0p_ext" || ch_name == "numuCC3_PC_0p_dirt"  || ch_name == "numuCC3_PC_0p_overlay" || ch_name == "numuCC3_PC_0p_ncpi0"
     ){
     if (flag_numuCC_tight && (!flag_FC) && flag_0p) return true;
     else return false;
   }else if (ch_name == "numuCC_PC_Np_bnb" || ch_name == "numuCC_PC_Np_ext" || ch_name == "numuCC_PC_Np_dirt"  || ch_name == "numuCC_PC_Np_overlay" || ch_name == "numuCC_PC_Np_ncpi0" || ch_name == "BG_numuCC_PC_Np_ext" || ch_name == "BG_numuCC_PC_Np_dirt"
-    || ch_name == "numuCC1_PC_Np_bnb" || ch_name == "numuCC1_PC_Np_ext" || ch_name == "numuCC1_PC_Np_dirt"  || ch_name == "numuCC1_PC_Np_overlay" || ch_name == "numuCC1_PC_Np_ncpi0"
-    || ch_name == "numuCC2_PC_Np_bnb" || ch_name == "numuCC2_PC_Np_ext" || ch_name == "numuCC2_PC_Np_dirt"  || ch_name == "numuCC2_PC_Np_overlay" || ch_name == "numuCC2_PC_Np_ncpi0"
-    || ch_name == "numuCC3_PC_Np_bnb" || ch_name == "numuCC3_PC_Np_ext" || ch_name == "numuCC3_PC_Np_dirt"  || ch_name == "numuCC3_PC_Np_overlay" || ch_name == "numuCC3_PC_Np_ncpi0"
     ){
     if (flag_numuCC_tight && (!flag_FC) && (!flag_0p)) return true;
     else return false;
@@ -2246,6 +2330,102 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
         else return false;
       } 
     }else return false;
+  }else if (ch_name == "NCpi0BDT_theta0_FC_bnb" || ch_name == "NCpi0BDT_theta0_FC_overlay" || ch_name == "NCpi0BDT_theta0_FC_ncpi0" || ch_name == "NCpi0BDT_theta0_FC_ext" || ch_name == "NCpi0BDT_theta0_FC_dirt" || ch_name == "BG_NCpi0BDT_theta0_FC_ext" || ch_name == "BG_NCpi0BDT_theta0_FC_dirt" || ch_name == "NCpi0BDT_theta0_signal_FC" || ch_name == "NCpi0BDT_theta0_background_FC"
+       || ch_name == "NCpi0BDT_theta0_PC_bnb" || ch_name == "NCpi0BDT_theta0_PC_overlay" || ch_name == "NCpi0BDT_theta0_PC_ncpi0" || ch_name == "NCpi0BDT_theta0_PC_ext" || ch_name == "NCpi0BDT_theta0_PC_dirt" || ch_name == "BG_NCpi0BDT_theta0_PC_ext" || ch_name == "BG_NCpi0BDT_theta0_PC_dirt" || ch_name == "NCpi0BDT_theta0_signal_PC" || ch_name == "NCpi0BDT_theta0_background_PC"
+       ){
+    if (flag_NCpi0BDT_X && reco_pi0_costheta<=costheta_pio[1] && reco_pi0_costheta>costheta_pio[0]){
+      if (ch_name == "NCpi0BDT_theta0_FC_bnb" || ch_name == "NCpi0BDT_theta0_FC_overlay" || ch_name == "NCpi0BDT_theta0_FC_ncpi0" || ch_name == "BG_NCpi0BDT_theta0_FC_ext" || ch_name == "BG_NCpi0BDT_theta0_FC_dirt" || ch_name == "NCpi0BDT_theta0_FC_ext" || ch_name == "NCpi0BDT_theta0_FC_dirt"){ 
+        if (flag_FC) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta0_signal_FC"){
+        if (flag_FC &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta0_background_FC"){
+        if (flag_FC &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta0_PC_bnb" || ch_name == "NCpi0BDT_theta0_PC_overlay" || ch_name == "NCpi0BDT_theta0_PC_ncpi0" || ch_name == "BG_NCpi0BDT_theta0_PC_ext" || ch_name == "BG_NCpi0BDT_theta0_PC_dirt" || ch_name == "NCpi0BDT_theta0_PC_ext" || ch_name == "NCpi0BDT_theta0_PC_dirt"){ 
+        if ((!flag_FC)) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta0_signal_PC"){
+        if ((!flag_FC) &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta0_background_PC"){
+        if ((!flag_FC) &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      } 
+    }else return false;
+  }else if (ch_name == "NCpi0BDT_theta1_FC_bnb" || ch_name == "NCpi0BDT_theta1_FC_overlay" || ch_name == "NCpi0BDT_theta1_FC_ncpi0" || ch_name == "NCpi0BDT_theta1_FC_ext" || ch_name == "NCpi0BDT_theta1_FC_dirt" || ch_name == "BG_NCpi0BDT_theta1_FC_ext" || ch_name == "BG_NCpi0BDT_theta1_FC_dirt" || ch_name == "NCpi0BDT_theta1_signal_FC" || ch_name == "NCpi0BDT_theta1_background_FC"
+       || ch_name == "NCpi0BDT_theta1_PC_bnb" || ch_name == "NCpi0BDT_theta1_PC_overlay" || ch_name == "NCpi0BDT_theta1_PC_ncpi0" || ch_name == "NCpi0BDT_theta1_PC_ext" || ch_name == "NCpi0BDT_theta1_PC_dirt" || ch_name == "BG_NCpi0BDT_theta1_PC_ext" || ch_name == "BG_NCpi0BDT_theta1_PC_dirt" || ch_name == "NCpi0BDT_theta1_signal_PC" || ch_name == "NCpi0BDT_theta1_background_PC"
+       ){
+    if (flag_NCpi0BDT_X && reco_pi0_costheta<=costheta_pio[2] && reco_pi0_costheta>costheta_pio[1]){
+      if (ch_name == "NCpi0BDT_theta1_FC_bnb" || ch_name == "NCpi0BDT_theta1_FC_overlay" || ch_name == "NCpi0BDT_theta1_FC_ncpi0" || ch_name == "BG_NCpi0BDT_theta1_FC_ext" || ch_name == "BG_NCpi0BDT_theta1_FC_dirt" || ch_name == "NCpi0BDT_theta1_FC_ext" || ch_name == "NCpi0BDT_theta1_FC_dirt"){ 
+        if (flag_FC) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta1_signal_FC"){
+        if (flag_FC &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta1_background_FC"){
+        if (flag_FC &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta1_PC_bnb" || ch_name == "NCpi0BDT_theta1_PC_overlay" || ch_name == "NCpi0BDT_theta1_PC_ncpi0" || ch_name == "BG_NCpi0BDT_theta1_PC_ext" || ch_name == "BG_NCpi0BDT_theta1_PC_dirt" || ch_name == "NCpi0BDT_theta1_PC_ext" || ch_name == "NCpi0BDT_theta1_PC_dirt"){ 
+        if ((!flag_FC)) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta1_signal_PC"){
+        if ((!flag_FC) &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta1_background_PC"){
+        if ((!flag_FC) &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      } 
+    }else return false;
+  }else if (ch_name == "NCpi0BDT_theta2_FC_bnb" || ch_name == "NCpi0BDT_theta2_FC_overlay" || ch_name == "NCpi0BDT_theta2_FC_ncpi0" || ch_name == "BG_NCpi0BDT_theta2_FC_ext" || ch_name == "BG_NCpi0BDT_theta2_FC_dirt" || ch_name == "NCpi0BDT_theta2_FC_ext" || ch_name == "NCpi0BDT_theta2_FC_dirt" || ch_name == "NCpi0BDT_theta2_signal_FC" || ch_name == "NCpi0BDT_theta2_background_FC"
+       || ch_name == "NCpi0BDT_theta2_PC_bnb" || ch_name == "NCpi0BDT_theta2_PC_overlay" || ch_name == "NCpi0BDT_theta2_PC_ncpi0" || ch_name == "BG_NCpi0BDT_theta2_PC_ext" || ch_name == "BG_NCpi0BDT_theta2_PC_dirt" || ch_name == "NCpi0BDT_theta2_PC_ext" || ch_name == "NCpi0BDT_theta2_PC_dirt" || ch_name == "NCpi0BDT_theta2_signal_PC" || ch_name == "NCpi0BDT_theta2_background_PC"
+       ){
+    if (flag_NCpi0BDT_X && reco_pi0_costheta<=costheta_pio[3] && reco_pi0_costheta>costheta_pio[2]){
+      if (ch_name == "NCpi0BDT_theta2_FC_bnb" || ch_name == "NCpi0BDT_theta2_FC_overlay" || ch_name == "NCpi0BDT_theta2_FC_ncpi0" || ch_name == "BG_NCpi0BDT_theta2_FC_ext" || ch_name == "BG_NCpi0BDT_theta2_FC_dirt" || ch_name == "NCpi0BDT_theta2_FC_ext" || ch_name == "NCpi0BDT_theta2_FC_dirt"){ 
+        if (flag_FC) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta2_signal_FC"){
+        if (flag_FC &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta2_background_FC"){
+        if (flag_FC &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta2_PC_bnb" || ch_name == "NCpi0BDT_theta2_PC_overlay" || ch_name == "NCpi0BDT_theta2_PC_ncpi0" || ch_name == "BG_NCpi0BDT_theta2_PC_ext" || ch_name == "BG_NCpi0BDT_theta2_PC_dirt" || ch_name == "NCpi0BDT_theta2_PC_ext" || ch_name == "NCpi0BDT_theta2_PC_dirt"){ 
+        if ((!flag_FC)) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta2_signal_PC"){
+        if ((!flag_FC) &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta2_background_PC"){
+        if ((!flag_FC) &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      } 
+    }else return false;
+  }else if (ch_name == "NCpi0BDT_theta3_FC_bnb" || ch_name == "NCpi0BDT_theta3_FC_overlay" || ch_name == "NCpi0BDT_theta3_FC_ncpi0" || ch_name == "BG_NCpi0BDT_theta3_FC_ext" || ch_name == "BG_NCpi0BDT_theta3_FC_dirt" || ch_name == "NCpi0BDT_theta3_FC_ext" || ch_name == "NCpi0BDT_theta3_FC_dirt" || ch_name == "NCpi0BDT_theta3_signal_FC" || ch_name == "NCpi0BDT_theta3_background_FC"
+       || ch_name == "NCpi0BDT_theta3_PC_bnb" || ch_name == "NCpi0BDT_theta3_PC_overlay" || ch_name == "NCpi0BDT_theta3_PC_ncpi0" || ch_name == "BG_NCpi0BDT_theta3_PC_ext" || ch_name == "BG_NCpi0BDT_theta3_PC_dirt" || ch_name == "NCpi0BDT_theta3_PC_ext" || ch_name == "NCpi0BDT_theta3_PC_dirt" || ch_name == "NCpi0BDT_theta3_signal_PC" || ch_name == "NCpi0BDT_theta3_background_PC"
+       ){
+    if (flag_NCpi0BDT_X && reco_pi0_costheta<=costheta_pio[4] && reco_pi0_costheta>costheta_pio[3]){
+      if (ch_name == "NCpi0BDT_theta3_FC_bnb" || ch_name == "NCpi0BDT_theta3_FC_overlay" || ch_name == "NCpi0BDT_theta3_FC_ncpi0" || ch_name == "BG_NCpi0BDT_theta3_FC_ext" || ch_name == "BG_NCpi0BDT_theta3_FC_dirt" || ch_name == "NCpi0BDT_theta3_FC_ext" || ch_name == "NCpi0BDT_theta3_FC_dirt"){ 
+        if (flag_FC) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta3_signal_FC"){
+        if (flag_FC &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta3_background_FC"){
+        if (flag_FC &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta3_PC_bnb" || ch_name == "NCpi0BDT_theta3_PC_overlay" || ch_name == "NCpi0BDT_theta3_PC_ncpi0" || ch_name == "BG_NCpi0BDT_theta3_PC_ext" || ch_name == "BG_NCpi0BDT_theta3_PC_dirt" || ch_name == "NCpi0BDT_theta3_PC_ext" || ch_name == "NCpi0BDT_theta3_PC_dirt"){ 
+        if ((!flag_FC)) return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta3_signal_PC"){
+        if ((!flag_FC) &&  map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"])     return true;
+        else return false;
+      }else if (ch_name == "NCpi0BDT_theta3_background_PC"){
+        if ((!flag_FC) &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
+        else return false;
+      } 
+    }else return false;
 
   ////////////////////////////////////////////////////////
   // NCpi0BDT XSEC TOTAL - WC definition Enu 275-4000 MeV
@@ -2335,6 +2515,29 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "NCpi0BDT_background_Ppi0_PC_0p_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
     }else if (ch_name == "NCpi0BDT_background_Ppi0_PC_Np_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Ppi0_NCpi0BDTinFV"]))  return true;
     }else return false;
+  }else if (ch_name == "NCpi0BDT_0p_signal_Ppi0_FC_0p_overlay" || ch_name == "NCpi0BDT_Np_signal_Ppi0_FC_Np_overlay" || ch_name == "NCpi0BDT_0p_background_Ppi0_FC_0p_overlay" || ch_name == "NCpi0BDT_Np_background_Ppi0_FC_Np_overlay"
+    || ch_name == "NCpi0BDT_0p_signal_Ppi0_PC_0p_overlay" || ch_name == "NCpi0BDT_Np_signal_Ppi0_PC_Np_overlay" || ch_name == "NCpi0BDT_0p_background_Ppi0_PC_0p_overlay" || ch_name == "NCpi0BDT_Np_background_Ppi0_PC_Np_overlay"){
+    //NCpi0BDT_FC_0p_bnb
+    //BG_NCpi0BDT_FC_0p_ext
+    //BG_NCpi0BDT_FC_0p_dirt
+    //NCpi0BDT_FC_Np_bnb
+    //BG_NCpi0BDT_FC_Np_ext
+    //BG_NCpi0BDT_FC_Np_dirt
+    if (ch_name == "NCpi0BDT_0p_signal_Ppi0_FC_0p_overlay"){           if (flag_NCpi0BDT_X && flag_FC && flag_0p     &&  map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_0p_background_Ppi0_FC_0p_overlay"){ if (flag_NCpi0BDT_X && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_Np_signal_Ppi0_FC_Np_overlay"){     if (flag_NCpi0BDT_X && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_Np_background_Ppi0_FC_Np_overlay"){ if (flag_NCpi0BDT_X && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"]))  return true;
+    //NCpi0BDT_PC_0p_bnb
+    //BG_NCpi0BDT_PC_0p_ext
+    //BG_NCpi0BDT_PC_0p_dirt
+    //NCpi0BDT_PC_Np_bnb
+    //BG_NCpi0BDT_PC_Np_ext
+    //BG_NCpi0BDT_PC_Np_dirt
+    }else if (ch_name == "NCpi0BDT_0p_signal_Ppi0_PC_0p_overlay"){     if (flag_NCpi0BDT_X && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_0p_background_Ppi0_PC_0p_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_0p_Ppi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_Np_signal_Ppi0_PC_Np_overlay"){     if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_Np_background_Ppi0_PC_Np_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Np_Ppi0_NCpi0BDTinFV"]))  return true;
+    }else return false;
   //////////////////////////////////////////////////////////////////////
   // NCpi0BDT XSEC diff - Enu 275-4000 MeV - CosThetapi0 -1--->1 
   //////////////////////////////////////////////////////////////////////
@@ -2372,6 +2575,29 @@ bool LEEana::get_cut_pass(TString ch_name, TString add_cut, bool flag_data, Eval
     }else if (ch_name == "NCpi0BDT_signal_CosThetapi0_PC_Np_overlay"){     if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_CosThetapi0_NCpi0BDTinFV"])     return true;
     }else if (ch_name == "NCpi0BDT_background_CosThetapi0_PC_0p_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_CosThetapi0_NCpi0BDTinFV"]))  return true;
     }else if (ch_name == "NCpi0BDT_background_CosThetapi0_PC_Np_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }else return false;
+  }else if (ch_name == "NCpi0BDT_0p_signal_CosThetapi0_FC_0p_overlay" || ch_name == "NCpi0BDT_Np_signal_CosThetapi0_FC_Np_overlay" || ch_name == "NCpi0BDT_0p_background_CosThetapi0_FC_0p_overlay" || ch_name == "NCpi0BDT_Np_background_CosThetapi0_FC_Np_overlay"
+    || ch_name == "NCpi0BDT_0p_signal_CosThetapi0_PC_0p_overlay" || ch_name == "NCpi0BDT_Np_signal_CosThetapi0_PC_Np_overlay" || ch_name == "NCpi0BDT_0p_background_CosThetapi0_PC_0p_overlay" || ch_name == "NCpi0BDT_Np_background_CosThetapi0_PC_Np_overlay"){
+    //NCpi0BDT_FC_0p_bnb
+    //BG_NCpi0BDT_FC_0p_ext
+    //BG_NCpi0BDT_FC_0p_dirt
+    //NCpi0BDT_FC_Np_bnb
+    //BG_NCpi0BDT_FC_Np_ext
+    //BG_NCpi0BDT_FC_Np_dirt
+    if (ch_name == "NCpi0BDT_0p_signal_CosThetapi0_FC_0p_overlay"){           if (flag_NCpi0BDT_X && flag_FC && flag_0p     &&  map_cuts_flag["Xs_0p_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_0p_background_CosThetapi0_FC_0p_overlay"){ if (flag_NCpi0BDT_X && flag_FC && flag_0p     &&  (!map_cuts_flag["Xs_0p_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_Np_signal_CosThetapi0_FC_Np_overlay"){     if (flag_NCpi0BDT_X && flag_FC && (!flag_0p)  &&  map_cuts_flag["Xs_Np_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_Np_background_CosThetapi0_FC_Np_overlay"){ if (flag_NCpi0BDT_X && flag_FC && (!flag_0p)  &&  (!map_cuts_flag["Xs_Np_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    //NCpi0BDT_PC_0p_bnb
+    //BG_NCpi0BDT_PC_0p_ext
+    //BG_NCpi0BDT_PC_0p_dirt
+    //NCpi0BDT_PC_Np_bnb
+    //BG_NCpi0BDT_PC_Np_ext
+    //BG_NCpi0BDT_PC_Np_dirt
+    }else if (ch_name == "NCpi0BDT_0p_signal_CosThetapi0_PC_0p_overlay"){     if (flag_NCpi0BDT_X && (!flag_FC) && flag_0p     &&  map_cuts_flag["Xs_0p_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_0p_background_CosThetapi0_PC_0p_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && flag_0p     &&  (!map_cuts_flag["Xs_0p_CosThetapi0_NCpi0BDTinFV"]))  return true;
+    }else if (ch_name == "NCpi0BDT_Np_signal_CosThetapi0_PC_Np_overlay"){     if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  map_cuts_flag["Xs_Np_CosThetapi0_NCpi0BDTinFV"])     return true;
+    }else if (ch_name == "NCpi0BDT_Np_background_CosThetapi0_PC_Np_overlay"){ if (flag_NCpi0BDT_X && (!flag_FC) && (!flag_0p)  &&  (!map_cuts_flag["Xs_Np_CosThetapi0_NCpi0BDTinFV"]))  return true;
     }else return false;
   //////////////////////////////////////////////////////////////////////
   // NCpi0BDT XSEC diff - Enu 275-4000 MeV - Etransf 30--->2500 
@@ -2599,18 +2825,19 @@ bool LEEana::is_generic(EvalInfo& eval){
 
 bool LEEana::is_0p(TaggerInfo& tagger_info, KineInfo& kine, PFevalInfo& pfeval){
   bool flag = false;
-  // 1 lepton <=1 proton 0 charged pion
-  // 1 lepton guaranteed by numu cc flag
-  // using pi0 flag to remove pi0 component in channel definition
-  int Nproton = 0;
-  int Npion = 0;
-  for(size_t i=0; i<kine.kine_energy_particle->size(); i++){
-    int pdgcode = kine.kine_particle_type->at(i);
-    if(abs(pdgcode)==2212 && kine.kine_energy_particle->at(i)>35) Nproton++; // KE threshold: 50 MeV, 1.5 cm? 
-    if(abs(pdgcode)==211 && kine.kine_energy_particle->at(i)>10) Npion++; // KE threshold: 10 MeV 
-  }
-  if(Nproton==0) flag = true;
+  if(pfeval.reco_protonMomentum[3]*1000-938.27208816>35) return false;
+  else return true; 
   return flag;
+
+  //int Nproton = 0;
+  //int Npion = 0;
+  //for(size_t i=0; i<kine.kine_energy_particle->size(); i++){
+  //  int pdgcode = kine.kine_particle_type->at(i);
+  //  if(abs(pdgcode)==2212 && kine.kine_energy_particle->at(i)>35) Nproton++; // KE threshold: 50 MeV, 1.5 cm? 
+  //  if(abs(pdgcode)==211 && kine.kine_energy_particle->at(i)>10) Npion++; // KE threshold: 10 MeV 
+  //}
+  //if(Nproton==0) flag = true;
+  //return flag;
 }
 
 bool LEEana::is_1p(TaggerInfo& tagger_info, KineInfo& kine, PFevalInfo& pfeval){

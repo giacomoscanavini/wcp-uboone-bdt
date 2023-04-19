@@ -260,7 +260,7 @@ int main(int argc, char** argv)
   //Lee_test->scaleF_Lee = config_Lee::Lee_strength_for_GoF;
   //Lee_test->Set_Collapse();
 
-  // chi-square with multiple distributions, set to 1 in case you want it
+  // 2D MOMENTUM ONLY
   if(0){
     // With 1 right-side overflow bin
     if(1){
@@ -342,19 +342,8 @@ int main(int argc, char** argv)
     }
   }
 
-  // chi-square with 2 distributions, set to 1 in case you want it
+  // VALID FOR ALL DISTRIBUTIONS (not COSTHETA) - 9ch in cov_input.txt
   if(0){
-    int Nbins = 24;
-    int bins_h1 = Nbins; // number of bins in cov_input for obsr 1
-    int bins_h2 = Nbins; // number of bins in cov_input for obsr 2
-    int bins_h3 = Nbins; // number of bins in cov_input for obsr 3
-    int bins_h4 = Nbins; // number of bins in cov_input for obsr 4
-    int bins_h5 = Nbins; // number of bins in cov_input for obsr 5
-    int bins_h6 = Nbins; // number of bins in cov_input for obsr 6
-    int bins_h7 = Nbins; // number of bins in cov_input for obsr 7
-    int bins_h8 = Nbins; // number of bins in cov_input for obsr 8
-    int bins_h9 = Nbins; // number of bins in cov_input for obsr 9
-
     // With 1 right-side overflow bin
     if(1){
       // FC, PC next to each other
@@ -421,7 +410,7 @@ int main(int argc, char** argv)
       vc_support_chs.push_back(6);
       Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 806);
     }
-    if(0){
+    if(1){
       // PC Np constrained with measured FC Np
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(9);
@@ -430,7 +419,7 @@ int main(int argc, char** argv)
       vc_support_chs.push_back(7);
       Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 907);
     }
-    if(0){
+    if(1){
       // PC0p PCNp constrained with measured FC0p FCNp
       vector<int>vc_target_chs;       // Distribution to plot with Chi2, can be 1 or multiple next to each other
       vc_target_chs.push_back(8);
@@ -441,94 +430,159 @@ int main(int argc, char** argv)
       vc_support_chs.push_back(7);
       Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 89067);
     }
-    
-    /*
-    int all_bins = bins_h1+1;
+  }
+  
+  // VALID FOR MOMENTUM FC0p FCNp PC0p PCNp - 4ch in cov_input.txt
+  if(0){
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(1);
+      vc_target_chs.push_back(2);
+      vc_target_chs.push_back(3);
+      vc_target_chs.push_back(4);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1234);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(1);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 102);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(3);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(4);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 304);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(4);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 402);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(3);
+      vc_target_chs.push_back(4);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(1);
+      vc_support_chs.push_back(2);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 34012);
+    }
+  }
+  // // VALID FOR COSTHETA FC0p FCNp PC0p PCNp - 4ch in cov_input.txt
+  if(0){
+    int Nbins = 20;
     // Without any overflow bin
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h2); i++) vc_target_chs.push_back(all_bins+i);
-      for(int i=0; i<(bins_h3); i++) vc_target_chs.push_back(all_bins+bins_h2+1+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*0+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*1+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*2+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*3+i);
 
       vector<int>vc_support_chs; //for constraint, need bin index
-      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
-      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2223);
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 1234);
     }
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h2); i++) vc_target_chs.push_back(all_bins+i);
-      vector<int>vc_support_chs; //for constraint, need bin index
-      for(int i=0; i<(bins_h3); i++) vc_support_chs.push_back(all_bins+bins_h2+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5523);
-    }
-    all_bins += bins_h2+1;
-    all_bins += bins_h3+1;
-    if(1){
-      vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h4); i++) vc_target_chs.push_back(all_bins+i);
-      for(int i=0; i<(bins_h5); i++) vc_target_chs.push_back(all_bins+bins_h4+1+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*0+i);
 
       vector<int>vc_support_chs; //for constraint, need bin index
-      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
-      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2245);
+      for(int i=0; i<(Nbins); i++) vc_support_chs.push_back((Nbins+1)*1+i);
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 102);
     }
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h4); i++) vc_target_chs.push_back(all_bins+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*2+i);
+      
       vector<int>vc_support_chs; //for constraint, need bin index
-      for(int i=0; i<(bins_h5); i++) vc_support_chs.push_back(all_bins+bins_h4+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5545);
-    }
-    all_bins += bins_h4+1;
-    all_bins += bins_h5+1;
-    if(1){
-      vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h6); i++) vc_target_chs.push_back(all_bins+i);
-      for(int i=0; i<(bins_h7); i++) vc_target_chs.push_back(all_bins+bins_h6+1+i);
-
-      vector<int>vc_support_chs; //for constraint, need bin index
-      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
-      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2267);
+      for(int i=0; i<(Nbins); i++) vc_support_chs.push_back((Nbins+1)*3+i);
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 304);
     }
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h6); i++) vc_target_chs.push_back(all_bins+i);
-      vector<int>vc_support_chs; //for constraint, need bin index
-      for(int i=0; i<(bins_h7); i++) vc_support_chs.push_back(all_bins+bins_h6+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5567);
-    }
-    all_bins += bins_h6+1;
-    all_bins += bins_h7+1;
-    if(1){
-      vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h8); i++) vc_target_chs.push_back(all_bins+i);
-      for(int i=0; i<(bins_h9); i++) vc_target_chs.push_back(all_bins+bins_h8+1+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*3+i);
 
       vector<int>vc_support_chs; //for constraint, need bin index
-      //for(int i=0; i<bins_h1; i++) vc_support_chs.push_back(i);
-      //for(int i=0; i<bins_h2; i++) vc_support_chs.push_back(bins_h1+1+i);
-
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 2289);
+      for(int i=0; i<(Nbins); i++) vc_support_chs.push_back((Nbins+1)*1+i);
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 402);
     }
     if(1){
       vector<int>vc_target_chs;
-      for(int i=0; i<(bins_h8); i++) vc_target_chs.push_back(all_bins+i);
-      vector<int>vc_support_chs; //for constraint, need bin index
-      for(int i=0; i<(bins_h9); i++) vc_support_chs.push_back(all_bins+bins_h8+1+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*2+i);
+      for(int i=0; i<(Nbins); i++) vc_target_chs.push_back((Nbins+1)*3+i);
 
-      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 5589);
+      vector<int>vc_support_chs; //for constraint, need bin index
+      for(int i=0; i<(Nbins); i++) vc_support_chs.push_back((Nbins+1)*0+i);
+      for(int i=0; i<(Nbins); i++) vc_support_chs.push_back((Nbins+1)*1+i);
+      Lee_test->Exe_Goodness_of_fit_detailed(vc_target_chs, vc_support_chs, 34012);
     }
-    */
   }
+
+  // VALID FOR TRANSFERRED ENERGY CONSTRAINT 6ch in cov_input.txt (NCpi0 Xp, 0p, Np, numuCC Xp, 0p, Np)
+  if(0){
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(2);
+      vc_target_chs.push_back(3);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 23);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(5);
+      vc_target_chs.push_back(6);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 56);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(1);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(4);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 104);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(2);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(5);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 205);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(3);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(6);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 306);
+    }
+    if(1){
+      vector<int>vc_target_chs;
+      vc_target_chs.push_back(1);
+
+      vector<int>vc_support_chs; //for constraint, need bin index
+      vc_support_chs.push_back(5);
+      vc_support_chs.push_back(6);
+      Lee_test->Exe_Goodness_of_fit(vc_target_chs, vc_support_chs, 1056);
+    }
+  }
+
+
 
 
   if( config_Lee::flag_GoF_output2file_default_0 ) {

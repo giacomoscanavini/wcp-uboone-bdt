@@ -1632,15 +1632,15 @@ int main( int argc, char** argv )
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Conversion Distance [cm]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Azimuthal Angle #phi [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Leading shower Polar Angle #theta [rad]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conversion Distance [cm]"); }
+        // if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Conversion Distance [cm]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Azimuthal Angle #phi [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Polar Angle #theta [rad]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Sub-leading shower Energy [MeV]"); }
 
-        if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT Score"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("BDT Score"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Transferred Energy [MeV]"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Proton Multiplicity"); }
-        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Angle between photons [cosine]"); }
+        if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Proton Multiplicity"); }
+        //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Angle between photons #theta_{#gamma #gamma} [red]"); }
 
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Energy [MeV]"); }
         //if(obschannel >= 1){  gratio_mc[obschannel-1]->GetXaxis()->SetTitle("Muon Momentum [MeV/c]"); }
@@ -1686,8 +1686,9 @@ int main( int argc, char** argv )
         if(flag_err==2) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat uncertainty (Bayesian)", "F");
         if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Total Uncertainty", "F");
         //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc[obschannel-1],"Pred stat+xsec+flux uncertainty", "F");
-        if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Genie + GEANT4", "F");
-        //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Genie + GEANT4 + Reweight", "F");
+        //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Genie + GEANT4", "F");
+        if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + Flux + Genie + GEANT4 + Reweight", "F");
+        //if(flag_err==3) legend2[obschannel-1]->AddEntry(gratio_mc2[obschannel-1],"Stat. + XS", "F");
         //legend2[obschannel-1]->AddEntry(gratio_data[obschannel-1],"Data with stat. uncertainty", "lp");
         //legend2[obschannel-1]->AddEntry(gratio_data2[obschannel-1],"Data with stat. uncertainty (normalized)", "lp");
         legend2[obschannel-1]->SetTextSize(0.08);
